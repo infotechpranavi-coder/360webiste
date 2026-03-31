@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -600,6 +600,10 @@ const RegularPackagesPage = () => {
     }).format(price);
   };
 
+  const generateSlug = (title: string, id: string) => {
+    return `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -746,7 +750,7 @@ const RegularPackagesPage = () => {
                           </p>
 
                           <div className="mt-6 flex space-x-2">
-                            <Link href={`/packages/${pkg._id}`} className="flex-1">
+                            <Link href={`/packages/${generateSlug(pkg.title, pkg._id)}`} className="flex-1">
                               <Button className="w-full">
                                 View Details
                               </Button>

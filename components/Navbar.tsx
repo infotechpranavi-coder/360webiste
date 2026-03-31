@@ -27,6 +27,10 @@ interface NavigationItem {
   submenu?: Array<{ name: string; href: string }>;
 }
 
+const generateSlug = (title: string, id: string) => {
+  return `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+};
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -386,7 +390,7 @@ const Navbar = () => {
                       {searchResults.map((pkg) => (
                         <Link
                           key={pkg._id}
-                          href={`/packages/${pkg._id}`}
+                          href={`/packages/${generateSlug(pkg.title, pkg._id)}`}
                           className="block p-3 hover:bg-gray-50 rounded-lg transition-colors"
                           onClick={() => setIsSearchOpen(false)}
                         >
@@ -583,7 +587,7 @@ const Navbar = () => {
                         {searchResults.map((pkg) => (
                           <Link
                             key={pkg._id}
-                            href={`/packages/${pkg._id}`}
+                            href={`/packages/${generateSlug(pkg.title, pkg._id)}`}
                             className="block p-3 hover:bg-gray-50 rounded-lg transition-colors"
                             onClick={() => {
                               setIsSearchOpen(false);

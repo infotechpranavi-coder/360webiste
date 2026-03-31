@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -182,6 +182,10 @@ const PackagesPage = () => {
     }).format(price);
   };
 
+  const generateSlug = (title: string, id: string) => {
+    return `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -350,7 +354,7 @@ const PackagesPage = () => {
                   <motion.div
                     key={pkg._id}
                     className="group bg-white rounded-[32px] overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_70px_rgba(0,0,0,0.1)] transition-all duration-700 cursor-pointer flex flex-col"
-                    onClick={() => router.push(`/packages/${pkg._id}`)}
+                    onClick={() => router.push(`/packages/${generateSlug(pkg.title, pkg._id)}`)}
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}

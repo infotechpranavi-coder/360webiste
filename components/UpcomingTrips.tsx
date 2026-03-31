@@ -52,7 +52,11 @@ const UpcomingTrips = () => {
                 className="relative flex-shrink-0 w-[300px] sm:w-[380px] h-[500px] mx-4 rounded-2xl overflow-hidden cursor-pointer group shadow-lg"
                 onClick={() => {
                   const itemType = trip.type || 'package';
-                  const route = itemType === 'tour' ? `/tours/${trip.id}` : itemType === 'ticket' ? `/tickets/${trip.id}` : `/packages/${trip.id}`;
+                  const generateSlug = (title: string, id: string) => {
+                      return `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+                  };
+                  const slug = generateSlug(trip.title, trip.id);
+                  const route = itemType === 'tour' ? `/tours/${slug}` : itemType === 'ticket' ? `/tickets/${slug}` : `/packages/${slug}`;
                   router.push(route);
                 }}
                 whileHover={{

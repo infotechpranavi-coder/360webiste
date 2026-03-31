@@ -132,7 +132,13 @@ const PopularPackages = ({ initialPackages }: PopularPackagesProps) => {
 const PackageCard = ({ pkg, index, router }: any) => {
     const packageId = pkg._id || pkg.id;
     const itemType = pkg.type || 'package';
-    const route = itemType === 'tour' ? `/tours/${packageId}` : itemType === 'ticket' ? `/tickets/${packageId}` : `/packages/${packageId}`;
+    
+    const generateSlug = (title: string, id: string) => {
+        return `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+    };
+    
+    const slug = generateSlug(pkg.title, packageId);
+    const route = itemType === 'tour' ? `/tours/${slug}` : itemType === 'ticket' ? `/tickets/${slug}` : `/packages/${slug}`;
     const imageUrl = pkg.images && pkg.images.length > 0 ? pkg.images[0].url : pkg.image;
 
     return (

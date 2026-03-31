@@ -102,12 +102,24 @@ const TicketDetailPage = () => {
     const [ticketData, setTicketData] = useState<TicketData | null>(null);
     const [loading, setLoading] = useState(true);
 
+    const extractIdFromSlug = (slug: string | string[] | undefined) => {
+        if (!slug) return '';
+        const slugStr = Array.isArray(slug) ? slug[0] : slug;
+        const parts = slugStr.split('-');
+        const lastPart = parts[parts.length - 1];
+        if (/^[0-9a-fA-F]{24}$/.test(lastPart)) {
+            return lastPart;
+        }
+        return slugStr;
+    };
+
     const fetchTicket = useCallback(async () => {
-        if (!params?.id) return;
+        const actualId = extractIdFromSlug(params?.id);
+        if (!actualId) return;
 
         // Check for demo data first
-        if (typeof params.id === 'string' && params.id.startsWith('demo-')) {
-            const demo = demoTickets.find(t => t._id === params.id);
+        if (actualId.startsWith('demo-')) {
+            const demo = demoTickets.find(t => t._id === actualId);
             if (demo) {
                 setTicketData(demo);
                 setLoading(false);
@@ -117,7 +129,7 @@ const TicketDetailPage = () => {
 
         try {
             setLoading(true);
-            const response = await fetch(`/api/tickets/${params.id}`);
+            const response = await fetch(`/api/tickets/${actualId}`);
             const result = await response.json();
             if (result.success) {
                 setTicketData(result.data);

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -332,7 +332,7 @@ const InternationalPackagesPage = () => {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
           style={{
-            backgroundImage: `url('/Incredible-Infra-Services-Reviews.jpg')`
+            backgroundImage: `url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
           }}
         >
           {/* Overlay for better text readability */}

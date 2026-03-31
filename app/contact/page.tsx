@@ -560,8 +560,8 @@ Please get back to me with more information about available packages and pricing
                 </Button>
               </a>
               <a href="mailto:sales@skygovoyages.com">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
-                  <MessageCircle className="h-5 w-5 mr-2" />
+                <Button size="lg" variant="outline" className="bg-white text-black border-gray-200 hover:bg-gray-100">
+                  <MessageCircle className="h-5 w-5 mr-2 text-black" />
                   Send Email
                 </Button>
               </a>

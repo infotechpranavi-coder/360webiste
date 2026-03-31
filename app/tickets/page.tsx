@@ -157,6 +157,10 @@ const TicketsPage = () => {
         }).format(price);
     };
 
+    const generateSlug = (title: string, id: string) => {
+        return `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+    };
+
     if (loading && tickets.length === 0) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
@@ -175,7 +179,7 @@ const TicketsPage = () => {
                 <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style={{
-                        backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')"
+                        backgroundImage: "url('https://images.unsplash.com/photo-1542296332-2e4473faf563?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')"
                     }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70" />
@@ -267,7 +271,7 @@ const TicketsPage = () => {
                             <motion.div
                                 key={t._id}
                                 className="group bg-white rounded-[32px] overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_70px_rgba(0,0,0,0.1)] transition-all duration-700 cursor-pointer flex flex-col border border-gray-100"
-                                onClick={() => router.push(`/tickets/${t._id}`)}
+                                onClick={() => router.push(`/tickets/${generateSlug(t.title, t._id)}`)}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -340,7 +344,7 @@ const TicketsPage = () => {
                                         className="w-full bg-[#111827] hover:bg-[#bd9245] text-white font-black py-6 rounded-2xl transition-all duration-300 shadow-lg flex items-center justify-center gap-3 group/btn uppercase tracking-widest text-[10px]"
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            router.push(`/tickets/${t._id}`);
+                                            router.push(`/tickets/${generateSlug(t.title, t._id)}`);
                                         }}
                                     >
                                         <span>View Flight Details</span>

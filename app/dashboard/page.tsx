@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
@@ -50,15 +51,28 @@ import {
   LogOut,
   Compass,
   Plane,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Settings as SettingsIcon,
+  CheckCircle2,
+  AlertCircle,
+  Linkedin,
+  Share2,
+  Facebook,
+  Instagram,
+  Twitter,
+  Youtube,
+  Save,
+  Check,
+  ExternalLink
 } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import { Switch } from "../../components/ui/switch";
 import { cn } from "../../lib/utils";
 
 import { PackageData, TourData, TicketData, BannerData, BlogData } from "@/lib/types";
 
-type DashboardView = 'packages' | 'tours' | 'tickets' | 'banners' | 'testimonials' | 'blogs' | 'enquiries' | 'reports';
+type DashboardView = 'packages' | 'tours' | 'tickets' | 'banners' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
 
 export default function DashboardPage() {
   const [activeView, setActiveView] = useState<DashboardView>('packages');
@@ -102,6 +116,26 @@ export default function DashboardPage() {
   const [selectedBlog, setSelectedBlog] = useState<BlogData | null>(null);
   const [isCreateBlogModalOpen, setIsCreateBlogModalOpen] = useState(false);
   const [isEditBlogModalOpen, setIsEditBlogModalOpen] = useState(false);
+  const [siteSettings, setSiteSettings] = useState({ 
+    popularSection: true, 
+    upcomingSection: true,
+    destinationsSection: true,
+    exploreSection: true,
+    testimonialsSection: true,
+    facebookUrl: "",
+    facebookEnabled: true,
+    instagramUrl: "",
+    instagramEnabled: true,
+    twitterUrl: "",
+    twitterEnabled: true,
+    linkedinUrl: "",
+    linkedinEnabled: true,
+    youtubeUrl: "",
+    youtubeEnabled: true,
+    whatsappUrl: "",
+    whatsappEnabled: true
+  });
+  const [settingsLoading, setSettingsLoading] = useState(false);
 
   const fetchPackages = async () => {
     try {
@@ -181,6 +215,59 @@ export default function DashboardPage() {
       if (data.success) setBlogs(data.data);
     } catch (error) {
       console.error('Error fetching blogs:', error);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/settings', { cache: 'no-store' });
+      const data = await response.json();
+      if (data.success && data.data) {
+        // Merge with existing state to preserve defaults for missing fields
+        setSiteSettings(prev => ({ ...prev, ...data.data }));
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
+
+  const updateSetting = async (key: string, value: boolean | string) => {
+    try {
+      setSettingsLoading(true);
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [key]: value })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSiteSettings(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to update setting:", error);
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  const saveSocialSettings = async () => {
+    try {
+      setSettingsLoading(true);
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(siteSettings)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSiteSettings(data.data);
+        alert("Social media settings updated successfully!");
+      }
+    } catch (error) {
+      console.error("Failed to save settings:", error);
+      alert("Failed to save settings. Please try again.");
+    } finally {
+      setSettingsLoading(false);
     }
   };
 
@@ -264,6 +351,7 @@ export default function DashboardPage() {
     fetchEnquiries();
     fetchTestimonials();
     fetchBlogs();
+    fetchSettings();
   }, []);
 
   // Reset place filter when package type changes
@@ -999,7 +1087,7 @@ export default function DashboardPage() {
         );
 
         pkg.itinerary.forEach((day, index) => {
-          const cleanTitle = day.title.replace(/[â­*]/g, '').trim();
+          const cleanTitle = day.title.replace(/[â­ *]/g, '').trim();
           children.push(
             new Paragraph({
               children: [new TextRun({ text: `Day ${day.day}`, bold: true, size: 20 })],
@@ -1237,11 +1325,16 @@ export default function DashboardPage() {
       label: 'Customer Enquiries',
       icon: MessageSquare,
     },
-    // {
-    //   id: 'reports' as DashboardView,
-    //   label: 'Reports',
-    //   icon: TrendingUp,
-    // }
+    {
+      id: 'settings' as DashboardView,
+      label: 'Home Settings',
+      icon: SettingsIcon,
+    },
+    {
+      id: 'socials' as DashboardView,
+      label: 'Social Media',
+      icon: Share2,
+    },
   ];
 
   return (
@@ -1363,6 +1456,8 @@ export default function DashboardPage() {
                     {activeView === 'banners' && 'Home Banners'}
                     {activeView === 'testimonials' && 'Guest Feedback'}
                     {activeView === 'blogs' && 'Content Studio'}
+                    {activeView === 'settings' && 'Home Configuration'}
+                    {activeView === 'socials' && 'Social Presence'}
                   </h1>
                   <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1">
                     {activeView === 'packages' && 'Curating premium experiences for global travelers'}
@@ -1371,6 +1466,8 @@ export default function DashboardPage() {
                     {activeView === 'banners' && 'Management of homepage hero slider visuals'}
                     {activeView === 'testimonials' && 'Monitoring guest satisfaction and reviews'}
                     {activeView === 'blogs' && 'Managing luxury travel narratives'}
+                    {activeView === 'settings' && 'Customize homepage section visibility and features'}
+                    {activeView === 'socials' && 'Centralized control for all brand digital touchpoints'}
                   </p>
                 </div>
               </div>
@@ -2335,6 +2432,472 @@ export default function DashboardPage() {
                         )}
                       </tbody>
                     </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeView === 'settings' && (
+            <div className="container mx-auto px-8 py-10 space-y-10">
+              <Card className="rounded-[40px] border-white shadow-sm overflow-hidden">
+                <CardHeader className="p-8 pb-4">
+                  <div>
+                    <CardTitle className="text-2xl font-black text-[#111827] tracking-tight uppercase">Home Page Configuration</CardTitle>
+                    <CardDescription className="text-sm font-medium text-gray-400 font-bold uppercase tracking-widest mt-1">Control the visibility of dynamic sections on your main landing page</CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-8 pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Popular Section Toggle */}
+                    <div className={cn(
+                      "p-8 rounded-[32px] border-2 transition-all duration-300 flex flex-col justify-between h-full",
+                      siteSettings.popularSection 
+                        ? "bg-white border-[#bd9245]/20 shadow-xl shadow-[#bd9245]/5" 
+                        : "bg-gray-50/50 border-gray-100"
+                    )}>
+                      <div className="flex items-start justify-between mb-6">
+                        <div className={cn(
+                          "w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg",
+                          siteSettings.popularSection ? "bg-[#bd9245] text-white shadow-[#bd9245]/20" : "bg-gray-200 text-gray-400"
+                        )}>
+                          <Star className="h-7 w-7" />
+                        </div>
+                        <Switch 
+                          disabled={settingsLoading}
+                          checked={siteSettings.popularSection} 
+                          onCheckedChange={(val) => updateSetting('popularSection', val)}
+                          className="data-[state=checked]:bg-[#bd9245]"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-[#111827] uppercase tracking-tight mb-2">Popular Packages</h3>
+                        <p className="text-sm font-medium text-gray-500 mb-6">Display the curated collection of top-rated travel packages on the home screen.</p>
+                        
+                        <div className="flex items-center gap-2">
+                          {siteSettings.popularSection ? (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> Visible Live
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gray-200 text-gray-500 hover:bg-gray-200 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <AlertCircle className="h-3 w-3 mr-1" /> Hidden
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Upcoming Section Toggle */}
+                    <div className={cn(
+                      "p-8 rounded-[32px] border-2 transition-all duration-300 flex flex-col justify-between h-full",
+                      siteSettings.upcomingSection 
+                        ? "bg-white border-[#bd9245]/20 shadow-xl shadow-[#bd9245]/5" 
+                        : "bg-gray-50/50 border-gray-100"
+                    )}>
+                      <div className="flex items-start justify-between mb-6">
+                        <div className={cn(
+                          "w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg",
+                          siteSettings.upcomingSection ? "bg-[#bd9245] text-white shadow-[#bd9245]/20" : "bg-gray-200 text-gray-400"
+                        )}>
+                          <Compass className="h-7 w-7" />
+                        </div>
+                        <Switch 
+                          disabled={settingsLoading}
+                          checked={siteSettings.upcomingSection} 
+                          onCheckedChange={(val) => updateSetting('upcomingSection', val)}
+                          className="data-[state=checked]:bg-[#bd9245]"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-[#111827] uppercase tracking-tight mb-2">Upcoming Trips</h3>
+                        <p className="text-sm font-medium text-gray-500 mb-6">Showcase scheduled group adventures and upcoming expeditions to visitors.</p>
+                        
+                        <div className="flex items-center gap-2">
+                          {siteSettings.upcomingSection ? (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> Visible Live
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gray-200 text-gray-500 hover:bg-gray-200 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <AlertCircle className="h-3 w-3 mr-1" /> Hidden
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Destinations Section Toggle */}
+                    <div className={cn(
+                      "p-8 rounded-[32px] border-2 transition-all duration-300 flex flex-col justify-between h-full",
+                      siteSettings.destinationsSection 
+                        ? "bg-white border-[#bd9245]/20 shadow-xl shadow-[#bd9245]/5" 
+                        : "bg-gray-50/50 border-gray-100"
+                    )}>
+                      <div className="flex items-start justify-between mb-6">
+                        <div className={cn(
+                          "w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg",
+                          siteSettings.destinationsSection ? "bg-[#bd9245] text-white shadow-[#bd9245]/20" : "bg-gray-200 text-gray-400"
+                        )}>
+                          <MapPin className="h-7 w-7" />
+                        </div>
+                        <Switch 
+                          disabled={settingsLoading}
+                          checked={siteSettings.destinationsSection} 
+                          onCheckedChange={(val) => updateSetting('destinationsSection', val)}
+                          className="data-[state=checked]:bg-[#bd9245]"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-[#111827] uppercase tracking-tight mb-2">Destinations Grid</h3>
+                        <p className="text-sm font-medium text-gray-500 mb-6">Manage visibility of the global destinations gallery and featured location cards.</p>
+                        
+                        <div className="flex items-center gap-2">
+                          {siteSettings.destinationsSection ? (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> Visible Live
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gray-200 text-gray-500 hover:bg-gray-200 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <AlertCircle className="h-3 w-3 mr-1" /> Hidden
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Explore Section Toggle */}
+                    <div className={cn(
+                      "p-8 rounded-[32px] border-2 transition-all duration-300 flex flex-col justify-between h-full",
+                      siteSettings.exploreSection 
+                        ? "bg-white border-[#bd9245]/20 shadow-xl shadow-[#bd9245]/5" 
+                        : "bg-gray-50/50 border-gray-100"
+                    )}>
+                      <div className="flex items-start justify-between mb-6">
+                        <div className={cn(
+                          "w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg",
+                          siteSettings.exploreSection ? "bg-[#bd9245] text-white shadow-[#bd9245]/20" : "bg-gray-200 text-gray-400"
+                        )}>
+                          <LayoutDashboard className="h-7 w-7" />
+                        </div>
+                        <Switch 
+                          disabled={settingsLoading}
+                          checked={siteSettings.exploreSection} 
+                          onCheckedChange={(val) => updateSetting('exploreSection', val)}
+                          className="data-[state=checked]:bg-[#bd9245]"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-[#111827] uppercase tracking-tight mb-2">Explore Us</h3>
+                        <p className="text-sm font-medium text-gray-500 mb-6">Toggle the main branding and mission statement section below the hero banner.</p>
+                        
+                        <div className="flex items-center gap-2">
+                          {siteSettings.exploreSection ? (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> Visible Live
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gray-200 text-gray-500 hover:bg-gray-200 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <AlertCircle className="h-3 w-3 mr-1" /> Hidden
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Testimonials Section Toggle */}
+                    <div className={cn(
+                      "p-8 rounded-[32px] border-2 transition-all duration-300 flex flex-col justify-between h-full",
+                      siteSettings.testimonialsSection 
+                        ? "bg-white border-[#bd9245]/20 shadow-xl shadow-[#bd9245]/5" 
+                        : "bg-gray-50/50 border-gray-100"
+                    )}>
+                      <div className="flex items-start justify-between mb-6">
+                        <div className={cn(
+                          "w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg",
+                          siteSettings.testimonialsSection ? "bg-[#bd9245] text-white shadow-[#bd9245]/20" : "bg-gray-200 text-gray-400"
+                        )}>
+                          <Users className="h-7 w-7" />
+                        </div>
+                        <Switch 
+                          disabled={settingsLoading}
+                          checked={siteSettings.testimonialsSection} 
+                          onCheckedChange={(val) => updateSetting('testimonialsSection', val)}
+                          className="data-[state=checked]:bg-[#bd9245]"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-[#111827] uppercase tracking-tight mb-2">Client Feedback</h3>
+                        <p className="text-sm font-medium text-gray-500 mb-6">Show or hide the customer testimonials and travel reviews section.</p>
+                        
+                        <div className="flex items-center gap-2">
+                          {siteSettings.testimonialsSection ? (
+                            <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> Visible Live
+                            </Badge>
+                          ) : (
+                            <Badge className="bg-gray-200 text-gray-500 hover:bg-gray-200 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
+                              <AlertCircle className="h-3 w-3 mr-1" /> Hidden
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-12 p-6 bg-[#faf8f3] rounded-[32px] border border-gray-100 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+                      <LayoutDashboard className="h-5 w-5 text-[#bd9245]" />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-black text-[#111827] uppercase tracking-widest">Administrator Pro-Tip</p>
+                      <p className="text-xs text-gray-500 font-medium">Changes made here reflect immediately on the frontend without requiring a redeploy.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeView === 'socials' && (
+            <div className="container mx-auto px-8 py-10 space-y-10">
+              <Card className="rounded-[40px] border-white shadow-sm overflow-hidden">
+                <CardHeader className="p-8 pb-4">
+                  <div>
+                    <CardTitle className="text-2xl font-black text-[#111827] tracking-tight uppercase">Social Media Presence</CardTitle>
+                    <CardDescription className="text-sm font-medium text-gray-400 font-bold uppercase tracking-widest mt-1">Manage your brand's digital touchpoints and profile links across the web</CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-8 pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Facebook */}
+                    <div className="p-6 rounded-[32px] bg-[#faf8f3] border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-[#1877F2]/10 text-[#1877F2] flex items-center justify-center">
+                            <Facebook className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platform</p>
+                            <p className="text-sm font-black text-[#111827] uppercase">Facebook</p>
+                          </div>
+                        </div>
+                        <Switch 
+                          checked={siteSettings.facebookEnabled}
+                          onCheckedChange={(val) => setSiteSettings({...siteSettings, facebookEnabled: val})}
+                          className="data-[state=checked]:bg-[#1877F2]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Profile URL</p>
+                        <Input 
+                          value={siteSettings.facebookUrl || ""}
+                          onChange={(e) => setSiteSettings({...siteSettings, facebookUrl: e.target.value})}
+                          placeholder="https://facebook.com/..."
+                          className="bg-white border-gray-100 rounded-xl h-11 text-xs font-medium"
+                        />
+                        {siteSettings.facebookUrl && (
+                          <Link href={siteSettings.facebookUrl} target="_blank" className="text-[9px] text-[#bd9245] flex items-center gap-1 mt-1 font-bold uppercase truncate hover:underline px-1">
+                            <ExternalLink className="h-2.5 w-2.5" /> View Live Profile
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Instagram */}
+                    <div className="p-6 rounded-[32px] bg-[#faf8f3] border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#f09433]/10 via-[#e6683c]/10 to-[#dc2743]/10 text-[#e6683c] flex items-center justify-center">
+                            <Instagram className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platform</p>
+                            <p className="text-sm font-black text-[#111827] uppercase">Instagram</p>
+                          </div>
+                        </div>
+                        <Switch 
+                          checked={siteSettings.instagramEnabled}
+                          onCheckedChange={(val) => setSiteSettings({...siteSettings, instagramEnabled: val})}
+                          className="data-[state=checked]:bg-[#e6683c]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Profile URL</p>
+                        <Input 
+                          value={siteSettings.instagramUrl || ""}
+                          onChange={(e) => setSiteSettings({...siteSettings, instagramUrl: e.target.value})}
+                          placeholder="https://instagram.com/..."
+                          className="bg-white border-gray-100 rounded-xl h-11 text-xs font-medium"
+                        />
+                        {siteSettings.instagramUrl && (
+                          <Link href={siteSettings.instagramUrl} target="_blank" className="text-[9px] text-[#e6683c] flex items-center gap-1 mt-1 font-bold uppercase truncate hover:underline px-1">
+                            <ExternalLink className="h-2.5 w-2.5" /> View Live Profile
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Twitter / X */}
+                    <div className="p-6 rounded-[32px] bg-[#faf8f3] border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-black/10 text-black flex items-center justify-center">
+                            <Twitter className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platform</p>
+                            <p className="text-sm font-black text-[#111827] uppercase">X / Twitter</p>
+                          </div>
+                        </div>
+                        <Switch 
+                          checked={siteSettings.twitterEnabled}
+                          onCheckedChange={(val) => setSiteSettings({...siteSettings, twitterEnabled: val})}
+                          className="data-[state=checked]:bg-black"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Profile URL</p>
+                        <Input 
+                          value={siteSettings.twitterUrl || ""}
+                          onChange={(e) => setSiteSettings({...siteSettings, twitterUrl: e.target.value})}
+                          placeholder="https://x.com/..."
+                          className="bg-white border-gray-100 rounded-xl h-11 text-xs font-medium"
+                        />
+                        {siteSettings.twitterUrl && (
+                          <Link href={siteSettings.twitterUrl} target="_blank" className="text-[9px] text-gray-500 flex items-center gap-1 mt-1 font-bold uppercase truncate hover:underline px-1">
+                            <ExternalLink className="h-2.5 w-2.5" /> View Live Profile
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* LinkedIn */}
+                    <div className="p-6 rounded-[32px] bg-[#faf8f3] border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-[#0A66C2]/10 text-[#0A66C2] flex items-center justify-center">
+                            <Linkedin className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platform</p>
+                            <p className="text-sm font-black text-[#111827] uppercase">LinkedIn</p>
+                          </div>
+                        </div>
+                        <Switch 
+                          checked={siteSettings.linkedinEnabled}
+                          onCheckedChange={(val) => setSiteSettings({...siteSettings, linkedinEnabled: val})}
+                          className="data-[state=checked]:bg-[#0A66C2]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Profile URL</p>
+                        <Input 
+                          value={siteSettings.linkedinUrl || ""}
+                          onChange={(e) => setSiteSettings({...siteSettings, linkedinUrl: e.target.value})}
+                          placeholder="https://linkedin.com/in/..."
+                          className="bg-white border-gray-100 rounded-xl h-11 text-xs font-medium"
+                        />
+                        {siteSettings.linkedinUrl && (
+                          <Link href={siteSettings.linkedinUrl} target="_blank" className="text-[9px] text-[#0A66C2] flex items-center gap-1 mt-1 font-bold uppercase truncate hover:underline px-1">
+                            <ExternalLink className="h-2.5 w-2.5" /> View Live Profile
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* YouTube */}
+                    <div className="p-6 rounded-[32px] bg-[#faf8f3] border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-red-600/10 text-red-600 flex items-center justify-center">
+                            <Youtube className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platform</p>
+                            <p className="text-sm font-black text-[#111827] uppercase">YouTube</p>
+                          </div>
+                        </div>
+                        <Switch 
+                          checked={siteSettings.youtubeEnabled}
+                          onCheckedChange={(val) => setSiteSettings({...siteSettings, youtubeEnabled: val})}
+                          className="data-[state=checked]:bg-red-600"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Channel URL</p>
+                        <Input 
+                          value={siteSettings.youtubeUrl || ""}
+                          onChange={(e) => setSiteSettings({...siteSettings, youtubeUrl: e.target.value})}
+                          placeholder="https://youtube.com/c/..."
+                          className="bg-white border-gray-100 rounded-xl h-11 text-xs font-medium"
+                        />
+                        {siteSettings.youtubeUrl && (
+                          <Link href={siteSettings.youtubeUrl} target="_blank" className="text-[9px] text-red-600 flex items-center gap-1 mt-1 font-bold uppercase truncate hover:underline px-1">
+                            <ExternalLink className="h-2.5 w-2.5" /> View Live Profile
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* WhatsApp */}
+                    <div className="p-6 rounded-[32px] bg-[#faf8f3] border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl bg-[#25D366]/10 text-[#25D366] flex items-center justify-center">
+                            <MessageSquare className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Platform</p>
+                            <p className="text-sm font-black text-[#111827] uppercase">WhatsApp Business</p>
+                          </div>
+                        </div>
+                        <Switch 
+                          checked={siteSettings.whatsappEnabled}
+                          onCheckedChange={(val) => setSiteSettings({...siteSettings, whatsappEnabled: val})}
+                          className="data-[state=checked]:bg-[#25D366]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Business Link (wa.me)</p>
+                        <Input 
+                          value={siteSettings.whatsappUrl || ""}
+                          onChange={(e) => setSiteSettings({...siteSettings, whatsappUrl: e.target.value})}
+                          placeholder="https://wa.me/237..."
+                          className="bg-white border-gray-100 rounded-xl h-11 text-xs font-medium"
+                        />
+                        {siteSettings.whatsappUrl && (
+                          <Link href={siteSettings.whatsappUrl} target="_blank" className="text-[9px] text-[#25D366] flex items-center gap-1 mt-1 font-bold uppercase truncate hover:underline px-1">
+                            <ExternalLink className="h-2.5 w-2.5" /> View Live Profile
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-12 p-8 bg-[#111827] rounded-[40px] flex flex-col md:flex-row items-center gap-8 border border-white/5 relative">
+                    <div className="w-20 h-20 rounded-3xl bg-[#bd9245] flex items-center justify-center shadow-xl shadow-[#bd9245]/20 shrink-0">
+                      <Share2 className="h-10 w-10 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-lg font-black text-white uppercase tracking-tight mb-1">Expanding your reach</h4>
+                      <p className="text-sm text-white/50 font-medium">Adding social media links helps build trust with potential customers. Ensure all URLs are correct and active before enabling them on the live site.</p>
+                    </div>
+                    <div className="shrink-0">
+                      <Button 
+                        onClick={saveSocialSettings}
+                        disabled={settingsLoading}
+                        className="bg-[#bd9245] hover:bg-[#a07835] text-white font-black px-10 py-8 rounded-[24px] shadow-2xl shadow-[#bd9245]/20 transition-all uppercase text-sm tracking-widest flex gap-3 group"
+                      >
+                        {settingsLoading ? (
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                        ) : (
+                          <>
+                            <Save className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                            Save Configuration
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

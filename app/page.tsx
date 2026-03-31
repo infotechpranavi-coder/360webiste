@@ -8,11 +8,19 @@ import ClientFeedback from "../components/ClientFeedback";
 import connectDB from "@/lib/mongodb";
 import Banner from "@/models/Banner";
 import Package from "@/models/Package";
+import Settings from "@/models/Settings";
 
 export default async function Home() {
   // Use try/catch for database operations
   let initialBanners = [];
   let initialPackages = [];
+  let settings = { 
+    popularSection: true, 
+    upcomingSection: true,
+    destinationsSection: true,
+    exploreSection: true,
+    testimonialsSection: true
+  };
 
   try {
     await connectDB();
@@ -26,6 +34,12 @@ export default async function Home() {
     const packageDocs = await Package.find({ isPopularPackage: true })
       .limit(5)
       .lean();
+
+    // Fetch site settings
+    const settingsDoc = await Settings.findOne().lean();
+    if (settingsDoc) {
+      settings = JSON.parse(JSON.stringify(settingsDoc));
+    }
     
     // Stringify/Parse to handle MongoDB ObjectIds for client components
     initialBanners = JSON.parse(JSON.stringify(bannerDocs));
@@ -37,13 +51,11 @@ export default async function Home() {
   return (
     <div className="min-h-screen">
       <HeroExplore initialBanners={initialBanners} />
-      <ExploreWithUs />
-      <DestinationsGrid />
-      <UpcomingTrips />
-      <PopularPackages initialPackages={initialPackages} />
-      <ClientFeedback />
-
-
+      {settings.exploreSection !== false && <ExploreWithUs />}
+      {settings.destinationsSection !== false && <DestinationsGrid />}
+      {settings.upcomingSection !== false && <UpcomingTrips />}
+      {settings.popularSection !== false && <PopularPackages initialPackages={initialPackages} />}
+      {settings.testimonialsSection !== false && <ClientFeedback />}
     </div>
   );
 }

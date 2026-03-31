@@ -1,43 +1,96 @@
+'use client'
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Mail, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
+import { MapPin, Phone, Mail, Facebook, Instagram, Twitter, Youtube, Linkedin, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 const Footer = () => {
+  const [settings, setSettings] = useState<any>({
+    facebookEnabled: true,
+    facebookUrl: "",
+    instagramEnabled: true,
+    instagramUrl: "",
+    twitterEnabled: true,
+    twitterUrl: "",
+    linkedinEnabled: true,
+    linkedinUrl: "",
+    youtubeEnabled: true,
+    youtubeUrl: "",
+    whatsappEnabled: true,
+    whatsappUrl: ""
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        if (data.success && data.data) {
+          setSettings(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch footer settings:", error);
+      }
+    };
+    fetchSettings();
+  }, []);
+
   return (
-    <footer className="relative bg-[#f4f7f9] text-gray-900 overflow-hidden border-t border-gray-200">
+    <footer className="relative bg-[#f4f7f9] text-gray-900 overflow-hidden border-t border-gray-200 font-inter">
       <div className="relative z-10 container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="flex items-center">
               <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
-                <div className="relative w-full h-full z-10">
-                  <Image
-                    src="/Untitled_design__2_-removebg-preview.png"
-                    alt="Sky Go Logo"
-                    fill
-                    sizes="(max-width: 640px) 120px, (max-width: 768px) 150px, 200px"
-                    className="object-contain"
-                    priority
-                  />
-                </div>
+                <Image
+                  src="/Untitled_design__2_-removebg-preview.png"
+                  alt="Sky Go Logo"
+                  fill
+                  sizes="(max-width: 640px) 120px, (max-width: 768px) 150px, 200px"
+                  className="object-contain"
+                  priority
+                />
               </div>
             </div>
-            <p className="text-gray-600 text-sm font-medium leading-relaxed max-w-xs">
-              Sky Go specializes in well-curated travel experiences across Cape Town, Johannesburg, and the beautiful landscapes of South Africa.
+            <p className="text-gray-600 text-[13px] font-medium leading-relaxed max-w-sm">
+              SkyGo specializes in comprehensive tours, travel, and ticketing services. We provide well-curated travel experiences and seamless flight bookings, offering professional and personalized solutions for all your journey needs within the region and beyond.
             </p>
-            <div className="flex space-x-5">
-              <Link href="https://www.facebook.com/share/1EkLqFyM9F/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#bd9245] transition-colors">
-                <Facebook className="h-5 w-5" />
-              </Link>
-              <Link href="https://www.instagram.com/jj_tia_travels" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-[#bd9245] transition-colors">
-                <Instagram className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-gray-400 hover:text-[#bd9245] transition-colors">
-                <Youtube className="h-5 w-5" />
-              </Link>
+            
+            <div className="flex flex-wrap gap-4">
+              {settings?.facebookEnabled && settings?.facebookUrl && (
+                <Link href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#1877F2] hover:border-[#1877F2]/30 hover:bg-[#1877F2]/5 transition-all duration-300">
+                  <Facebook className="h-5 w-5" />
+                </Link>
+              )}
+              {settings?.instagramEnabled && settings?.instagramUrl && (
+                <Link href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#E4405F] hover:border-[#E4405F]/30 hover:bg-[#E4405F]/5 transition-all duration-300">
+                  <Instagram className="h-5 w-5" />
+                </Link>
+              )}
+              {settings?.twitterEnabled && settings?.twitterUrl && (
+                <Link href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black/30 hover:bg-black/5 transition-all duration-300">
+                  <Twitter className="h-5 w-5" />
+                </Link>
+              )}
+              {settings?.linkedinEnabled && settings?.linkedinUrl && (
+                <Link href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/30 hover:bg-[#0A66C2]/5 transition-all duration-300">
+                  <Linkedin className="h-5 w-5" />
+                </Link>
+              )}
+              {settings?.youtubeEnabled && settings?.youtubeUrl && (
+                <Link href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#FF0000] hover:border-[#FF0000]/30 hover:bg-[#FF0000]/5 transition-all duration-300">
+                  <Youtube className="h-5 w-5" />
+                </Link>
+              )}
+              {settings?.whatsappEnabled && settings?.whatsappUrl && (
+                <Link href={settings.whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#25D366] hover:border-[#25D366]/30 hover:bg-[#25D366]/5 transition-all duration-300">
+                  <MessageSquare className="h-5 w-5" />
+                </Link>
+              )}
             </div>
           </div>
 

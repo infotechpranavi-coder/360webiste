@@ -148,6 +148,10 @@ const ToursPage = () => {
         }).format(price);
     };
 
+    const generateSlug = (title: string, id: string) => {
+        return `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+    };
+
     if (loading && packages.length === 0) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
@@ -244,7 +248,7 @@ const ToursPage = () => {
                             <motion.div
                                 key={pkg._id}
                                 className="group bg-white rounded-[32px] overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_70px_rgba(0,0,0,0.1)] transition-all duration-700 cursor-pointer flex flex-col"
-                                onClick={() => router.push(`/tours/${pkg._id}`)}
+                                onClick={() => router.push(`/tours/${generateSlug(pkg.title, pkg._id)}`)}
                                 initial={{ opacity: 0, y: 30 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -272,7 +276,7 @@ const ToursPage = () => {
                                             className="w-full bg-gray-900 hover:bg-black text-white font-bold py-5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                router.push(`/tours/${pkg._id}`);
+                                                router.push(`/tours/${generateSlug(pkg.title, pkg._id)}`);
                                             }}
                                         >
                                             <span>View Detailed Page</span>

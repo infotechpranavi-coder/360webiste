@@ -23,20 +23,23 @@ const DestinationsGrid = () => {
         const result = await res.json();
         
         if (result.success && result.data) {
+          const generateSlug = (title: string, id: string) => {
+              return `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+          };
+          
           const featured = (result.data as PackageData[])
             .map(pkg => ({
               id: pkg._id,
               title: pkg.title,
               subtitle: pkg.subtitle,
               image: pkg.images[0]?.url || "",
-              link: `/packages/${pkg._id}`
+              link: `/packages/${generateSlug(pkg.title, pkg._id)}`
             }));
 
-          // Only set if we have actual data from database
+          // Show all featured packages, not just 4
           if (featured.length > 0) {
-            setDisplayDestinations(featured.slice(0, 4));
+            setDisplayDestinations(featured);
           } else {
-            // Set to empty or don't show demo data as per user request
             setDisplayDestinations([]);
           }
         }
@@ -66,9 +69,9 @@ const DestinationsGrid = () => {
     <section
       id="destinations"
       ref={ref}
-      className="py-24 relative overflow-hidden min-h-[600px]"
+      className="py-24 relative overflow-hidden min-h-[700px] h-auto"
     >
-      {/* Default Background - Always visible as base layer */}
+      {/* Default Background */}
       <div className="absolute inset-0 z-0">
         <img
           src="/b5.jpg"
@@ -82,28 +85,26 @@ const DestinationsGrid = () => {
         <div className="absolute inset-0 bg-gray-900/30" />
       </div>
 
-      {/* All destination images pre-rendered, toggled via opacity for instant transitions */}
-      {displayDestinations.map((destination) => (
-        <div
-          key={destination.id}
-          className="absolute inset-0 z-[1] pointer-events-none"
-          style={{
-            opacity: hoveredCardImage === destination.image ? 1 : 0,
-            transition: 'opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          <img
-            src={destination.image}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{
-              filter: 'blur(4px) brightness(0.55) saturate(1.3)',
-              transform: 'scale(1.15)',
-            }}
-          />
-          <div className="absolute inset-0 bg-black/20" />
-        </div>
-      ))}
+      {/* Hover Background Layer - Only one active at a time for performance */}
+      <div 
+        className="absolute inset-0 z-[1] pointer-events-none transition-opacity duration-700 ease-in-out"
+        style={{ opacity: hoveredCardImage ? 1 : 0 }}
+      >
+        {hoveredCardImage && (
+          <>
+            <img
+              src={hoveredCardImage}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000"
+              style={{
+                filter: 'blur(4px) brightness(0.55) saturate(1.3)',
+                transform: 'scale(1.05)',
+              }}
+            />
+            <div className="absolute inset-0 bg-black/20" />
+          </>
+        )}
+      </div>
 
       <div className="container mx-auto px-4 relative z-[3]">
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
@@ -113,7 +114,7 @@ const DestinationsGrid = () => {
               DESTINATIONS
             </h2>
             <p className="text-lg text-gray-300 mb-8">
-              Discover breathtaking destinations across South Africa. From safari adventures to cultural landmarks.
+              Explore the world&rsquo;s most iconic destinations with our curated travel packages. From luxury beach getaways to wild safari adventures, we turn your dream tour into a seamless reality.
             </p>
             <Button
               className="bg-black text-white border-2 border-white hover:bg-white hover:text-black px-8 py-6 rounded-full transition-colors duration-300"
@@ -137,7 +138,11 @@ const DestinationsGrid = () => {
                   if (isDetailLink) {
                     router.push(destination.link);
                   } else {
-                    const route = itemType === 'tour' ? `/tours/${destination.id}` : itemType === 'ticket' ? `/tickets/${destination.id}` : `/packages/${destination.id}`;
+                    const generateSlug = (title: string, id: string) => {
+                        return `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+                    };
+                    const slug = generateSlug(destination.title, destination.id);
+                    const route = itemType === 'tour' ? `/tours/${slug}` : itemType === 'ticket' ? `/tickets/${slug}` : `/packages/${slug}`;
                     // If link is a generic list page like '/packages', use the respective detail route
                     if (destination.link === '/packages' || destination.link === '/tours' || destination.link === '/tickets') {
                       router.push(route);

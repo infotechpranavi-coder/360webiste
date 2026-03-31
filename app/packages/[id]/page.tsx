@@ -131,34 +131,28 @@ const PackageDetailPage = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'overview' | 'itinerary' | 'policy'>('overview');
 
+  const extractIdFromSlug = (slug: string | string[] | undefined) => {
+    if (!slug) return '';
+    const slugStr = Array.isArray(slug) ? slug[0] : slug;
+    const parts = slugStr.split('-');
+    const lastPart = parts[parts.length - 1];
+    if (/^[0-9a-fA-F]{24}$/.test(lastPart)) {
+      return lastPart;
+    }
+    return slugStr;
+  };
+
   useEffect(() => {
     const fetchPackage = async () => {
-      if (!params?.id) return;
+      const actualId = extractIdFromSlug(params?.id);
+      if (!actualId) return;
 
       // Skip API fetch for demo packages (handled by second useEffect)
       // Attraction packages (like burj-khalifa-tickets) should always fetch from API
-      const demoPackageIds = [
-        'demo-package-id',
-        'premium-dubai-tours-default',
-        'dubai-grand-signature-journey',
-        'dubai-signature-explorer',
-        'dubai-stopover-signature',
-        'dubai-transit-escape',
-        'dubai-grand-explorer',
-        'dubai-essential-experience',
-        'dubai-grand-experience',
-        'classic-discovery-dubai-abu-dhabi',
-        'dubai-private-classic-discovery',
-        'dubai-elite-grand-explorer'
-      ];
-
-      // For attraction packages, always fetch from API (no hardcoded fallback)
-      const packageId = params?.id as string;
-      const isAttractionPackage = packageId?.includes('ticket') || packageId?.includes('attraction') || packageId === 'burj-khalifa-tickets';
-
-      // If ID is one of the fallback demo IDs used on the homepage, skip API fetch
       const demoPageIds = ['demo-package-id', '1', '2', '3', '4', '5'];
-      if (!isAttractionPackage && demoPageIds.includes(packageId)) {
+      const isAttractionPackage = actualId.includes('ticket') || actualId.includes('attraction') || actualId === 'burj-khalifa-tickets';
+
+      if (!isAttractionPackage && demoPageIds.includes(actualId)) {
         return;
       }
 
@@ -167,7 +161,7 @@ const PackageDetailPage = () => {
         setError(null);
 
         // Always fetch from API for attraction packages
-        const response = await fetch(`/api/packages/${params.id}`);
+        const response = await fetch(`/api/packages/${actualId}`);
         const result = await response.json();
 
         if (result.success && result.data) {
@@ -208,17 +202,18 @@ const PackageDetailPage = () => {
   // Keep old hardcoded data as fallback for demo (only for specific demo IDs)
   // Attraction packages should NEVER use hardcoded data - only API data
   useEffect(() => {
-    if (!params?.id) return;
+    const actualId = extractIdFromSlug(params?.id);
+    if (!actualId) return;
 
     // Skip hardcoded data for attraction packages - they must use API data only
-    const isAttractionPackage = params.id.includes('ticket') || params.id.includes('attraction') || params.id === 'burj-khalifa-tickets';
+    const isAttractionPackage = actualId.includes('ticket') || actualId.includes('attraction') || actualId === 'burj-khalifa-tickets';
     if (isAttractionPackage) {
       return; // Don't set any hardcoded data for attraction packages
     }
 
     // Only set hardcoded data for specific demo IDs used on the homepage
     const demoPageIds = ['demo-package-id', '1', '2', '3', '4', '5'];
-    if (demoPageIds.includes(params.id as string)) {
+    if (demoPageIds.includes(actualId)) {
       // Set hardcoded demo data
       setPackageData({
         _id: 'demo-package-id',
@@ -260,7 +255,7 @@ const PackageDetailPage = () => {
         ]
       } as any); // Cast to any to bypass strict literal type check for 'place' if it mismatches
       setLoading(false);
-    } else if (params.id === 'premium-dubai-tours-default') {
+    } else if (actualId === 'premium-dubai-tours-default') {
       // Set Dubai Signature Private Escape premium package data
       setPackageData({
         _id: 'premium-dubai-tours-default',
@@ -434,7 +429,7 @@ We focus on delivering smooth, well-managed journeys rather than selling oversiz
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'dubai-grand-signature-journey') {
+    } else if (actualId === 'dubai-grand-signature-journey') {
       // Set Dubai Grand Signature Journey package data
       setPackageData({
         _id: 'dubai-grand-signature-journey',
@@ -697,7 +692,7 @@ Overnight in Dubai / Safari Lodge.`
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'dubai-elite-grand-explorer') {
+    } else if (actualId === 'dubai-elite-grand-explorer') {
       // Set Dubai Elite Grand Explorer package data
       setPackageData({
         _id: 'dubai-elite-grand-explorer',
@@ -983,7 +978,7 @@ Overnight in Dubai.`
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'dubai-private-classic-discovery') {
+    } else if (actualId === 'dubai-private-classic-discovery') {
       // Set Dubai Private Classic Discovery package data
       setPackageData({
         _id: 'dubai-private-classic-discovery',
@@ -1182,7 +1177,7 @@ Overnight in Dubai`
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'dubai-grand-explorer') {
+    } else if (actualId === 'dubai-grand-explorer') {
       // Set Dubai Grand Explorer package data
       setPackageData({
         _id: 'dubai-grand-explorer',
@@ -1385,7 +1380,7 @@ Key Highlights`,
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'capetown-transit-escape') {
+    } else if (actualId === 'capetown-transit-escape') {
       // Set Cape Town Transit Escape package data
       setPackageData({
         _id: 'capetown-transit-escape',
@@ -1615,7 +1610,7 @@ Departure as per flight schedule`
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'capetown-classic-discovery') {
+    } else if (actualId === 'capetown-classic-discovery') {
       // Set Cape Town Classic Discovery package data
       setPackageData({
         _id: 'capetown-classic-discovery',
@@ -1744,7 +1739,7 @@ This flexibility allows travelers to customize their experience based on interes
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'capetown-essential-experience') {
+    } else if (actualId === 'capetown-essential-experience') {
       // Set Cape Town Essential Experience package data
       setPackageData({
         _id: 'capetown-essential-experience',
@@ -1922,7 +1917,7 @@ This tour is suitable year - round, with summer departures focusing on comfortab
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'capetown-grand-experience') {
+    } else if (actualId === 'capetown-grand-experience') {
       // Set Cape Town Grand Experience package data
       setPackageData({
         _id: 'capetown-grand-experience',
@@ -2103,7 +2098,7 @@ Key Highlights`,
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'capetown-signature-explorer') {
+    } else if (actualId === 'capetown-signature-explorer') {
       // Set Cape Town Signature Explorer package data
       setPackageData({
         _id: 'capetown-signature-explorer',
@@ -2276,7 +2271,7 @@ Key Highlights`,
         ]
       } as any);
       setLoading(false);
-    } else if (params.id === 'capetown-stopover-signature') {
+    } else if (actualId === 'capetown-stopover-signature') {
       // Set Cape Town Stopover Signature package data
       setPackageData({
         _id: 'capetown-stopover-signature',

@@ -99,12 +99,24 @@ const TourDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [activeDay, setActiveDay] = useState(1);
 
+    const extractIdFromSlug = (slug: string | string[] | undefined) => {
+        if (!slug) return '';
+        const slugStr = Array.isArray(slug) ? slug[0] : slug;
+        const parts = slugStr.split('-');
+        const lastPart = parts[parts.length - 1];
+        if (/^[0-9a-fA-F]{24}$/.test(lastPart)) {
+            return lastPart;
+        }
+        return slugStr;
+    };
+
     const fetchTour = useCallback(async () => {
-        if (!params?.id) return;
+        const actualId = extractIdFromSlug(params?.id);
+        if (!actualId) return;
         
         // Check for demo data first
-        if (typeof params.id === 'string' && params.id.startsWith('demo-')) {
-            const demo = demoTours.find(t => t._id === params.id);
+        if (actualId.startsWith('demo-')) {
+            const demo = demoTours.find(t => t._id === actualId);
             if (demo) {
                 setTourData(demo);
                 setLoading(false);
@@ -114,7 +126,7 @@ const TourDetailPage = () => {
 
         try {
             setLoading(true);
-            const response = await fetch(`/api/tours/${params.id}`);
+            const response = await fetch(`/api/tours/${actualId}`);
             const result = await response.json();
             if (result.success) {
                 setTourData(result.data);

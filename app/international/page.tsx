@@ -104,6 +104,10 @@ const InternationalPage = () => {
         }).format(price);
     };
 
+    const generateSlug = (title: string, id: string) => {
+        return `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
@@ -122,7 +126,7 @@ const InternationalPage = () => {
                 <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style={{
-                        backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')"
+                        backgroundImage: "url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')"
                     }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70" />
@@ -196,7 +200,7 @@ const InternationalPage = () => {
                                 <motion.div
                                     key={pkg._id}
                                     className="group bg-white rounded-[32px] overflow-hidden shadow-[0_10px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_70px_rgba(0,0,0,0.1)] transition-all duration-700 cursor-pointer flex flex-col"
-                                    onClick={() => router.push(`/packages/${pkg._id}`)}
+                                    onClick={() => router.push(`/packages/${generateSlug(pkg.title, pkg._id)}`)}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
@@ -224,7 +228,7 @@ const InternationalPage = () => {
                                                 className="w-full bg-gray-900 hover:bg-black text-white font-bold py-5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 group/btn"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    router.push(`/packages/${pkg._id}`);
+                                                    router.push(`/packages/${generateSlug(pkg.title, pkg._id)}`);
                                                 }}
                                             >
                                                 <span>View Detailed Page</span>

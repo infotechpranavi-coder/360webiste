@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,7 +30,7 @@ const AboutPage = () => {
     {
       icon: Sparkles,
       title: "Personalized Tours",
-      description: "Customized South African Tours tailored to your preferences and needs",
+      description: "Customized International Tours tailored to your preferences and needs",
       image: "https://tse3.mm.bing.net/th/id/OIP.mVmw5OWyuDbYW0aV-NMQZAHaF0?pid=ImgDet&w=184&h=144&c=7&dpr=1.3&o=7&rm=3"
     },
     {
@@ -112,13 +112,13 @@ const AboutPage = () => {
             <h1 className="text-6xl md:text-7xl lg:text-8xl font-[1000] mb-6 leading-none tracking-tighter uppercase">
               About Us
             </h1>
-            <p className="text-xl md:text-2xl mb-10 text-white/80 max-w-3xl mx-auto font-medium leading-relaxed">
-              A premium-focused global travel brand dedicated to delivering well-crafted travel experiences defined by comfort, clarity, and service quality
+            <p className="text-xl md:text-2xl mb-10 text-white/80 max-w-4xl mx-auto font-medium leading-relaxed">
+              SkyGo is a premium-focused global travel brand dedicated to delivering well-crafted travel experiences defined by comfort, clarity, and service quality.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-white/60 text-sm font-bold uppercase tracking-widest">
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span>Based in Yaoundé</span>
+                <span>Based In Cameroon</span>
               </div>
               <span className="text-white/30">·</span>
               <div className="flex items-center space-x-2">
@@ -160,13 +160,13 @@ const AboutPage = () => {
                 </h2>
                 <div className="space-y-5 text-gray-700 leading-relaxed text-lg">
                   <p>
-                    Sky Go is a premier tour operator based in Yaoundé, Cameroon. We operate Regular Tours, Premium Tours, Luxury Tours, Adventure Activities, and Day Tours/Attractions and activities globally.
+                    SkyGo is a premier travel firm dedicated to seamless global mobility. We specialize in expertly curated tours and precision ticketing services, blending local expertise with world-class standards.
                   </p>
                   <p>
-                    We specialize in premium South African tours, luxury experiences, and customized travel services for travelers who value comfort, clarity, and professional service over rushed itineraries or unclear pricing. We are not a marketplace for budget deals; however, we also have some regular tours that are more budget-friendly for those customers.
+                    Whether you are exploring new horizons or securing your next flight, SkyGo delivers sophisticated, reliable, and personalized travel solutions designed to get you where you need to be.
                   </p>
                   <p className="font-semibold text-[#1e1f44]">
-                    We are a specialized tour company dedicated to delivering quality, transparency, and genuine comfort to our guests from around the world.
+                    We are a specialized travel company dedicated to delivering quality, transparency, and genuine comfort to our guests from around the world.
                   </p>
                 </div>
               </div>
@@ -186,20 +186,20 @@ const AboutPage = () => {
                 Our Core Values
               </Badge>
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1e1f44] mb-6">
-                Our Philosophy: <span className="text-primary">Quality Over Confusion</span>
+                Our Philosophy: <span className="text-primary">Absolute Clarity</span>
               </h2>
             </div>
 
             <div className="grid lg:grid-cols-2 gap-12 mb-16 items-center">
               <div className="space-y-6 text-gray-700 leading-relaxed text-lg order-2 lg:order-1">
                 <p>
-                  The South African tourism market can be overwhelming. Travelers often encounter massive price differences: for instance, a safari can range from ZAR 500 to ZAR 15,000, and cruise dinners from ZAR 300 to ZAR 5,000. This often leaves visitors confused about what they are actually paying for.
+                  In a travel market often cluttered with hidden costs and inconsistent service, SkyGo stands for absolute clarity. We believe that booking a flight or a tour should never be a guessing game of "what's included."
                 </p>
                 <p>
-                  We founded Sky Go to address this gap and eliminate that uncertainty. We do not chase the lowest price; we pursue the highest value. Our goal is to clearly explain what guests receive, why prices vary, and how service levels affect the overall experience.
+                  We bridge the gap between price and value. We don't simply chase the lowest fare; we pursue the highest standard. Our commitment is to ensure you understand exactly what you are paying for—eliminating uncertainty through transparent pricing, expert vetting, and premium service.
                 </p>
                 <p className="font-semibold text-[#1e1f44]">
-                  We believe pricing should reflect quality, not confusion. So, we provide a transparent, premium experience where the quality of the vehicle, the expertise of the guide, and the standard of the food and services are guaranteed.
+                  At SkyGo, we don’t just sell tickets; we deliver peace of mind.
                 </p>
               </div>
               <div className="relative group order-1 lg:order-2">
@@ -310,7 +310,7 @@ const AboutPage = () => {
             <div className="mt-12 text-center max-w-4xl mx-auto">
               <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 rounded-2xl p-8 border border-primary/20">
                 <p className="text-lg md:text-xl text-gray-700 leading-relaxed font-medium">
-                  Whether travelers are seeking luxury South African tours, private experiences, or premium-managed sightseeing along with other top activities that South Africa offers, we focus on delivering travel services with care and consistency.
+                  Whether travelers are seeking luxury international tours, private experiences, or premium-managed sightseeing across the globe, we focus on delivering travel services with care and consistency.
                 </p>
               </div>
             </div>
@@ -318,75 +318,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-                <Heart className="h-3 w-3 mr-2" />
-                Why Travel With Us
-              </Badge>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1e1f44] mb-6">
-                Why Choose Us?
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                We specialize in customized South African tours that prioritize your time and comfort. Whether you are visiting for business or leisure, our team ensures a seamless experience from arrival to departure.
-              </p>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-              {whyChooseUs.map((item, index) => (
-                <Card key={index} className="group border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl bg-white overflow-hidden">
-                  <div className="relative h-64 overflow-hidden">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      width={400}
-                      height={300}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                    <div className="absolute bottom-6 left-6 right-6">
-                      <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30 mb-4">
-                        <item.icon className="h-8 w-8 text-white" />
-                      </div>
-                      <h3 className="text-2xl font-bold text-white">
-                        {item.title}
-                      </h3>
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <p className="text-gray-600 leading-relaxed text-lg">
-                      {item.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <div className="mt-12 text-center">
-              <div className="bg-white rounded-2xl p-8 md:p-12 shadow-xl border border-gray-200 max-w-4xl mx-auto">
-                <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed font-medium">
-                  If you are looking for luxury South African tours delivered with professionalism and care, we invite you to explore South Africa with us.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link href="/packages">
-                    <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all">
-                      Explore Our Packages
-                    </Button>
-                  </Link>
-                  <Link href="/contact">
-                    <Button size="lg" variant="outline" className="border-2 border-primary text-primary hover:bg-primary hover:text-white text-lg px-8 py-6">
-                      Contact Us
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
 
       {/* CTA Section */}
       <section className="py-20 md:py-28 bg-gradient-to-br from-primary via-primary/95 to-secondary relative overflow-hidden">
@@ -402,7 +334,7 @@ const AboutPage = () => {
               Ready to Start Your Journey?
             </h2>
             <p className="text-lg md:text-xl mb-10 text-white/90 leading-relaxed">
-              Experience luxury South African tours delivered with professionalism and care
+              If you are looking for premium international tours or seamless ticketing services delivered with professionalism and care, we invite you to explore the world with us
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">
