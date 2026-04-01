@@ -433,7 +433,8 @@ const PackagesPage = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
 
               <Link href="/packages/domestic">
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-primary">
+                <Button size="lg" variant="outline" className="border-white bg-white text-gray-900 hover:bg-transparent hover:text-white font-bold flex items-center gap-2">
+                  <ArrowRight className="w-4 h-4" />
                   View Domestic Packages
                 </Button>
               </Link>

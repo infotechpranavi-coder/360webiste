@@ -986,9 +986,9 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
             </Button>
           </div>
 
-          {/* Why Premium Sky Go Tours */}
+          {/* Why Premium SkyGo Tours */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Why Premium Sky Go Tours? (General)</label>
+            <label className="text-sm font-medium">Why Premium SkyGo Tours? (General)</label>
             {whyPremiumSkygoTours.map((item, index) => (
               <div key={index} className="flex gap-2 mb-2">
                 <Input
@@ -1126,7 +1126,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">About Sky Go</label>
+            <label className="text-sm font-medium">About SkyGo</label>
             <Textarea
               placeholder="Write about your company and this package..."
               value={formData.about}

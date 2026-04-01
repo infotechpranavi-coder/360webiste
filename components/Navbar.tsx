@@ -341,11 +341,11 @@ const Navbar = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center relative py-2">
             {/* White Background Rectangle behind logo */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-18 md:h-22 bg-white rounded-full shadow-sm border border-gray-100/50 z-0"></div>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-24 md:h-32 bg-white rounded-full shadow-sm border border-gray-100/50 z-0"></div>
             {/* Logo Logo */}
-            <div className="relative w-40 h-40 md:w-56 md:h-56 z-10 flex items-center justify-center">
+            <div className="relative w-48 h-48 md:w-64 md:h-64 z-10 flex items-center justify-center">
               <Image
-                src="/Untitled_design__2_-removebg-preview.png"
+                src="/skygologo.png"
                 alt="Sky Go Logo"
                 fill
                 className="object-contain"

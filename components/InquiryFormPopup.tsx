@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Phone, Mail, MapPin, Calendar, Users, Plane } from "lucide-react";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 import { ProductInfo } from "../contexts/InquiryFormContext";
 
@@ -22,7 +24,23 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
     message: ""
   });
 
+  const [availablePackages, setAvailablePackages] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const res = await fetch('/api/packages');
+        const data = await res.json();
+        if (data.success) {
+          setAvailablePackages(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching packages for inquiry form:", error);
+      }
+    };
+    fetchPackages();
+  }, []);
 
   useEffect(() => {
     if (isOpen && productInfo && productInfo.type !== 'General') {
@@ -80,7 +98,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
       });
 
       const data = await res.json();
-      
+
       if (!data.success) {
         throw new Error(data.error || 'Failed to submit inquiry');
       }
@@ -171,39 +189,62 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Phone Number *
                 </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
-                  placeholder="Enter your phone number"
-                />
+                <div className="phone-input-container">
+                  <PhoneInput
+                    country={'za'}
+                    value={formData.phone}
+                    onChange={(phone) => setFormData(prev => ({ ...prev, phone }))}
+                    inputProps={{
+                      name: 'phone',
+                      required: true,
+                    }}
+                    containerClass="!w-full"
+                    inputClass="!w-full !h-[38px] sm:!h-[48px] !px-2 sm:!px-4 !py-1.5 sm:!py-3 !pl-[48px] sm:!pl-[58px] !border !border-gray-300 !rounded-lg focus:!ring-2 focus:!ring-secondary focus:!border-transparent !transition-all !text-xs sm:!text-base"
+                    buttonClass="!bg-white !border !border-gray-300 !border-r-0 !rounded-l-lg hover:!bg-gray-50"
+                  />
+                  <style jsx global>{`
+                    .phone-input-container .react-tel-input .selected-flag {
+                      background: transparent !important;
+                      padding-left: 12px !important;
+                      width: 44px !important;
+                    }
+                    .phone-input-container .react-tel-input .flag-dropdown {
+                      background: transparent !important;
+                      border: 1px solid #d1d5db !important;
+                      border-right: none !important;
+                      border-top-left-radius: 0.5rem !important;
+                      border-bottom-left-radius: 0.5rem !important;
+                    }
+                    @media (max-width: 640px) {
+                      .phone-input-container .react-tel-input .selected-flag {
+                        padding-left: 8px !important;
+                        width: 38px !important;
+                      }
+                    }
+                  `}</style>
+                </div>
               </div>
 
               <div>
                 <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Destination *
                 </label>
-                <select
-                  name="destination"
-                  value={formData.destination}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
-                >
-                  <option value="">Select destination</option>
-                  <option value="cape-town">Cape Town</option>
-                  <option value="kruger">Kruger National Park</option>
-                  <option value="johannesburg">Johannesburg</option>
-                  <option value="garden-route">Garden Route</option>
-                  <option value="durban">Durban</option>
-                  <option value="drakensberg">Drakensberg</option>
-                  <option value="sun-city">Sun City</option>
-                  <option value="knysna">Knysna</option>
-                  <option value="other">Other</option>
-                </select>
+                <div className="relative">
+                  <input
+                    list="package-destinations"
+                    name="destination"
+                    value={formData.destination}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
+                    placeholder="Enter or select destination"
+                  />
+                  <datalist id="package-destinations">
+                    {availablePackages.map((pkg) => (
+                      <option key={pkg._id} value={pkg.title}>{pkg.location}</option>
+                    ))}
+                  </datalist>
+                </div>
               </div>
             </div>
 
@@ -247,18 +288,14 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Budget Range
               </label>
-              <select
+              <input
+                type="text"
                 name="budget"
                 value={formData.budget}
                 onChange={handleInputChange}
                 className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
-              >
-                <option value="">Select budget range</option>
-                <option value="under-10k">Under ZAR 10,000</option>
-                <option value="10k-30k">ZAR 10,000 - ZAR 30,000</option>
-                <option value="30k-70k">ZAR 30,000 - ZAR 70,000</option>
-                <option value="above-70k">Above ZAR 70,000</option>
-              </select>
+                placeholder="Enter your budget range "
+              />
             </div>
 
             <div>

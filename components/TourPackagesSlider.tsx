@@ -84,7 +84,7 @@ const TourPackagesSlider = () => {
           {/* Section Header */}
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Sky Go offers carefully curated tour experiences designed for comfort and luxury.
+              SkyGo offers carefully curated tour experiences designed for comfort and luxury.
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Our services are accessible to travelers worldwide, with seamless arrangements from arrival to return.

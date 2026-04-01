@@ -80,7 +80,7 @@ const ContactForm = () => {
     }
 
     // Create WhatsApp message with form data
-    const whatsappMessage = `Hello! I'm interested in booking a trip with Sky Go.
+    const whatsappMessage = `Hello! I'm interested in booking a trip with SkyGo.
 
 *Contact Information:*
 â€¢ Name: ${formData.name}
@@ -156,7 +156,7 @@ Please get back to me with more information about available packages and pricing
       phone: "+237 6 83 57 76 76"
     },
     {
-      name: "Sky Go Team",
+      name: "SkyGo Team",
       role: "Customer Relations",
       email: "sales@skygovoyages.com",
       phone: "+237 6 83 57 76 76"
@@ -384,7 +384,7 @@ Please get back to me with more information about available packages and pricing
                           allowFullScreen
                           loading="lazy"
                           referrerPolicy="no-referrer-when-downgrade"
-                          title="Sky Go Location - Yaoundé, Cameroon"
+                          title="SkyGo Location - Yaoundé, Cameroon"
                         ></iframe>
                       </div>
                     </CardContent>

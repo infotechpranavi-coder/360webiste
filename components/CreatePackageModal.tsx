@@ -44,7 +44,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     ideaFor: "",
     abstract: "",
     tourOverview: "",
-    about: "Premium Sky Go Tours is a specialized travel management company dedicated to crafting exceptional journeys across dynamic destinations.",
+    about: "Premium SkyGo Tours is a specialized travel management company dedicated to crafting exceptional journeys across dynamic destinations.",
     services: "Customized travel planning, Guided tours & local experiences, Group & family vacations, Luxury & adventure travel",
     tourDetails: "This carefully curated package offers a perfect blend of iconic landmarks, cultural immersion, and leisure activities.",
     price: "",
@@ -169,7 +169,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
   const handleClose = () => {
     setFormData({
       title: "", subtitle: "", ideaFor: "", abstract: "", tourOverview: "",
-      about: "Premium Sky Go Tours is a specialized travel management company dedicated to crafting exceptional journeys across dynamic destinations.",
+      about: "Premium SkyGo Tours is a specialized travel management company dedicated to crafting exceptional journeys across dynamic destinations.",
       services: "Customized travel planning, Guided tours & local experiences, Group & family vacations, Luxury & adventure travel",
       tourDetails: "This carefully curated package offers a perfect blend of iconic landmarks, cultural immersion, and leisure activities.",
       price: "", duration: "", location: "", capacity: "",
@@ -383,7 +383,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
           {/* Why Premium Tours */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Why Premium Sky Go Tours?</label>
+              <label className="text-sm font-medium">Why Premium SkyGo Tours?</label>
               <Button type="button" variant="outline" size="sm" onClick={() => setWhyPremiumDubaiTours(p => [...p, ""])}><Plus className="h-4 w-4 mr-1" /> Add</Button>
             </div>
             {whyPremiumDubaiTours.map((w, i) => (

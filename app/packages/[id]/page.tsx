@@ -316,9 +316,9 @@ Why Choose This Trip?
 • Perfect for families, couples, and honeymooners
 • Customizable activities and flexible scheduling
 
-Why Sky Go for This Trip?
+Why SkyGo for This Trip?
 
-At Sky Go, luxury is not about exaggeration; it’s about execution, reliability, and transparency.
+At SkyGo, luxury is not about exaggeration; it’s about execution, reliability, and transparency.
 
 • Private-first approach: No shared vehicles or rushed group schedules
 • Per-vehicle pricing: Better value for families and small groups
@@ -769,7 +769,7 @@ Why Choose This Trip ?
 • Ideal for families, honeymooners, and small groups
 • Balanced mix of culture, luxury, and leisure
 
-Why Sky Go for This Journey ?
+Why SkyGo for This Journey ?
 
 • Per - vehicle pricing for better value
 • Private vehicles and experienced local staff
@@ -1440,7 +1440,7 @@ This transit tour operates throughout the year.
 
 Cape Town's infrastructure ensures comfort even during cooler months.
 
-Why Sky Go for This Transit Trip ?
+Why SkyGo for This Transit Trip ?
 
 • Expertise in short - stay and stopover logistics
 • Flight - time - sensitive planning
@@ -1633,7 +1633,7 @@ With flexible hotel categories and a mix of guided tours and personal free time,
 
 Tour Overview 
 Cape Town is a destination of contrasts, historic neighborhoods sit beside futuristic skylines, calm coastal landscapes balance vibrant urban life, and traditional hospitality blends seamlessly with modern style.The Cape Town Classic Discovery tour has been crafted to reflect this diversity while maintaining simplicity and ease throughout the journey.
-From the moment you arrive, all major travel logistics are handled by Sky Go, allowing you to focus entirely on enjoying the destination. Private airport transfers ensure a smooth arrival, while carefully scheduled sightseeing days prevent fatigue.
+From the moment you arrive, all major travel logistics are handled by SkyGo, allowing you to focus entirely on enjoying the destination. Private airport transfers ensure a smooth arrival, while carefully scheduled sightseeing days prevent fatigue.
 The tour introduces Cape Town gradually, starting with a relaxed arrival day followed by guided city exploration.Guests experience historical Cape Town, with its heritage areas and traditional markets, and modern districts, known for architectural landmarks.
 A wildlife safari offers a cultural contrast to the city experience, providing insight into the region's natural landscape. The evening Harbour Cruise delivers a calm, scenic dining experience, ideal for families and couples alike.
 The inclusion of a Winelands tour adds depth to the itinerary, offering a broader understanding of the Western Cape beyond the city.A dedicated free day allows guests to shop, relax, or explore independently, an essential element for a comfortable holiday.
@@ -2696,7 +2696,7 @@ Key Highlights`,
                   </div>
 
                   <CardContent className="p-8 md:p-12">
-                    {/* About Sky Go Story */}
+                    {/* About SkyGo Story */}
                     {packageData.about && (
                       <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl mb-12">
                         <div className="p-8 bg-gray-50 border-b border-gray-100">
@@ -2706,7 +2706,7 @@ Key Highlights`,
                             </div>
                             <div>
                               <h4 className="text-amber-600 font-bold uppercase text-[10px] tracking-[0.4em]">The Collection</h4>
-                              <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">The Sky Go Story</h3>
+                              <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">The SkyGo Story</h3>
                             </div>
                           </div>
                         </div>
@@ -3221,10 +3221,10 @@ Key Highlights`,
                     </CardContent>
                   </Card>
 
-                  {/* About Sky Go */}
+                  {/* About SkyGo */}
                   <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
                     <div className="bg-gray-50 px-8 py-5 border-b border-gray-100">
-                      <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">About Sky Go</h4>
+                      <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">About SkyGo</h4>
                     </div>
                     <CardContent className="p-8">
                       <p className="text-gray-600 text-base leading-relaxed italic border-l-2 border-amber-500/20 pl-6">
@@ -3564,10 +3564,10 @@ Key Highlights`,
                         <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
                           <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
                             <Sparkles className="h-5 w-5 text-amber-600" />
-                            <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">The Sky Go Edge</h4>
+                            <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">The SkyGo Edge</h4>
                           </div>
                           <CardContent className="p-8">
-                             <h3 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Why Premium Sky Go?</h3>
+                             <h3 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Why Premium SkyGo?</h3>
                             <ul className="space-y-4">
                               {packageData.whyPremiumSkygoTours.map((w: string, idx: number) => (
                                 <li key={idx} className="flex items-start gap-4 p-4 bg-amber-50/30 rounded-2xl border border-amber-50">

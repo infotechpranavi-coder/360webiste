@@ -313,7 +313,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
 
                 {/* Why Premium [Brand] Tours Card */}
                 <DetailCard
-                  title={`Why Premium ${packageData.place === 'dubai' ? 'Dubai' : 'Sky Go'} Tours for This Journey?`}
+                  title={`Why Premium ${packageData.place === 'dubai' ? 'Dubai' : 'SkyGo'} Tours for This Journey?`}
                   icon={ShieldCheck}
                   headerBg="bg-teal-50"
                   iconBg="bg-teal-600"
@@ -333,7 +333,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
 
                 {/* About [Brand] Card */}
                 <DetailCard
-                  title={`About Premium ${packageData.place === 'dubai' ? 'Dubai' : 'Sky Go'} Tours`}
+                  title={`About Premium ${packageData.place === 'dubai' ? 'Dubai' : 'SkyGo'} Tours`}
                   icon={Info}
                   headerBg="bg-amber-50"
                   iconColor="text-amber-900"

@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { Playfair_Display, Cormorant_Garamond, Poppins } from 'next/font/google'
 
 const playfair = Playfair_Display({
@@ -23,8 +23,8 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: 'Sky Go | Customized & Luxury Travel Experiences',
-  description: 'Discover the world with Sky Go. Enjoy personalized travel experiences tailored to your preferences. Book now for reliable, premium tours.',
+  title: 'SkyGo | Customized & Luxury Travel Experiences',
+  description: 'Discover the world with SkyGo. Enjoy personalized travel experiences tailored to your preferences. Book now for reliable, premium tours.',
 }
 
 export default function PremiumPackagesLayout({

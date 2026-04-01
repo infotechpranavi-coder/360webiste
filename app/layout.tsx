@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { Toaster } from "../components/ui/toaster"
@@ -13,8 +13,8 @@ import ConditionalLayout from "../components/ConditionalLayout"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Sky Go | Customized & Luxury South African Travel Experiences',
-  description: 'Discover South Africa with Sky Go. Enjoy personalized travel experiences tailored to your preferences. Book now for reliable, premium South African tours.',
+  title: 'SkyGo | Customized & Luxury South African Travel Experiences',
+  description: 'Discover South Africa with SkyGo. Enjoy personalized travel experiences tailored to your preferences. Book now for reliable, premium South African tours.',
 }
 
 export const viewport = {

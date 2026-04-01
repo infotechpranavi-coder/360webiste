@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -135,7 +135,7 @@ const PremiumPackagesPage = () => {
       _id: 'dubai-private-classic-discovery',
       title: 'Dubai Private Classic Discovery',
       subtitle: '4 Nights / 5 Days Premium Private Tour Package',
-      about: 'The Dubai Signature Escape â€“ 4 Nights / 5 Days is a carefully curated premium Dubai tour designed for travelers who value privacy, comfort, flexibility, and refined experiences. This journey blends Dubai\'s iconic landmarks with exclusive private services, allowing guests to experience the city at a relaxed, unhurried pace.',
+      about: 'The Dubai Signature Escape – 4 Nights / 5 Days is a carefully curated premium Dubai tour designed for travelers who value privacy, comfort, flexibility, and refined experiences. This journey blends Dubai\'s iconic landmarks with exclusive private services, allowing guests to experience the city at a relaxed, unhurried pace.',
       services: [],
       tourDetails: 'This 4 Nights / 5 Days Premium Dubai Tour is designed as a complete introduction to Dubai, combining modern landmarks, cultural attractions, leisure experiences, and signature luxury elements. The itinerary follows a logical flow, avoiding rushed days and overcrowded schedules.',
       itinerary: [
@@ -165,7 +165,7 @@ const PremiumPackagesPage = () => {
       _id: 'dubai-elite-grand-explorer',
       title: 'Dubai Elite Grand Explorer',
       subtitle: '6 Nights / 7 Days Premium Private Dubai & UAE Tour',
-      about: 'The Dubai Elite Grand Explorer â€“ 6 Nights / 7 Days Premium Tour is a comprehensive private travel experience designed for travelers who want to explore Dubai beyond the basics while also discovering neighboring Emirates in comfort and privacy.',
+      about: 'The Dubai Elite Grand Explorer – 6 Nights / 7 Days Premium Tour is a comprehensive private travel experience designed for travelers who want to explore Dubai beyond the basics while also discovering neighboring Emirates in comfort and privacy.',
       services: [],
       tourDetails: '',
       itinerary: [],
@@ -189,7 +189,7 @@ const PremiumPackagesPage = () => {
       _id: 'dubai-grand-signature-journey',
       title: 'Dubai Grand Signature Journey',
       subtitle: '5 Nights / 6 Days Premium Private Dubai Tour',
-      about: 'The Dubai Grand Signature Journey â€“ 5 Nights / 6 Days is a refined private Dubai travel experience designed for travelers who want more time, more depth, and more flexibility while exploring the UAE.',
+      about: 'The Dubai Grand Signature Journey – 5 Nights / 6 Days is a refined private Dubai travel experience designed for travelers who want more time, more depth, and more flexibility while exploring the UAE.',
       services: [],
       tourDetails: '',
       itinerary: [],
@@ -983,15 +983,15 @@ const PremiumPackagesPage = () => {
                       <ul className="space-y-2 font-poppins font-light text-gray-700">
                         <li className="flex items-start">
                           <CheckCircle2 className="h-5 w-5 mr-2 text-amber-500 mt-0.5 flex-shrink-0" />
-                          <span><strong>Without hotel accommodation</strong> â€“ ideal for residents or travelers with pre-booked hotels</span>
+                          <span><strong>Without hotel accommodation</strong> – ideal for residents or travelers with pre-booked hotels</span>
                         </li>
                         <li className="flex items-start">
                           <CheckCircle2 className="h-5 w-5 mr-2 text-amber-500 mt-0.5 flex-shrink-0" />
-                          <span><strong>With 4-star hotel accommodation</strong> â€“ comfort-focused, centrally located properties</span>
+                          <span><strong>With 4-star hotel accommodation</strong> – comfort-focused, centrally located properties</span>
                         </li>
                         <li className="flex items-start">
                           <CheckCircle2 className="h-5 w-5 mr-2 text-amber-500 mt-0.5 flex-shrink-0" />
-                          <span><strong>With 5-star hotel accommodation</strong> â€“ refined luxury and premium hospitality</span>
+                          <span><strong>With 5-star hotel accommodation</strong> – refined luxury and premium hospitality</span>
                         </li>
                       </ul>
                       <p className="mt-4 text-gray-700 font-poppins font-light">

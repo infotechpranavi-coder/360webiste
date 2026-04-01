@@ -156,7 +156,7 @@ const AboutPage = () => {
                   </Badge>
                 </div>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1e1f44] leading-tight">
-                  About Sky Go
+                  About SkyGo
                 </h2>
                 <div className="space-y-5 text-gray-700 leading-relaxed text-lg">
                   <p>

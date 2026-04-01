@@ -123,10 +123,10 @@ const Header = () => {
           <div className="flex justify-between items-center">
             <Link href="/" className="flex items-center relative">
               {/* White Rectangle background */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-16 md:h-20 lg:h-24 bg-white rounded-full shadow-sm border border-gray-100/50 z-0"></div>
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-20 md:h-28 lg:h-32 bg-white rounded-full shadow-sm border border-gray-100/50 z-0"></div>
               {/* Logo */}
-              <span className="relative z-10 flex items-center justify-center w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40">
-                <img src="/Untitled_design__2_-removebg-preview.png" alt="Sky Go" className="h-full w-full object-contain" />
+              <span className="relative z-10 flex items-center justify-center w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56">
+                <img src="/skygologo.png" alt="Sky Go" className="h-full w-full object-contain" />
               </span>
             </Link>
 

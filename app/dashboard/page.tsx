@@ -658,7 +658,7 @@ export default function DashboardPage() {
           properties: {},
           children: [
             new Paragraph({
-              children: [new TextRun({ text: "Sky Go - Package Report", bold: true, size: 32 })],
+              children: [new TextRun({ text: "SkyGo - Package Report", bold: true, size: 32 })],
               heading: HeadingLevel.TITLE,
               alignment: AlignmentType.CENTER,
             }),
@@ -921,7 +921,7 @@ export default function DashboardPage() {
       // Create document children array
       const children = [
         new Paragraph({
-          children: [new TextRun({ text: "Sky Go", bold: true, size: 32 })],
+          children: [new TextRun({ text: "SkyGo", bold: true, size: 32 })],
           heading: HeadingLevel.TITLE,
           alignment: AlignmentType.CENTER,
         }),
@@ -1359,7 +1359,7 @@ export default function DashboardPage() {
                   <LayoutDashboard className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white tracking-tighter uppercase">SKY GO</h2>
+                  <h2 className="text-xl font-black text-white tracking-tighter uppercase">SkyGo</h2>
                   <p className="text-[10px] font-bold text-[#bd9245] uppercase tracking-widest">Management</p>
                 </div>
               </div>

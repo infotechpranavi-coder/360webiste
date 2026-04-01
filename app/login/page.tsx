@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -115,7 +115,7 @@ const LoginPage = () => {
         </Card>
 
         <div className="text-center mt-6">
-          © 2025 Sky Go. All rights reserved.
+          � 2025 SkyGo. All rights reserved.
         </div>
       </div>
     </div>

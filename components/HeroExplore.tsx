@@ -167,7 +167,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
               size="lg"
               className="bg-amber-500 hover:bg-white hover:text-gray-900 text-gray-900 font-black px-12 py-8 text-xs rounded-2xl shadow-2xl transition-all uppercase tracking-widest border-none"
             >
-              {currentBanner.link ? 'View Details' : 'Start With Sky Go'}
+              {currentBanner.link ? 'View Details' : 'Start With SkyGo'}
             </Button>
           </div>
         </div>

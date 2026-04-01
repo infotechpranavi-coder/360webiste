@@ -150,11 +150,9 @@ const TicketsPage = () => {
     };
 
     const formatPrice = (price: number) => {
-        return new Intl.NumberFormat('en-ZA', {
-            style: 'currency',
-            currency: 'ZAR',
-            maximumFractionDigits: 0,
-        }).format(price);
+        // Use a locale-independent formatter to avoid SSR hydration mismatch
+        // (en-ZA uses space as thousands sep on some systems, comma on others)
+        return 'R ' + Math.round(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
     const generateSlug = (title: string, id: string) => {

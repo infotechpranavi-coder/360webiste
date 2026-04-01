@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -140,7 +140,7 @@ const AttractionsActivitiesPage = () => {
                   For visitors, however, choosing the right attractions and activities tickets in Dubai can quickly become overwhelming. With hundreds of ticket types, time slots, peak and non-peak pricing, combo offers, seasonal promotions, and strict entry rules for certain attractions, booking incorrectly can lead to missed experiences or unnecessary costs.
                 </p>
                 <p className="text-lg text-gray-800 font-semibold leading-relaxed">
-                  This is where <span className="text-purple-600">Sky Go</span> plays a key role: simplifying access to all major attractions and activities tickets across South Africa, while offering clarity, reliability, and expert guidance.
+                  This is where <span className="text-purple-600">SkyGo</span> plays a key role: simplifying access to all major attractions and activities tickets across South Africa, while offering clarity, reliability, and expert guidance.
                 </p>
               </div>
             </div>
@@ -313,7 +313,7 @@ const AttractionsActivitiesPage = () => {
             <div className="text-center mb-16">
               <h2 className="text-4xl md:text-5xl font-bold text-[#1e1f44] mb-4">
                 Why Book with
-                <span className="block text-purple-600">Sky Go?</span>
+                <span className="block text-purple-600">SkyGo?</span>
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                 Your trusted partner for all UAE attractions and activities tickets
@@ -452,7 +452,7 @@ const AttractionsActivitiesPage = () => {
                 Dubai is home to some of the most recognizable landmarks in the world. We provide tickets for:
               </p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {['Burj Khalifa â€“ At the Top Entry Tickets', 'Burj Khalifa Combo Entry Tickets', 'Sky Views Observation Deck', 'The View at The Palm', 'Ain Dubai', 'Dubai Frame'].map((attraction, index) => (
+                {['Burj Khalifa – At the Top Entry Tickets', 'Burj Khalifa Combo Entry Tickets', 'Sky Views Observation Deck', 'The View at The Palm', 'Ain Dubai', 'Dubai Frame'].map((attraction, index) => (
                   <div
                     key={index}
                     className="group bg-gradient-to-br from-white to-gray-50 p-5 rounded-xl shadow-md hover:shadow-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1"
@@ -480,7 +480,7 @@ const AttractionsActivitiesPage = () => {
                 </h3>
               </div>
               <p className="text-lg text-gray-700 mb-4 max-w-3xl">
-                Located in the heart of Downtown Dubai, Dubai Mall is not just a shopping destinationâ€”it's a major entertainment hub.
+                Located in the heart of Downtown Dubai, Dubai Mall is not just a shopping destination—it's a major entertainment hub.
               </p>
               <p className="text-lg text-gray-800 font-semibold mb-6">Available tickets include:</p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -516,7 +516,7 @@ const AttractionsActivitiesPage = () => {
               </p>
               <p className="text-lg text-gray-800 font-semibold mb-6">Tickets available through Premium Dubai Tours include:</p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {['Museum of the Future (MOTF)', 'Museum of the Future â€“ Pioneer Pass', 'Shindagha Museum', 'Arte Museum Dubai â€“ Immersive Media Art Exhibition', 'Inside Burj Al Arab Tour'].map((attraction, index) => (
+                {['Museum of the Future (MOTF)', 'Museum of the Future – Pioneer Pass', 'Shindagha Museum', 'Arte Museum Dubai – Immersive Media Art Exhibition', 'Inside Burj Al Arab Tour'].map((attraction, index) => (
                   <div
                     key={index}
                     className="group bg-gradient-to-br from-white to-gray-50 p-5 rounded-xl shadow-md hover:shadow-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1"
@@ -547,7 +547,7 @@ const AttractionsActivitiesPage = () => {
                 Dubai also offers beautifully curated green spaces and wildlife experiences:
               </p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {['Dubai Miracle Garden Entrance Ticket', 'Dubai Butterfly Garden Entrance Ticket', 'Combo: Miracle Garden + Butterfly Garden', 'Glow Garden (Regular Ticket â€“ includes Dinosaur Park & Fantasy Park)', 'The Green Planet', 'The Green Planet (Promotional Offer â€“ booking valid until 31 Jan 2026, ticket validity until 20 Mar 2026)', 'Crocodile Park Dubai', 'Dubai Safari Park â€“ Day Pass', 'Safari Bundle (Park Pass + Train + Explorer Safari)'].map((attraction, index) => (
+                {['Dubai Miracle Garden Entrance Ticket', 'Dubai Butterfly Garden Entrance Ticket', 'Combo: Miracle Garden + Butterfly Garden', 'Glow Garden (Regular Ticket – includes Dinosaur Park & Fantasy Park)', 'The Green Planet', 'The Green Planet (Promotional Offer – booking valid until 31 Jan 2026, ticket validity until 20 Mar 2026)', 'Crocodile Park Dubai', 'Dubai Safari Park – Day Pass', 'Safari Bundle (Park Pass + Train + Explorer Safari)'].map((attraction, index) => (
                   <div
                     key={index}
                     className="group bg-gradient-to-br from-white to-gray-50 p-5 rounded-xl shadow-md hover:shadow-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1"
@@ -579,7 +579,7 @@ const AttractionsActivitiesPage = () => {
               </p>
               <p className="text-lg text-gray-800 font-semibold mb-6">Tickets available include:</p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {['Atlantis The Palm â€“ Marine & Waterpark', 'Wild Wadi General Admission', 'Wild Wadi General Admission with Meal', 'Ski Dubai â€“ Snow Park (Mall of the Emirates)', 'Dubai Parks and Resorts (DPR)', 'IMG Worlds of Adventure Dubai', 'Global Village', 'La Perle Dubai'].map((attraction, index) => (
+                {['Atlantis The Palm – Marine & Waterpark', 'Wild Wadi General Admission', 'Wild Wadi General Admission with Meal', 'Ski Dubai – Snow Park (Mall of the Emirates)', 'Dubai Parks and Resorts (DPR)', 'IMG Worlds of Adventure Dubai', 'Global Village', 'La Perle Dubai'].map((attraction, index) => (
                   <div
                     key={index}
                     className="group bg-gradient-to-br from-white to-gray-50 p-5 rounded-xl shadow-md hover:shadow-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1"
@@ -610,7 +610,7 @@ const AttractionsActivitiesPage = () => {
                 For travelers who want to experience Dubai from land, sea, and sky:
               </p>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {['Big Bus Tours Dubai â€“ Hop-On Hop-Off', 'Speed Boat Tours in Dubai', 'The Yellow Boats â€“ Dubai', 'The Black Boat (TBB)', 'The Dubai Balloon â€“ Atlantis'].map((attraction, index) => (
+                {['Big Bus Tours Dubai – Hop-On Hop-Off', 'Speed Boat Tours in Dubai', 'The Yellow Boats – Dubai', 'The Black Boat (TBB)', 'The Dubai Balloon – Atlantis'].map((attraction, index) => (
                   <div
                     key={index}
                     className="group bg-gradient-to-br from-white to-gray-50 p-5 rounded-xl shadow-md hover:shadow-xl border border-gray-200 hover:border-purple-300 transition-all duration-300 hover:-translate-y-1"
@@ -684,7 +684,7 @@ const AttractionsActivitiesPage = () => {
                   <h3 className="text-2xl font-bold text-[#1e1f44]">Museums & Cultural Landmarks</h3>
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {['Louvre Museum Abu Dhabi â€“ General Admission', 'Louvre Museum Guided Tour (Add-on)', 'Qasr Al Watan â€“ General Admission (Peak & Non-Peak Hours)', 'Natural History Museum Abu Dhabi', 'Zayed National Museum', 'TeamLab Phenomena Abu Dhabi'].map((attraction, index) => (
+                  {['Louvre Museum Abu Dhabi – General Admission', 'Louvre Museum Guided Tour (Add-on)', 'Qasr Al Watan – General Admission (Peak & Non-Peak Hours)', 'Natural History Museum Abu Dhabi', 'Zayed National Museum', 'TeamLab Phenomena Abu Dhabi'].map((attraction, index) => (
                     <div
                       key={index}
                       className="group bg-gradient-to-br from-purple-50 to-indigo-50 p-5 rounded-xl shadow-md hover:shadow-xl border border-purple-200 hover:border-purple-400 transition-all duration-300 hover:-translate-y-1"
@@ -706,7 +706,7 @@ const AttractionsActivitiesPage = () => {
                   <h3 className="text-2xl font-bold text-[#1e1f44]">Family & Wildlife Attractions</h3>
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {['National Aquarium Abu Dhabi', 'The Butterfly Garden Abu Dhabi', 'Combo: National Aquarium + Butterfly Garden', 'Emirates Park Zoo â€“ Regular Pass', 'Emirates Park Zoo â€“ Explorer Pass', 'KidZania Abu Dhabi'].map((attraction, index) => (
+                  {['National Aquarium Abu Dhabi', 'The Butterfly Garden Abu Dhabi', 'Combo: National Aquarium + Butterfly Garden', 'Emirates Park Zoo – Regular Pass', 'Emirates Park Zoo – Explorer Pass', 'KidZania Abu Dhabi'].map((attraction, index) => (
                     <div
                       key={index}
                       className="group bg-gradient-to-br from-purple-50 to-indigo-50 p-5 rounded-xl shadow-md hover:shadow-xl border border-purple-200 hover:border-purple-400 transition-all duration-300 hover:-translate-y-1"
@@ -760,7 +760,7 @@ const AttractionsActivitiesPage = () => {
               </p>
             </div>
             <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {['Ras Al Khaimah Adventure Parks', 'The Yellow Boats â€“ Abu Dhabi & RAK'].map((attraction, index) => (
+              {['Ras Al Khaimah Adventure Parks', 'The Yellow Boats – Abu Dhabi & RAK'].map((attraction, index) => (
                 <div
                   key={index}
                   className="group bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-lg hover:shadow-xl border-2 border-gray-200 hover:border-purple-400 text-center transition-all duration-300 hover:-translate-y-2"

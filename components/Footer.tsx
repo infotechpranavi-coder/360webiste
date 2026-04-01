@@ -43,20 +43,20 @@ const Footer = () => {
       <div className="relative z-10 container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Company Info */}
-          <div className="space-y-8">
-            <div className="flex items-center">
-              <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
+          <div className="space-y-0 -mt-8">
+            <div className="flex items-center justify-start">
+              <div className="relative w-64 h-32 md:w-80 md:h-40 flex items-center justify-center -ml-4 z-[0]">
                 <Image
-                  src="/Untitled_design__2_-removebg-preview.png"
+                  src="/skygologo.png"
                   alt="Sky Go Logo"
                   fill
-                  sizes="(max-width: 640px) 120px, (max-width: 768px) 150px, 200px"
-                  className="object-contain"
+                  sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, 320px"
+                  className="object-contain object-center opacity-90"
                   priority
                 />
               </div>
             </div>
-            <p className="text-gray-600 text-[13px] font-medium leading-relaxed max-w-sm">
+            <p className="relative z-10 text-gray-600 text-[13px] font-medium leading-relaxed max-w-sm -mt-6 md:-mt-8 pl-2 drop-shadow-sm">
               SkyGo specializes in comprehensive tours, travel, and ticketing services. We provide well-curated travel experiences and seamless flight bookings, offering professional and personalized solutions for all your journey needs within the region and beyond.
             </p>
             
@@ -156,7 +156,7 @@ const Footer = () => {
         <div className="border-t border-gray-200 mt-16 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-500 text-xs font-medium">
-              © 2025 Sky Go. All rights reserved.
+              © 2025 SkyGo. All rights reserved.
             </p>
             <div className="flex space-x-8">
               <Link href="/privacy" className="text-gray-500 hover:text-gray-900 text-xs font-medium transition-colors underline-offset-4 hover:underline">

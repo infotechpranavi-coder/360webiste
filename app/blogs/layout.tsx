@@ -1,4 +1,4 @@
-﻿export default function BlogsLayout({
+export default function BlogsLayout({
   children,
 }: {
   children: React.ReactNode

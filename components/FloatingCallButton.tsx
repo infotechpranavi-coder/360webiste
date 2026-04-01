@@ -11,7 +11,7 @@ const FloatingCallButton = () => {
     <button
       onClick={handleCall}
       className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 animate-pulse"
-      aria-label="Call Sky Go"
+      aria-label="Call SkyGo"
       title="Call +237 6 83 57 76 76"
     >
       <Phone className="h-6 w-6" />

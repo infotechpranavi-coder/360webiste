@@ -18,7 +18,7 @@ export default function ReplyEnquiryModal({ isOpen, onClose, enquiryData }: Repl
   useEffect(() => {
     if (isOpen && enquiryData) {
       setSubject(`Re: ${enquiryData.subject || 'Your Inquiry'}`);
-      setMessage(`Dear ${enquiryData.name.split(' ')[0]},\n\nThank you for reaching out to us regarding your interest in ${enquiryData.packageName || enquiryData.packageType || 'our services'}.\n\n...\n\nBest regards,\nSky Go Team`);
+      setMessage(`Dear ${enquiryData.name.split(' ')[0]},\n\nThank you for reaching out to us regarding your interest in ${enquiryData.packageName || enquiryData.packageType || 'our services'}.\n\n...\n\nBest regards,\nSkyGo Team`);
     }
   }, [isOpen, enquiryData]);
 

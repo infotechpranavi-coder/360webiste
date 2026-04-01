@@ -150,9 +150,9 @@ const NavbarTravel = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center relative z-50">
             {/* Logo */}
-            <div className="relative w-24 h-24 md:w-32 md:h-32 z-10">
+            <div className="relative w-32 h-32 md:w-48 md:h-48 z-10">
               <Image
-                src="/Untitled_design__2_-removebg-preview.png"
+                src="/skygologo.png"
                 alt="Sky Go"
                 fill
                 className="object-contain"
