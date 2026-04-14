@@ -6,20 +6,42 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Users, Globe } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Users, Globe, Plane } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    subject: "",
+    destination: "",
+    travelDate: "",
+    travelers: "",
+    budget: "",
     message: "",
+    subject: "",
     packageType: "",
-    packageName: "",
-    packageDuration: ""
+    packageName: ""
   });
+
+  const [availablePackages, setAvailablePackages] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const res = await fetch('/api/packages');
+        const data = await res.json();
+        if (data.success) {
+          setAvailablePackages(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching packages for contact form:", error);
+      }
+    };
+    fetchPackages();
+  }, []);
 
   const searchParams = useSearchParams();
   const prepopulatePackageName = searchParams?.get('packageName');
@@ -58,8 +80,7 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Save enquiry to database
-      await fetch('/api/enquiries', {
+      const res = await fetch('/api/enquiries', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,57 +89,44 @@ const ContactForm = () => {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
+          destination: formData.destination,
+          travelDate: formData.travelDate,
+          travelers: formData.travelers,
+          budget: formData.budget,
+          message: formData.message,
+          subject: formData.subject,
           packageType: formData.packageType,
           packageName: formData.packageName,
-          packageDuration: formData.packageDuration,
-          subject: formData.subject,
-          message: formData.message,
         }),
+      });
+
+      const data = await res.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to submit inquiry');
+      }
+
+      alert("Thank you for your inquiry! Our experts will get in touch with you shortly.");
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        destination: "",
+        travelDate: "",
+        travelers: "",
+        budget: "",
+        message: "",
+        subject: "",
+        packageType: "",
+        packageName: ""
       });
     } catch (error) {
       console.error('Error submitting enquiry:', error);
+      alert("There was an error sending your inquiry. Please try again or contact us directly.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Create WhatsApp message with form data
-    const whatsappMessage = `Hello! I'm interested in booking a trip with SkyGo.
-
-*Contact Information:*
-â€¢ Name: ${formData.name}
-â€¢ Email: ${formData.email}
-â€¢ Phone: ${formData.phone || 'Not provided'}
-
-*Package Details:*
-â€¢ Package Type: ${formData.packageType || 'Not specified'}
-â€¢ Package Name: ${formData.packageName || 'Not specified'}
-â€¢ Package Duration: ${formData.packageDuration || 'Not specified'}
-â€¢ Subject: ${formData.subject}
-
-*Message:*
-${formData.message}
-
-Please get back to me with more information about available packages and pricing. Thank you!`;
-
-    // Encode the message for URL
-    const encodedMessage = encodeURIComponent(whatsappMessage);
-
-    // Create WhatsApp URL
-    const whatsappUrl = `https://wa.me/237683577676?text=${encodedMessage}`;
-
-    // Open WhatsApp in new tab
-    window.open(whatsappUrl, '_blank');
-
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-      packageType: "",
-      packageName: "",
-      packageDuration: ""
-    });
-    setIsSubmitting(false);
   };
 
   const contactInfo = [
@@ -255,30 +263,89 @@ Please get back to me with more information about available packages and pricing
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                            Phone Number
+                            Phone Number *
+                          </label>
+                          <div className="phone-input-container">
+                            <PhoneInput
+                              country={'za'}
+                              value={formData.phone}
+                              onChange={(phone) => setFormData(prev => ({ ...prev, phone }))}
+                              inputProps={{
+                                name: 'phone',
+                                id: 'phone',
+                                required: true,
+                              }}
+                              containerClass="!w-full"
+                              inputClass="!w-full !h-[40px] !px-3 !py-2 !pl-[48px] !border !border-gray-200 !rounded-md focus:!ring-2 focus:!ring-black focus:!border-transparent !transition-all text-sm"
+                              buttonClass="!bg-white !border !border-gray-200 !border-r-0 !rounded-l-md hover:!bg-gray-50"
+                            />
+                            <style jsx global>{`
+                              .phone-input-container .react-tel-input .selected-flag {
+                                background: transparent !important;
+                                padding-left: 10px !important;
+                                width: 44px !important;
+                              }
+                              .phone-input-container .react-tel-input .flag-dropdown {
+                                background: transparent !important;
+                                border: 1px solid #e5e7eb !important;
+                                border-right: none !important;
+                                border-top-left-radius: 0.375rem !important;
+                                border-bottom-left-radius: 0.375rem !important;
+                              }
+                            `}</style>
+                          </div>
+                        </div>
+                        <div>
+                          <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-2">
+                            Destination *
+                          </label>
+                          <div className="relative">
+                            <Input
+                              list="contact-package-destinations"
+                              id="destination"
+                              name="destination"
+                              value={formData.destination}
+                              onChange={handleInputChange}
+                              required
+                              placeholder="Enter or select destination"
+                            />
+                            <datalist id="contact-package-destinations">
+                              {availablePackages.map((pkg) => (
+                                <option key={pkg._id} value={pkg.title}>{pkg.location}</option>
+                              ))}
+                            </datalist>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="travelDate" className="block text-sm font-medium text-gray-700 mb-2">
+                            Travel Date *
                           </label>
                           <Input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            value={formData.phone}
+                            id="travelDate"
+                            name="travelDate"
+                            type="date"
+                            required
+                            value={formData.travelDate}
                             onChange={handleInputChange}
-                            placeholder="+237 6 83 57 76 76"
                           />
                         </div>
                         <div>
-                          <label htmlFor="packageType" className="block text-sm font-medium text-gray-700 mb-2">
-                            Package Type
+                          <label htmlFor="travelers" className="block text-sm font-medium text-gray-700 mb-2">
+                            Number of Travelers *
                           </label>
-                          <Select value={formData.packageType} onValueChange={handleSelectChange}>
+                          <Select value={formData.travelers} onValueChange={(val) => setFormData(p => ({...p, travelers: val}))} required>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select package type" />
+                              <SelectValue placeholder="Select travelers" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="domestic">Domestic Packages</SelectItem>
-                              <SelectItem value="international">International Packages</SelectItem>
-                              <SelectItem value="custom">Custom Package</SelectItem>
-                              <SelectItem value="general">General Inquiry</SelectItem>
+                              <SelectItem value="1">1 Person</SelectItem>
+                              <SelectItem value="2">2 People</SelectItem>
+                              <SelectItem value="3">3 People</SelectItem>
+                              <SelectItem value="4">4 People</SelectItem>
+                              <SelectItem value="5+">5+ People</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -286,59 +353,44 @@ Please get back to me with more information about available packages and pricing
 
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="packageName" className="block text-sm font-medium text-gray-700 mb-2">
-                            Package Name
+                          <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">
+                            Budget Range
                           </label>
                           <Input
-                            id="packageName"
-                            name="packageName"
+                            id="budget"
+                            name="budget"
                             type="text"
-                            value={formData.packageName}
+                            value={formData.budget}
                             onChange={handleInputChange}
-                            placeholder="e.g., Kruger Safari Adventure"
+                            placeholder="e.g. ZAR 20,000 - 30,000"
                           />
                         </div>
                         <div>
-                          <label htmlFor="packageDuration" className="block text-sm font-medium text-gray-700 mb-2">
-                            Package Duration
+                          <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                            Subject *
                           </label>
                           <Input
-                            id="packageDuration"
-                            name="packageDuration"
+                            id="subject"
+                            name="subject"
                             type="text"
-                            value={formData.packageDuration}
+                            required
+                            value={formData.subject}
                             onChange={handleInputChange}
-                            placeholder="e.g., 5 Days / 4 Nights"
+                            placeholder="What's this about?"
                           />
                         </div>
-                      </div>
-
-                      <div>
-                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                          Subject *
-                        </label>
-                        <Input
-                          id="subject"
-                          name="subject"
-                          type="text"
-                          required
-                          value={formData.subject}
-                          onChange={handleInputChange}
-                          placeholder="What's this about?"
-                        />
                       </div>
 
                       <div>
                         <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                          Message *
+                          Special Requirements or Message
                         </label>
                         <Textarea
                           id="message"
                           name="message"
-                          required
                           value={formData.message}
                           onChange={handleInputChange}
-                          placeholder="Tell us about your travel plans, questions, or any specific requirements..."
+                          placeholder="Tell us about your travel plans, Special requirements, or any specific requirements..."
                           rows={4}
                         />
                       </div>
@@ -346,18 +398,18 @@ Please get back to me with more information about available packages and pricing
                       <Button
                         type="submit"
                         size="lg"
-                        className="w-full"
+                        className="w-full bg-secondary hover:bg-secondary/90 text-white"
                         disabled={isSubmitting}
                       >
                         {isSubmitting ? (
                           <>
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Opening WhatsApp...
+                            Sending...
                           </>
                         ) : (
                           <>
-                            <MessageCircle className="h-4 w-4 mr-2" />
-                            Send via WhatsApp
+                            <Plane className="h-5 w-5 mr-2" />
+                            Send Inquiry
                           </>
                         )}
                       </Button>

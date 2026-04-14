@@ -145,7 +145,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <p className="text-amber-500 font-black uppercase tracking-[0.5em] text-xs sm:text-sm mb-6 drop-shadow-[0_2px_12px_rgba(0,0,0,1)]">
-                PREMIUM EXPERIENCES
+                PREMIUM EXPERIENCE
               </p>
               
               <h2 className="text-6xl sm:text-7xl md:text-8xl lg:text-[140px] font-[1000] leading-[0.85] tracking-tighter uppercase drop-shadow-[0_10px_40px_rgba(0,0,0,1)] mb-8">

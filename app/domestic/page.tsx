@@ -143,7 +143,7 @@ const DomesticPage = () => {
                             Domestic
                         </h1>
                         <p className="text-xl md:text-2xl mb-10 text-white/80 max-w-2xl mx-auto font-medium">
-                            Discover the beauty and culture within South Africa with our local tour packages
+                            Experience the Africa in Miniature with curated tours across the diverse landscapes and rich traditions of Cameroon
                         </p>
                         <div className="flex flex-wrap justify-center gap-6 text-white/60 text-sm font-bold uppercase tracking-widest">
                             <span>{packages.length} Local Tours</span>

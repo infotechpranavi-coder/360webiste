@@ -56,8 +56,8 @@ const ExploreWithUs = () => {
             </h2>
 
             {/* ALL PACKAGES INCLUDE section */}
-            <p className="text-gray-500 text-sm uppercase tracking-wide mb-6">
-              ALL PACKAGES INCLUDE
+            <p className="text-gray-500 text-lg md:text-xl font-medium tracking-wide mb-6">
+              Everything Handled. You Just Show Up.
             </p>
 
             {/* Two Column Inclusions List */}
