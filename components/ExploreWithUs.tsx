@@ -13,9 +13,10 @@ const ExploreWithUs = () => {
   const router = useRouter();
   const { openForm } = useInquiryForm();
 
-  // Split inclusions into two columns
-  const leftColumn = exploreInclusions.slice(0, 4);
-  const rightColumn = exploreInclusions.slice(4, 8);
+  // Split inclusions into two columns evenly
+  const midPoint = Math.ceil(exploreInclusions.length / 2);
+  const leftColumn = exploreInclusions.slice(0, midPoint);
+  const rightColumn = exploreInclusions.slice(midPoint);
   const { ref, isVisible } = useScrollReveal({ threshold: 0.1 });
 
   return (

@@ -13,8 +13,8 @@ import ConditionalLayout from "../components/ConditionalLayout"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SkyGo | Customized & Luxury South African Travel Experiences',
-  description: 'Discover South Africa with SkyGo. Enjoy personalized travel experiences tailored to your preferences. Book now for reliable, premium South African tours.',
+  title: 'SkyGo | Seamless Flight Bookings & Curated Global Travel Experiences',
+  description: 'SkyGo specializes in comprehensive tours, global travel, and ticketing services. Experience seamless flight bookings and expertly curated, personalized travel solutions for all your journey needs.',
 }
 
 export const viewport = {

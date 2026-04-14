@@ -200,12 +200,11 @@ export const testimonials: Testimonial[] = [
 ];
 
 export const exploreInclusions = [
-  'Guided Safaris',
-  'Private Transfers',
-  'Luxury Lodging',
-  'Regional Flights',
-  'Table Mountain Entry',
-  'Wine Tasting',
-  'Wildlife Expert',
-  'Coastal Cruises'
+  '24x7 Concierge Support',
+  'Visa Assistance',
+  'Packing & Equipment Rental',
+  'Comprehensive Travel Insurance Assistance',
+  'Airport Pick Up',
+  'Centralized Hotel Locations',
+  'Vetted Local Partners'
 ];

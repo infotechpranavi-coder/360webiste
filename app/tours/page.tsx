@@ -186,7 +186,7 @@ const ToursPage = () => {
                             Exclusive Tours
                         </h1>
                         <p className="text-xl md:text-2xl mb-10 text-white/80 max-w-2xl mx-auto font-medium">
-                            Explore the hidden gems and popular landmarks of South Africa with our expert guides
+                            Explore the hidden gems and popular landmarks of the world with our expert guides
                         </p>
                         <div className="flex flex-wrap justify-center gap-6 text-white/60 text-sm font-bold uppercase tracking-widest">
                             <span>{packages.length} Tours Available</span>
