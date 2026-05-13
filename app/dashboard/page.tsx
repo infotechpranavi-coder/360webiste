@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
@@ -75,6 +76,7 @@ import { PackageData, TourData, TicketData, BannerData, BlogData } from "@/lib/t
 type DashboardView = 'packages' | 'tours' | 'tickets' | 'banners' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [activeView, setActiveView] = useState<DashboardView>('packages');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCreatePackageModalOpen, setIsCreatePackageModalOpen] = useState(false);
