@@ -1337,6 +1337,11 @@ export default function DashboardPage() {
     },
   ];
 
+  const handleLogout = () => {
+    document.cookie = "admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; SameSite=Lax";
+    router.push("/login");
+  };
+
   return (
     <div className="h-screen bg-[#faf8f3] flex font-inter overflow-hidden relative">
       {/* Sidebar */}
@@ -1414,7 +1419,11 @@ export default function DashboardPage() {
                   <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Yaoundé HQ</div>
                 </div>
               </div>
-              <Button variant="ghost" className="w-full justify-start text-white/50 hover:text-white hover:bg-red-500/10 hover:text-red-400 p-2 h-auto text-xs font-bold uppercase tracking-widest">
+              <Button 
+                onClick={handleLogout}
+                variant="ghost" 
+                className="w-full justify-start text-white/50 hover:text-white hover:bg-red-500/10 hover:text-red-400 p-2 h-auto text-xs font-bold uppercase tracking-widest"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </Button>
