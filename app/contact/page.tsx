@@ -10,6 +10,7 @@ import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Users, Globe, Plane } 
 import { useSearchParams } from "next/navigation";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { SITE_NAME } from "@/lib/branding";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -164,7 +165,7 @@ const ContactForm = () => {
       phone: "+237 6 83 57 76 76"
     },
     {
-      name: "SkyGo Team",
+      name: `${SITE_NAME} Team`,
       role: "Customer Relations",
       email: "sales@skygovoyages.com",
       phone: "+237 6 83 57 76 76"
@@ -436,7 +437,7 @@ const ContactForm = () => {
                           allowFullScreen
                           loading="lazy"
                           referrerPolicy="no-referrer-when-downgrade"
-                          title="SkyGo Location - Yaoundé, Cameroon"
+                          title={`${SITE_NAME} Location - Yaoundé, Cameroon`}
                         ></iframe>
                       </div>
                     </CardContent>

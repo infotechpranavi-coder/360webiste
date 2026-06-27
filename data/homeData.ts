@@ -1,3 +1,5 @@
+import { SITE_NAME } from '@/lib/branding';
+
 export interface Destination {
   id: string;
   title: string;
@@ -159,7 +161,7 @@ export const testimonials: Testimonial[] = [
     id: '1',
     name: 'Olivia Mitchell',
     role: 'Student',
-    quote: 'Our family trip to Kruger was absolutely magical. Sky Go handled everything from the private transfers to the lodge bookings perfectly. Truly a world-class experience!',
+    quote: `Our family trip to Kruger was absolutely magical. ${SITE_NAME} handled everything from the private transfers to the lodge bookings perfectly. Truly a world-class experience!`,
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop'
   },
   {
@@ -173,7 +175,7 @@ export const testimonials: Testimonial[] = [
     id: '3',
     name: 'Sophia Chen',
     role: 'Architect',
-    quote: 'As an architect, I was blown away by the Zeitz MOCAA and the Waterfront redevelopment. The tour was enlightening and very well coordinated. Sky Go knows their stuff!',
+    quote: `As an architect, I was blown away by the Zeitz MOCAA and the Waterfront redevelopment. The tour was enlightening and very well coordinated. ${SITE_NAME} knows their stuff!`,
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop'
   },
   {

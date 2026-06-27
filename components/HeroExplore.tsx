@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BannerData } from "@/lib/types";
 import Image from "next/image";
+import { BannerData } from "@/lib/types";
+import { SITE_NAME } from "@/lib/branding";
 
 interface HeroExploreProps {
   initialBanners?: BannerData[];
@@ -167,7 +168,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
               size="lg"
               className="bg-amber-500 hover:bg-white hover:text-gray-900 text-gray-900 font-black px-12 py-8 text-xs rounded-2xl shadow-2xl transition-all uppercase tracking-widest border-none"
             >
-              {currentBanner.link ? 'View Details' : 'Start With SkyGo'}
+              {currentBanner.link ? 'View Details' : `Start With ${SITE_NAME}`}
             </Button>
           </div>
         </div>

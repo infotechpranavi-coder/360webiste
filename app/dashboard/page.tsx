@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
@@ -70,6 +71,7 @@ import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { Switch } from "../../components/ui/switch";
 import { cn } from "../../lib/utils";
+import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 
 import { PackageData, TourData, TicketData, BannerData, BlogData } from "@/lib/types";
 
@@ -660,7 +662,7 @@ export default function DashboardPage() {
           properties: {},
           children: [
             new Paragraph({
-              children: [new TextRun({ text: "SkyGo - Package Report", bold: true, size: 32 })],
+              children: [new TextRun({ text: `${SITE_NAME} - Package Report`, bold: true, size: 32 })],
               heading: HeadingLevel.TITLE,
               alignment: AlignmentType.CENTER,
             }),
@@ -923,7 +925,7 @@ export default function DashboardPage() {
       // Create document children array
       const children = [
         new Paragraph({
-          children: [new TextRun({ text: "SkyGo", bold: true, size: 32 })],
+          children: [new TextRun({ text: SITE_NAME, bold: true, size: 32 })],
           heading: HeadingLevel.TITLE,
           alignment: AlignmentType.CENTER,
         }),
@@ -1362,11 +1364,16 @@ export default function DashboardPage() {
           <div className="p-8 border-b border-white/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-[#bd9245] flex items-center justify-center shadow-lg shadow-[#bd9245]/20">
-                  <LayoutDashboard className="h-6 w-6 text-white" />
+                <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-white flex items-center justify-center shadow-lg">
+                  <Image
+                    src={LOGO_SRC}
+                    alt={`${SITE_NAME} Logo`}
+                    fill
+                    className="object-contain p-1"
+                  />
                 </div>
                 <div>
-                  <h2 className="text-xl font-black text-white tracking-tighter uppercase">SkyGo</h2>
+                  <h2 className="text-lg font-black text-white tracking-tighter uppercase">{SITE_NAME}</h2>
                   <p className="text-[10px] font-bold text-[#bd9245] uppercase tracking-widest">Management</p>
                 </div>
               </div>

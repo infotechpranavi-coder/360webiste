@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plane, Map, Users, Award } from "lucide-react";
+import { SITE_NAME } from "@/lib/branding";
 
 const About = () => {
   const features = [
@@ -33,12 +34,12 @@ const About = () => {
           {/* Left content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <h2 className="text-4xl font-bold text-blue-600">About SkyGo</h2>
+              <h2 className="text-4xl font-bold text-blue-600">About {SITE_NAME}</h2>
               <p className="text-lg text-blue-500 leading-relaxed font-medium">
                 "Travel with Heart, Explore with Us"
               </p>
               <p className="text-lg text-blue-600 leading-relaxed">
-                SkyGo turns your holidays into memorable journeys across South Africa. Every trip is personal, seamless, and unforgettable.
+                {SITE_NAME} turns your holidays into memorable journeys across South Africa. Every trip is personal, seamless, and unforgettable.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Whether you're seeking luxury experiences at Table Mountain, adventure in the Kruger safari, cultural immersion at traditional markets, or relaxation at world-class beaches, our expert team is here to guide you every step of the way through South Africa.

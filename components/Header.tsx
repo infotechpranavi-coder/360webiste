@@ -12,7 +12,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-// import logo from "@/assets/image-Photoroom.png";
+import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -121,12 +121,9 @@ const Header = () => {
         {/* Main navigation */}
         <nav className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center relative">
-              {/* White Rectangle background */}
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-20 md:h-28 lg:h-32 bg-white rounded-full shadow-sm border border-gray-100/50 z-0"></div>
-              {/* Logo */}
-              <span className="relative z-10 flex items-center justify-center w-32 h-32 md:w-48 md:h-48 lg:w-56 lg:h-56">
-                <img src="/skygologo.png" alt="Sky Go" className="h-full w-full object-contain" />
+            <Link href="/" className="flex items-center">
+              <span className="flex items-center justify-center w-44 h-14 md:w-56 md:h-16">
+                <img src={LOGO_SRC} alt={SITE_NAME} className="h-full w-full object-contain object-left" />
               </span>
             </Link>
 

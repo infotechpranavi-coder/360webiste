@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Award, Shield, CheckCircle, Star, Sparkles, Users, Clock, Car, UserCheck, TrendingUp, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { SITE_NAME } from "@/lib/branding";
 
 const AboutPage = () => {
   const whatSetsUsApart = [
@@ -113,7 +114,7 @@ const AboutPage = () => {
               About Us
             </h1>
             <p className="text-xl md:text-2xl mb-10 text-white/80 max-w-4xl mx-auto font-medium leading-relaxed">
-              SkyGo is a premium-focused global travel brand dedicated to delivering well-crafted travel experiences defined by comfort, clarity, and service quality.
+              {SITE_NAME} is a premium-focused global travel brand dedicated to delivering well-crafted travel experiences defined by comfort, clarity, and service quality.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-white/60 text-sm font-bold uppercase tracking-widest">
               <div className="flex items-center space-x-2">
@@ -156,14 +157,14 @@ const AboutPage = () => {
                   </Badge>
                 </div>
                 <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#1e1f44] leading-tight">
-                  About SkyGo
+                  About {SITE_NAME}
                 </h2>
                 <div className="space-y-5 text-gray-700 leading-relaxed text-lg">
                   <p>
-                    SkyGo is a premier travel firm dedicated to seamless global mobility. We specialize in expertly curated tours and precision ticketing services, blending local expertise with world-class standards.
+                    {SITE_NAME} is a premier travel firm dedicated to seamless global mobility. We specialize in expertly curated tours and precision ticketing services, blending local expertise with world-class standards.
                   </p>
                   <p>
-                    Whether you are exploring new horizons or securing your next flight, SkyGo delivers sophisticated, reliable, and personalized travel solutions designed to get you where you need to be.
+                    Whether you are exploring new horizons or securing your next flight, {SITE_NAME} delivers sophisticated, reliable, and personalized travel solutions designed to get you where you need to be.
                   </p>
                   <p className="font-semibold text-[#1e1f44]">
                     We are a specialized travel company dedicated to delivering quality, transparency, and genuine comfort to our guests from around the world.
@@ -193,13 +194,13 @@ const AboutPage = () => {
             <div className="grid lg:grid-cols-2 gap-12 mb-16 items-center">
               <div className="space-y-6 text-gray-700 leading-relaxed text-lg order-2 lg:order-1">
                 <p>
-                  In a travel market often cluttered with hidden costs and inconsistent service, SkyGo stands for absolute clarity. We believe that booking a flight or a tour should never be a guessing game of "what's included."
+                  In a travel market often cluttered with hidden costs and inconsistent service, {SITE_NAME} stands for absolute clarity. We believe that booking a flight or a tour should never be a guessing game of "what's included."
                 </p>
                 <p>
                   We bridge the gap between price and value. We don't simply chase the lowest fare; we pursue the highest standard. Our commitment is to ensure you understand exactly what you are paying for—eliminating uncertainty through transparent pricing, expert vetting, and premium service.
                 </p>
                 <p className="font-semibold text-[#1e1f44]">
-                  At SkyGo, we don’t just sell tickets; we deliver peace of mind.
+                  At {SITE_NAME}, we don’t just sell tickets; we deliver peace of mind.
                 </p>
               </div>
               <div className="relative group order-1 lg:order-2">

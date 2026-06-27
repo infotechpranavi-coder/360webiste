@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { MapPin, Phone, Mail, Facebook, Instagram, Twitter, Youtube, Linkedin, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { SITE_NAME, SITE_DESCRIPTION, LOGO_SRC } from "@/lib/branding";
 
 const Footer = () => {
   const [settings, setSettings] = useState<any>({
@@ -45,19 +46,19 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-0 -mt-8">
             <div className="flex items-center justify-start">
-              <div className="relative w-64 h-32 md:w-80 md:h-40 flex items-center justify-center -ml-4 z-[0]">
+              <div className="relative w-56 h-20 md:w-72 md:h-24 flex items-center justify-center -ml-2 z-[0]">
                 <Image
-                  src="/skygologo.png"
-                  alt="Sky Go Logo"
+                  src={LOGO_SRC}
+                  alt={`${SITE_NAME} Logo`}
                   fill
-                  sizes="(max-width: 640px) 256px, (max-width: 768px) 320px, 320px"
-                  className="object-contain object-center opacity-90"
+                  sizes="(max-width: 640px) 224px, (max-width: 768px) 288px, 288px"
+                  className="object-contain object-left opacity-90"
                   priority
                 />
               </div>
             </div>
-            <p className="relative z-10 text-gray-600 text-[13px] font-medium leading-relaxed max-w-sm -mt-6 md:-mt-8 pl-2 drop-shadow-sm">
-              SkyGo specializes in comprehensive tours, travel, and ticketing services. We provide well-curated travel experiences and seamless flight bookings, offering professional and personalized solutions for all your journey needs within the region and beyond.
+            <p className="relative z-10 text-gray-600 text-[13px] font-medium leading-relaxed max-w-sm -mt-4 md:-mt-6 pl-2 drop-shadow-sm">
+              {SITE_DESCRIPTION}
             </p>
             
             <div className="flex flex-wrap gap-4">
@@ -156,7 +157,7 @@ const Footer = () => {
         <div className="border-t border-gray-200 mt-16 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-500 text-xs font-medium">
-              © 2025 SkyGo. All rights reserved.
+              © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
             </p>
             <div className="flex space-x-8">
               <Link href="/privacy" className="text-gray-500 hover:text-gray-900 text-xs font-medium transition-colors underline-offset-4 hover:underline">

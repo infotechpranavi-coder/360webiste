@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
+import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 const NavbarTravel = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -148,14 +149,13 @@ const NavbarTravel = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center relative z-50 pt-4">
-            {/* Logo */}
-            <div className="relative w-32 h-32 md:w-48 md:h-48 z-10">
+          <Link href="/" className="flex items-center relative z-50">
+            <div className="relative w-40 h-12 md:w-52 md:h-14">
               <Image
-                src="/skygologo.png"
-                alt="Sky Go"
+                src={LOGO_SRC}
+                alt={SITE_NAME}
                 fill
-                className="object-contain"
+                className="object-contain object-left"
                 priority
               />
             </div>

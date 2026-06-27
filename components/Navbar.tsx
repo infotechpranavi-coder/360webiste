@@ -9,6 +9,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
+import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 
 interface SearchPackage {
   _id: string;
@@ -339,16 +340,13 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-2">
           {/* Logo */}
-          <Link href="/" className="flex items-center relative py-2">
-            {/* White Background Rectangle behind logo */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-24 md:h-32 bg-white rounded-full shadow-sm border border-gray-100/50 z-0"></div>
-            {/* Logo Logo */}
-            <div className="relative w-48 h-48 md:w-64 md:h-64 z-10 flex items-center justify-center">
+          <Link href="/" className="flex items-center py-2">
+            <div className="relative w-44 h-14 md:w-56 md:h-16 flex items-center justify-center">
               <Image
-                src="/skygologo.png"
-                alt="Sky Go Logo"
+                src={LOGO_SRC}
+                alt={`${SITE_NAME} Logo`}
                 fill
-                className="object-contain"
+                className="object-contain object-left"
                 priority
               />
             </div>

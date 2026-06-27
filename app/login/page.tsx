@@ -6,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -43,11 +45,18 @@ const LoginPage = () => {
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary text-white mb-4 shadow-lg shadow-primary/20">
-            <ShieldCheck className="w-8 h-8" />
+          <div className="inline-flex items-center justify-center w-56 h-16 mb-4">
+            <Image
+              src={LOGO_SRC}
+              alt={`${SITE_NAME} Logo`}
+              width={224}
+              height={64}
+              className="h-full w-auto object-contain"
+              priority
+            />
           </div>
           <h1 className="text-3xl font-bold text-slate-900">Welcome Back</h1>
-          <p className="text-slate-500 mt-2">Sign in to manage your travel portal</p>
+          <p className="text-slate-500 mt-2">Sign in to manage your {SITE_NAME} portal</p>
         </div>
 
         <Card className="shadow-xl border-slate-200/60 bg-white">
@@ -120,7 +129,7 @@ const LoginPage = () => {
         </Card>
 
         <div className="text-center mt-8 text-slate-400 text-sm">
-          &copy; {new Date().getFullYear()} SkyGo Administration Portal
+          &copy; {new Date().getFullYear()} {SITE_NAME} Administration Portal
         </div>
       </div>
     </div>

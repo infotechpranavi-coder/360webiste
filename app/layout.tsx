@@ -9,12 +9,17 @@ import Footer from "../components/Footer"
 import FloatingButtons from "../components/FloatingButtons"
 import { InquiryFormProvider } from "../contexts/InquiryFormContext"
 import ConditionalLayout from "../components/ConditionalLayout"
+import { SITE_NAME, SITE_DESCRIPTION, LOGO_SRC } from "../lib/branding"
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SkyGo | Seamless Flight Bookings & Curated Global Travel Experiences',
-  description: 'SkyGo specializes in comprehensive tours, global travel, and ticketing services. Experience seamless flight bookings and expertly curated, personalized travel solutions for all your journey needs.',
+  title: `${SITE_NAME} | Seamless Flight Bookings & Curated Global Travel Experiences`,
+  description: SITE_DESCRIPTION,
+  icons: {
+    icon: LOGO_SRC,
+    apple: LOGO_SRC,
+  },
 }
 
 export const viewport = {
