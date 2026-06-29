@@ -6,6 +6,8 @@ export interface ProductInfo {
   type: 'Package' | 'Tour' | 'Ticket' | 'General';
   title?: string;
   referenceId?: string;
+  category?: string;
+  duration?: string;
 }
 
 interface InquiryFormContextType {

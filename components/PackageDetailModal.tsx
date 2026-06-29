@@ -1,4 +1,5 @@
 import { SITE_NAME, brandedText } from "@/lib/branding";
+import { getCategoryByValue } from "@/lib/packageExperienceCategories";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -117,7 +118,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
               <div className="absolute bottom-4 left-5 right-5 z-10">
                 <div className="flex flex-wrap gap-2 mb-3">
                   <Badge className="bg-[#bd9245] text-white hover:bg-[#bd9245] border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                    {packageData.packageCategory}
+                    {getCategoryByValue(packageData.packageCategory)?.label || packageData.packageCategory}
                   </Badge>
                   <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
                     {packageData.duration}
@@ -579,7 +580,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
           <div className="text-center sm:text-left">
             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Package Investment</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-[#111827] tracking-tight">R {packageData.price.toLocaleString()}</span>
+              <span className="text-2xl font-bold text-[#bd9245] tracking-tight uppercase text-sm">Enquire for Quote</span>
               <span className="text-gray-400 font-medium text-sm">/ Complete Journey</span>
             </div>
           </div>

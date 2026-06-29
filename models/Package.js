@@ -189,8 +189,7 @@ const PackageSchema = new mongoose.Schema({
   packageCategory: {
     type: String,
     required: true,
-    enum: ['Regular', 'Premium', 'Luxury', 'Adventure', 'Adventure Activities', 'Upcoming Rides', 'Bike & SUV 4x4 Expeditions', 'Sailing Experiences', 'Oman Tour', 'Attraction and Activity', 'Deluxe', 'Cultural', 'Wildlife', 'Trekking', 'Spiritual', 'Beach', 'regular'],
-    default: 'Regular',
+    default: 'Yachts & Sailing Cruises',
   },
   images: [ImageSchema],
   itinerary: [ItineraryDaySchema],
@@ -240,4 +239,9 @@ PackageSchema.pre('save', function (next) {
   next();
 });
 
-export default mongoose.models.Package || mongoose.model('Package', PackageSchema);
+// Drop cached model so packageCategory schema changes apply without a full restart
+if (mongoose.models.Package) {
+  delete mongoose.models.Package;
+}
+
+export default mongoose.model('Package', PackageSchema);

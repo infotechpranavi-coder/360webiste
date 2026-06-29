@@ -72,7 +72,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Switch } from "../../components/ui/switch";
 import { cn } from "../../lib/utils";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
-import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
+import { PACKAGE_NAV_GROUPS, getCategoryByValue, packageMatchesExperienceCategory } from "@/lib/packageExperienceCategories";
 
 import { PackageData, TourData, TicketData, BannerData, BlogData, GalleryData } from "@/lib/types";
 
@@ -389,6 +389,12 @@ export default function DashboardPage() {
     fetchSettings();
   }, []);
 
+  useEffect(() => {
+    if (activeView === 'enquiries') {
+      fetchEnquiries();
+    }
+  }, [activeView]);
+
   const filterPackages = useCallback(() => {
     let filtered = packages;
 
@@ -408,7 +414,12 @@ export default function DashboardPage() {
 
     // Experience page filter
     if (categoryFilter !== "all") {
-      filtered = filtered.filter(pkg => pkg.packageCategory === categoryFilter);
+      const category = getCategoryByValue(categoryFilter);
+      filtered = filtered.filter((pkg) =>
+        category
+          ? packageMatchesExperienceCategory(pkg.packageCategory, category)
+          : pkg.packageCategory === categoryFilter
+      );
     }
 
     setFilteredPackages(filtered);
@@ -1597,7 +1608,7 @@ export default function DashboardPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
                       <CardTitle className="text-2xl font-black text-[#111827] tracking-tight uppercase">EXPERIENCE INVENTORY</CardTitle>
-                      <CardDescription className="text-sm font-medium text-gray-400">Total catalog of curated domestic and international packages</CardDescription>
+                      <CardDescription className="text-sm font-medium text-gray-400">Total catalog of curated experience packages</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -1623,12 +1634,17 @@ export default function DashboardPage() {
                         <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
                           <SelectValue placeholder="Experience Page" />
                         </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-white shadow-xl">
+                        <SelectContent className="rounded-2xl border-white shadow-xl max-h-72">
                           <SelectItem value="all">All Experience Pages</SelectItem>
-                          {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
-                            <SelectItem key={category.value} value={category.value}>
-                              {category.label}
-                            </SelectItem>
+                          {PACKAGE_NAV_GROUPS.map((group) => (
+                            <div key={group.slug}>
+                              <p className="px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500">{group.label}</p>
+                              {group.items.map((category) => (
+                                <SelectItem key={category.value} value={category.value}>
+                                  {category.label}{category.isFuture ? ' (Future)' : ''}
+                                </SelectItem>
+                              ))}
+                            </div>
                           ))}
                         </SelectContent>
                       </Select>
@@ -1709,7 +1725,7 @@ export default function DashboardPage() {
                               </td>
                               <td className="p-4">
                                 <span className="text-[11px] font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-tight">
-                                  {pkg.packageCategory || 'Upcoming Rides'}
+                                  {getCategoryByValue(pkg.packageCategory)?.label || pkg.packageCategory || 'Yachts & Sailing Cruises'}
                                 </span>
                               </td>
                               <td className="p-4">
@@ -2474,7 +2490,7 @@ export default function DashboardPage() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                     <div>
                       <CardTitle className="text-2xl font-black text-[#111827] tracking-tight uppercase">Customer Enquiries</CardTitle>
-                      <CardDescription className="text-sm font-medium text-gray-400">Manage incoming requests from the website contact form</CardDescription>
+                      <CardDescription className="text-sm font-medium text-gray-400">Package enquiries from category pages, detail pages, and the contact form</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
@@ -2506,6 +2522,7 @@ export default function DashboardPage() {
                               <td className="p-4 align-top">
                                 <div className="text-xs font-bold text-gray-700 uppercase">{enq.packageType || 'General'}</div>
                                 {enq.packageName && <div className="text-[10px] text-gray-500 font-bold mb-1">{enq.packageName}</div>}
+                                {enq.packageDuration && <div className="text-[10px] text-gray-400 mb-1">Ref: {enq.packageDuration}</div>}
                                 {enq.destination && <div className="text-[10px] text-gray-500">📍 {enq.destination}</div>}
                                 {enq.travelDate && <div className="text-[10px] text-gray-500">📅 {enq.travelDate}</div>}
                                 {enq.travelers && <div className="text-[10px] text-gray-500">👥 {enq.travelers} Guests</div>}
@@ -2532,7 +2549,7 @@ export default function DashboardPage() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={5} className="p-8 text-center text-gray-500">
+                            <td colSpan={6} className="p-8 text-center text-gray-500">
                               <MessageSquare className="h-10 w-10 text-gray-300 mx-auto mb-2" />
                               <p className="font-bold text-sm">No enquiries found</p>
                             </td>
@@ -2618,8 +2635,8 @@ export default function DashboardPage() {
                         />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-[#111827] uppercase tracking-tight mb-2">Upcoming Trips</h3>
-                        <p className="text-sm font-medium text-gray-500 mb-6">Showcase scheduled group adventures and upcoming expeditions to visitors.</p>
+                        <h3 className="text-xl font-black text-[#1e1f44] uppercase tracking-tight mb-2">Featured Water Trips</h3>
+                        <p className="text-sm font-medium text-gray-500 mb-6">Showcase yacht cruises, kayaking, rafting, and other water experiences on the homepage.</p>
                         
                         <div className="flex items-center gap-2">
                           {siteSettings.upcomingSection ? (

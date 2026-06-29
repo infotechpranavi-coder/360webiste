@@ -13,6 +13,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
+import { PACKAGE_NAV_GROUPS } from "@/lib/packageExperienceCategories";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -153,33 +154,39 @@ const Header = () => {
                       Packages
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <ul className="grid w-[200px] gap-3 p-4 md:w-[250px] md:grid-cols-1 lg:w-[300px] bg-white rounded-lg shadow-lg">
+                      <ul className="grid w-[280px] gap-3 p-4 md:w-[320px] md:grid-cols-1 lg:w-[360px] bg-white rounded-lg shadow-lg max-h-[70vh] overflow-y-auto">
                         <li>
                           <NavigationMenuLink asChild>
                             <Link
-                              href="/packages/domestic"
+                              href="/packages"
                               className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                             >
-                              <div className="text-sm font-medium leading-none text-foreground">Domestic</div>
+                              <div className="text-sm font-medium leading-none text-foreground">All Packages</div>
                               <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                Explore amazing destinations within South Africa
+                                Browse water, land, and sky experiences
                               </p>
                             </Link>
                           </NavigationMenuLink>
                         </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/packages/international"
-                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                            >
-                              <div className="text-sm font-medium leading-none text-foreground">International</div>
-                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                Discover incredible destinations worldwide
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
+                        {PACKAGE_NAV_GROUPS.map((group) => (
+                          <li key={group.slug}>
+                            <p className="px-3 pt-2 text-[10px] font-black uppercase tracking-widest text-gray-500">{group.label}</p>
+                            <ul className="space-y-1">
+                              {group.items.map((category) => (
+                                <li key={category.slug}>
+                                  <NavigationMenuLink asChild>
+                                    <Link
+                                      href={category.href}
+                                      className="block select-none rounded-md p-2 pl-3 text-sm leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                                    >
+                                      {category.label}
+                                    </Link>
+                                  </NavigationMenuLink>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
                       </ul>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
@@ -253,19 +260,27 @@ const Header = () => {
                   <div className="font-medium text-white">Packages</div>
                   <div className="ml-4 space-y-2">
                     <Link
-                      href="/packages/domestic"
+                      href="/packages"
                       className="block text-white/80 hover:text-primary transition-colors duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Domestic
+                      All Packages
                     </Link>
-                    <Link
-                      href="/packages/international"
-                      className="block text-white/80 hover:text-primary transition-colors duration-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      International
-                    </Link>
+                    {PACKAGE_NAV_GROUPS.map((group) => (
+                      <div key={group.slug}>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/50 mt-2">{group.label}</p>
+                        {group.items.map((category) => (
+                          <Link
+                            key={category.slug}
+                            href={category.href}
+                            className="block text-white/80 hover:text-primary transition-colors duration-200 pl-2"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {category.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
                   </div>
                 </div>
 

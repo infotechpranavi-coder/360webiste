@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Minus, X, Upload, Star } from "lucide-react";
 import { compressImage } from "@/lib/utils";
-import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
+import { PACKAGE_NAV_GROUPS, getNavGroupForCategory } from "@/lib/packageExperienceCategories";
 import { SITE_NAME, DEFAULT_ABOUT_TEXT, DEFAULT_SERVICES_TEXT } from "@/lib/branding";
 
 interface ItineraryDay {
@@ -55,7 +55,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     capacity: "",
     packageType: "international" as "international" | "domestic",
     place: "dubai",
-    packageCategory: "Upcoming Rides",
+    packageCategory: "Yachts & Sailing Cruises",
     bestTimeToVisit: { yearRound: "", winter: "", summer: "" },
     isFeaturedDestination: false,
     isPopularPackage: false,
@@ -86,9 +86,21 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [packageGroupSlug, setPackageGroupSlug] = useState(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
+
+  const selectedPackageGroup =
+    PACKAGE_NAV_GROUPS.find((group) => group.slug === packageGroupSlug) ?? PACKAGE_NAV_GROUPS[0];
 
   // --- Handlers ---
   const handleInputChange = (field: string, value: string) => setFormData(prev => ({ ...prev, [field]: value }));
+
+  const handlePackageGroupChange = (groupSlug: string) => {
+    setPackageGroupSlug(groupSlug);
+    const group = PACKAGE_NAV_GROUPS.find((g) => g.slug === groupSlug);
+    if (group?.items[0]) {
+      handleInputChange("packageCategory", group.items[0].value);
+    }
+  };
 
   const handleAddUrl = () => {
     const url = currentImageUrl.trim();
@@ -201,7 +213,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
       services: DEFAULT_SERVICES_TEXT,
       tourDetails: "This carefully curated package offers a perfect blend of iconic landmarks, cultural immersion, and leisure activities.",
       price: "", duration: "", location: "", capacity: "",
-      packageType: "international", place: "dubai", packageCategory: "Upcoming Rides",
+      packageType: "international", place: "dubai", packageCategory: "Yachts & Sailing Cruises",
       bestTimeToVisit: { yearRound: "", winter: "", summer: "" },
       isFeaturedDestination: false,
       isPopularPackage: false,
@@ -222,6 +234,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     setExternalImageUrls([]);
     setCurrentImageUrl("");
     setSubmitError("");
+    setPackageGroupSlug(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
     onClose();
   };
 
@@ -262,22 +275,41 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Experience Page *</label>
-              <Select value={formData.packageCategory} onValueChange={v => handleInputChange('packageCategory', v)}>
-                <SelectTrigger><SelectValue placeholder="Select experience page" /></SelectTrigger>
-                <SelectContent>
-                  {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>
-                      {category.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-gray-500">
-                Package appears on the matching page under Packages in the navbar.
-              </p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Experience Type *</label>
+                <Select value={packageGroupSlug} onValueChange={handlePackageGroupChange}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent>
+                    {PACKAGE_NAV_GROUPS.map((group) => (
+                      <SelectItem key={group.slug} value={group.slug}>
+                        {group.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">Choose the main category (Water, Land — Motor, Land — Physical, or Sky).</p>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Experience Page *</label>
+                <Select
+                  value={formData.packageCategory}
+                  onValueChange={(v) => handleInputChange("packageCategory", v)}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select experience page" /></SelectTrigger>
+                  <SelectContent className="max-h-72">
+                    {selectedPackageGroup?.items.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}{category.isFuture ? " (Future)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">
+                  Package appears on this page under Packages in the navbar.
+                </p>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Place / Location *</label>

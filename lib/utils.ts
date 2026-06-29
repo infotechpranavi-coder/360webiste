@@ -10,6 +10,118 @@ export function cn(...inputs: ClassValue[]) {
  * This prevents "413 Content Too Large" errors by reducing high-res images
  * (often 5-10MB) to ~200-500KB before upload.
  */
+/**
+ * Returns a sharp Cloudinary / external URL for hero banners.
+ * `width` should match viewport × devicePixelRatio (capped at 3840).
+ */
+export function getHeroBannerUrl(url: string, publicId?: string, width = 3840): string {
+  if (!url) return url;
+
+  if (url.includes('images.unsplash.com')) {
+    const upgraded = url
+      .replace(/w=\d+/i, `w=${width}`)
+      .replace(/q=\d+/i, 'q=100');
+    return upgraded.includes('w=') ? upgraded : `${upgraded}${upgraded.includes('?') ? '&' : '?'}w=${width}&q=100`;
+  }
+
+  if (!url.includes('res.cloudinary.com')) return url;
+
+  const cloudName = url.match(/res\.cloudinary\.com\/([^/]+)/)?.[1];
+  const assetPath = resolveCloudinaryAssetPath(url, publicId);
+  if (!cloudName || !assetPath) return url;
+
+  const transforms = `c_limit,w_${width},q_100`;
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${transforms}/${assetPath}`;
+}
+
+export function getHeroBannerSrcSet(url: string, publicId?: string): string {
+  const widths = [1080, 1920, 2560, 3840];
+  return widths
+    .map((w) => `${getHeroBannerUrl(url, publicId, w)} ${w}w`)
+    .join(', ');
+}
+
+function resolveCloudinaryAssetPath(url: string, publicId?: string): string | null {
+  const afterUpload = url.split('/upload/')[1];
+  if (!afterUpload) return publicId || null;
+
+  // Stored URL with version — always prefer this over bare public_id
+  if (/^v\d+\//.test(afterUpload)) {
+    return afterUpload;
+  }
+
+  // Legacy URL that baked transforms into the path — strip to versioned asset
+  const versioned = afterUpload.match(/(?:.+\/)?(v\d+\/.+)$/);
+  if (versioned?.[1]) {
+    return versioned[1];
+  }
+
+  return publicId || afterUpload;
+}
+
+/** Reads a file as base64 without re-encoding (preserves full quality). */
+export function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Prepares a banner for upload: upscales small images so full-screen cover
+ * does not stretch a tiny bitmap, and caps very large files at 3840px wide.
+ */
+export function prepareBannerImageForUpload(
+  file: File,
+  targetMinWidth = 1920,
+  maxWidth = 3840
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width < targetMinWidth) {
+          const scale = targetMinWidth / width;
+          width = targetMinWidth;
+          height = Math.round(height * scale);
+        } else if (width > maxWidth) {
+          const scale = maxWidth / width;
+          width = maxWidth;
+          height = Math.round(height * scale);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to prepare banner image'));
+          return;
+        }
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const usePng = file.type === 'image/png';
+        const mime = usePng ? 'image/png' : 'image/jpeg';
+        resolve(canvas.toDataURL(mime, usePng ? undefined : 0.95));
+      };
+      img.onerror = reject;
+      img.src = event.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export function compressImage(file: File, maxWidth = 1920, quality = 0.7): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

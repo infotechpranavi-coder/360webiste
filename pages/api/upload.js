@@ -9,7 +9,7 @@ cloudinary.config({
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '10mb',
+      sizeLimit: '25mb',
     },
   },
 };
@@ -27,13 +27,21 @@ export default async function handler(req, res) {
     }
 
     const uploadFolder = folder || process.env.CLOUDINARY_UPLOAD_FOLDER || 'skygo/packages';
+    const isBanner = String(folder || '').includes('banner');
 
     const result = await cloudinary.uploader.upload(data, {
       folder: uploadFolder,
       resource_type: 'image',
-      transformation: [
-        { width: 1200, height: 800, crop: 'limit', quality: 'auto:good' }
-      ]
+      ...(isBanner
+        ? {
+            quality: 100,
+            flags: 'keep_iptc',
+          }
+        : {
+            transformation: [
+              { width: 1920, crop: 'limit', quality: 'auto:good' },
+            ],
+          }),
     });
 
     return res.status(200).json({

@@ -1,8 +1,5 @@
-import PackageExperiencePage from '@/components/PackageExperiencePage';
-import { getCategoryBySlug } from '@/lib/packageExperienceCategories';
+import { redirect } from 'next/navigation';
 
-export default function UpcomingRidesPage() {
-  const category = getCategoryBySlug('upcoming-rides');
-  if (!category) return null;
-  return <PackageExperiencePage category={category} />;
+export default function LegacyUpcomingRidesPage() {
+  redirect('/packages/yachts-sailing-cruises');
 }

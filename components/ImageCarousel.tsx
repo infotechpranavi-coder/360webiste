@@ -12,34 +12,34 @@ const ImageCarousel = () => {
       title: "Best of CAPE TOWN",
       description:
         "Table Mountain → V&A Waterfront → Cape Point → Penguin Colony\n\n4N/5D\nGroup Tour @ R 12,500/person\nPrivate Tour @ R 15,500/person",
-      link: "/packages/domestic",
+      link: "/packages",
     },
     {
       url: "https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
       title: "Kruger Wildlife Safari",
       description:
         "Big Five Game Drive → Luxury Bush Camp → Sunset Safari → BBQ Dinner\n\n3N/4D Tour Package\n\nR 18,900/person",
-      link: "/packages/domestic",
+      link: "/packages",
     },
     {
       url: "https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
       title: "Garden Route Explorer",
       description:
         "Knysna Heads → Cango Caves → Whale Watching → Scenic Coast\n\n5 Nights / 6 Days Tour Package\n\nR 14,500/person",
-      link: "/packages/domestic",
+      link: "/packages",
     },
     {
       url: "https://images.unsplash.com/photo-1545129139-1beb780cf337?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
       title: "Johannesburg Culture",
       description:
         "Apartheid Museum → Soweto Tour → Constitution Hill\n\n4D/3N Tour Package\n\nR 9,800/person",
-      link: "/packages/domestic",
+      link: "/packages",
     },
     {
       url: "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
       title: "Sun City & Pilanesberg",
       description: "Valley of Waves → Game Drive → Luxury Resort\n\n4N/5D Package\n\nR 17,500/person",
-      link: "/packages/domestic",
+      link: "/packages",
     },
   ];
 

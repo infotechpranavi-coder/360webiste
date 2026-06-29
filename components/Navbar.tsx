@@ -234,24 +234,10 @@ const Navbar = () => {
       const category = getDestinationCategory(searchTerm.trim());
 
       // Force page refresh to ensure search works correctly
-      if (category === 'international') {
-        window.location.href = `/packages/international?search=${encodeURIComponent(searchTerm.trim())}`;
-      } else if (category === 'domestic') {
-        window.location.href = `/packages/domestic?search=${encodeURIComponent(searchTerm.trim())}`;
-      } else {
-        window.location.href = `/packages?search=${encodeURIComponent(searchTerm.trim())}`;
-      }
+      window.location.href = `/packages?search=${encodeURIComponent(searchTerm.trim())}`;
 
       setIsSearchOpen(false);
     }
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: 'ZAR',
-      maximumFractionDigits: 0,
-    }).format(price);
   };
 
   return (
@@ -419,8 +405,8 @@ const Navbar = () => {
                                   {pkg.rating}/5
                                 </div>
                               </div>
-                              <div className="text-sm font-semibold text-black mt-1">
-                                {formatPrice(pkg.price)}
+                              <div className="text-sm font-semibold text-[#bd9245] mt-1 uppercase text-[10px] tracking-wider">
+                                Enquire for quote
                               </div>
                             </div>
                           </div>
@@ -433,13 +419,7 @@ const Navbar = () => {
                             setIsSearchOpen(false);
 
                             // Force page refresh to ensure search works correctly
-                            if (category === 'international') {
-                              window.location.href = `/packages/international?search=${encodeURIComponent(searchTerm)}`;
-                            } else if (category === 'domestic') {
-                              window.location.href = `/packages/domestic?search=${encodeURIComponent(searchTerm)}`;
-                            } else {
-                              window.location.href = `/packages?search=${encodeURIComponent(searchTerm)}`;
-                            }
+                            window.location.href = `/packages?search=${encodeURIComponent(searchTerm)}`;
                           }}
                           className="block w-full text-center text-sm text-primary hover:text-primary/80 py-2"
                         >
@@ -610,8 +590,8 @@ const Navbar = () => {
                                     <MapPin className="h-3 w-3 mr-1" />
                                     {pkg.location}
                                   </div>
-                                  <div className="text-xs font-semibold text-primary">
-                                    {formatPrice(pkg.price)}
+                                  <div className="text-xs font-semibold text-[#bd9245] uppercase tracking-wider">
+                                    Enquire
                                   </div>
                                 </div>
                               </div>
@@ -626,13 +606,7 @@ const Navbar = () => {
                               setIsMenuOpen(false);
 
                               // Force page refresh to ensure search works correctly
-                              if (category === 'international') {
-                                window.location.href = `/packages/international?search=${encodeURIComponent(searchTerm)}`;
-                              } else if (category === 'domestic') {
-                                window.location.href = `/packages/domestic?search=${encodeURIComponent(searchTerm)}`;
-                              } else {
-                                window.location.href = `/packages?search=${encodeURIComponent(searchTerm)}`;
-                              }
+                              window.location.href = `/packages?search=${encodeURIComponent(searchTerm)}`;
                             }}
                             className="block w-full text-center text-sm text-primary hover:text-primary/80 py-2"
                           >

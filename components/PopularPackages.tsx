@@ -7,6 +7,7 @@ import { popularPackages as staticPackages } from "@/data/homeData";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useInquiryForm } from "@/contexts/InquiryFormContext";
 
 interface PopularPackagesProps {
   initialPackages?: any[];
@@ -14,6 +15,7 @@ interface PopularPackagesProps {
 
 const PopularPackages = ({ initialPackages }: PopularPackagesProps) => {
   const router = useRouter();
+  const { openForm } = useInquiryForm();
   const [packages, setPackages] = useState<any[]>(initialPackages || []);
   const [isLoading, setIsLoading] = useState(!initialPackages);
 
@@ -93,6 +95,7 @@ const PopularPackages = ({ initialPackages }: PopularPackagesProps) => {
                 pkg={pkg}
                 index={idx}
                 router={router}
+                openForm={openForm}
               />
             ))}
           </div>
@@ -105,6 +108,7 @@ const PopularPackages = ({ initialPackages }: PopularPackagesProps) => {
                 pkg={pkg}
                 index={idx + col1.length}
                 router={router}
+                openForm={openForm}
               />
             ))}
 
@@ -129,7 +133,7 @@ const PopularPackages = ({ initialPackages }: PopularPackagesProps) => {
 };
 
 // Helper component for cleaner code
-const PackageCard = ({ pkg, index, router }: any) => {
+const PackageCard = ({ pkg, index, router, openForm }: any) => {
     const packageId = pkg._id || pkg.id;
     const itemType = pkg.type || 'package';
     
@@ -197,7 +201,13 @@ const PackageCard = ({ pkg, index, router }: any) => {
             className="flex-1 border-[#1e1f44] text-[#1e1f44] hover:bg-[#1e1f44] hover:text-white font-bold py-4 rounded-xl transition-all duration-300"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/contact?packageName=${encodeURIComponent(pkg.title)}&packageType=popular`);
+              openForm({
+                type: 'Package',
+                title: pkg.title,
+                referenceId: packageId,
+                category: pkg.packageCategory,
+                duration: pkg.duration,
+              });
             }}
           >
             Enquire Now

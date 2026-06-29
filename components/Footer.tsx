@@ -5,7 +5,7 @@ import { ArrowUpRight, Facebook, Instagram, Twitter, Linkedin, Youtube } from 'l
 import Link from 'next/link';
 import Image from 'next/image';
 import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, LOGO_SRC } from '@/lib/branding';
-import { PACKAGE_EXPERIENCE_CATEGORIES } from '@/lib/packageExperienceCategories';
+import { PACKAGE_NAV_GROUPS } from '@/lib/packageExperienceCategories';
 
 const FOOTER_BG =
   'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
@@ -151,13 +151,13 @@ const Footer = () => {
               </ul>
             </div>
 
-            {/* Experience pages */}
+            {/* Experience categories */}
             <div className="lg:border-l lg:border-gray-200 lg:pl-10 space-y-5">
-              <h4 className="text-base font-bold text-gray-900">Experience Pages</h4>
+              <h4 className="text-base font-bold text-gray-900">Experience Categories</h4>
               <ul className="space-y-3">
-                {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
-                  <FooterLink key={category.slug} href={category.href}>
-                    {category.label}
+                {PACKAGE_NAV_GROUPS.map((group) => (
+                  <FooterLink key={group.slug} href={`/packages/${group.slug}`}>
+                    {group.label}
                   </FooterLink>
                 ))}
               </ul>

@@ -1,6 +1,10 @@
 import connectDB from '../../../lib/mongodb';
 import Package from '../../../models/Package';
 import { isConnected } from '../../../lib/mongodb';
+import {
+  buildCategoryFilter,
+  buildGroupFilter,
+} from '../../../lib/packageExperienceCategories';
 
 // Demo data for when database is unavailable
 const getDemoPackages = () => {
@@ -145,20 +149,35 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, data: [], demo: false, error: 'Database connection failed' });
       }
 
-      const { search, popular, featured } = req.query;
+      const { search, popular, featured, category, group } = req.query;
       let query = {};
+
+      if (category) {
+        const categoryFilter = buildCategoryFilter(String(category));
+        if (categoryFilter) {
+          query = { ...query, ...categoryFilter };
+        }
+      } else if (group) {
+        const groupFilter = buildGroupFilter(String(group));
+        if (groupFilter) {
+          query = { ...query, ...groupFilter };
+        }
+      }
 
       // If search parameter is provided, create a search query
       if (search) {
-        query = {
+        const searchFilter = {
           $or: [
             { title: { $regex: search, $options: 'i' } },
             { subtitle: { $regex: search, $options: 'i' } },
             { location: { $regex: search, $options: 'i' } },
             { about: { $regex: search, $options: 'i' } },
-            { tourDetails: { $regex: search, $options: 'i' } }
-          ]
+            { tourDetails: { $regex: search, $options: 'i' } },
+          ],
         };
+        query = Object.keys(query).length
+          ? { $and: [query, searchFilter] }
+          : searchFilter;
       }
 
       // Add popular filter if requested
@@ -181,9 +200,12 @@ export default async function handler(req, res) {
     }
   } else if (req.method === 'POST') {
     if (useDemoData) {
+      const reason = !process.env.MONGODB_URI?.trim()
+        ? 'MONGODB_URI is missing. Add it to .env.local (local) or Vercel Environment Variables (production), then restart the server.'
+        : 'MongoDB connection failed. Check Atlas Network Access allows 0.0.0.0/0 and verify your connection string credentials.';
       return res.status(503).json({
         success: false,
-        error: 'Database not available. Cannot save package in demo mode.'
+        error: `Database not available. Cannot save package in demo mode. ${reason}`,
       });
     }
 

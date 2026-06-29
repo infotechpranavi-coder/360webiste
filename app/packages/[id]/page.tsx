@@ -44,6 +44,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { SITE_NAME, brandedText } from "@/lib/branding";
+import { getCategoryByValue } from "@/lib/packageExperienceCategories";
 import { useInquiryForm } from "@/contexts/InquiryFormContext";
 
 // Utility function to render text with bold formatting
@@ -2496,6 +2497,8 @@ Key Highlights`,
     packageData.packageCategory?.toLowerCase() === 'luxury'
   );
 
+  const experienceCategory = getCategoryByValue(packageData.packageCategory);
+
   return (
     <div className={`min-h-screen ${playfair.variable} ${cormorant.variable} ${poppins.variable} font-sans bg-[#faf8f3]`}>
       {/* Immersive Hero Section */}
@@ -2544,7 +2547,18 @@ Key Highlights`,
           <div className="container mx-auto max-w-7xl">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="max-w-3xl animate-fade-in-up">
-                <div className="flex items-center gap-3 mb-6">
+                <div className="flex items-center gap-3 mb-6 flex-wrap">
+                  {experienceCategory ? (
+                    <Link href={experienceCategory.href}>
+                      <Badge className="bg-teal-600 hover:bg-teal-700 text-white border-none px-5 py-2 text-xs font-black uppercase tracking-[0.15em] shadow-xl cursor-pointer">
+                        {experienceCategory.label}
+                      </Badge>
+                    </Link>
+                  ) : packageData.packageCategory ? (
+                    <Badge className="bg-teal-600 text-white border-none px-5 py-2 text-xs font-black uppercase tracking-[0.15em] shadow-xl">
+                      {packageData.packageCategory}
+                    </Badge>
+                  ) : null}
                   {isPremium ? (
                     <Badge className="bg-[#bd9245] text-white border-none px-6 py-2 text-xs font-black uppercase tracking-[0.2em] shadow-xl">
                       <Sparkles className="h-3 w-3 mr-2" />
@@ -2653,9 +2667,17 @@ Key Highlights`,
                         transition={{ delay: 0.2 }}
                         className="flex flex-wrap gap-4 mb-8"
                       >
-                        <Badge className="bg-[#bd9245] text-white hover:bg-[#bd9245] border-none px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-[#bd9245]/30">
-                          {packageData.packageCategory} Selection
-                        </Badge>
+                        {experienceCategory ? (
+                          <Link href={experienceCategory.href}>
+                            <Badge className="bg-teal-600 hover:bg-teal-700 text-white border-none px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-teal-600/30 cursor-pointer">
+                              {experienceCategory.label}
+                            </Badge>
+                          </Link>
+                        ) : (
+                          <Badge className="bg-[#bd9245] text-white hover:bg-[#bd9245] border-none px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.2em] shadow-2xl shadow-[#bd9245]/30">
+                            {packageData.packageCategory} Selection
+                          </Badge>
+                        )}
                         <Badge className="bg-white/10 backdrop-blur-2xl text-white border-white/10 px-8 py-3 rounded-full text-xs font-black uppercase tracking-[0.2em]">
                           {packageData.packageType}
                         </Badge>
@@ -2777,8 +2799,8 @@ Key Highlights`,
                     <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl mb-12">
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 p-8">
                         <div className="space-y-1">
-                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Pricing From</p>
-                          <p className="text-xl font-black text-gray-900 tracking-tighter"> {formatPrice(packageData.price)}</p>
+                          <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Pricing</p>
+                          <p className="text-xl font-black text-[#bd9245] tracking-tighter uppercase">On Request</p>
                         </div>
                         <div className="space-y-1">
                           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Experience Vibe</p>
@@ -2919,11 +2941,8 @@ Key Highlights`,
                                     </div>
                                     {price ? (
                                       <div className="mt-auto pt-6 border-t border-white/10">
-                                        <div className={`text-3xl font-black tracking-tighter ${isHighlighted ? 'text-[#bd9245]' : 'text-[#1e1f44]'}`}>
-                                          R {price}
-                                        </div>
-                                        <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${isHighlighted ? 'text-white/60' : 'text-gray-400'}`}>
-                                          {option.includes('Free') ? 'Complimentary' : 'Per Person'}
+                                        <p className={`text-sm font-bold uppercase tracking-widest ${isHighlighted ? 'text-[#bd9245]' : 'text-gray-500'}`}>
+                                          Contact us for pricing
                                         </p>
                                       </div>
                                     ) : (
@@ -3684,8 +3703,7 @@ Key Highlights`,
                           <p className="font-bold text-gray-900 text-lg">At the Top</p>
                           <p className="text-[10px] text-gray-400 font-medium">Levels 124 & 125</p>
                           <div className="mt-4 flex items-baseline gap-1">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">From</span>
-                            <span className="text-2xl font-bold text-gray-900 tracking-tight">R 200</span>
+                            <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Contact for pricing</span>
                           </div>
                         </div>
                         <div className="p-5 bg-gray-900 rounded-2xl border border-gray-800 relative group transition-all shadow-lg">
@@ -3694,14 +3712,19 @@ Key Highlights`,
                           <p className="font-bold text-white text-lg">At the Top SKY</p>
                           <p className="text-[10px] text-white/50 font-medium">Levels 124, 125 & 148</p>
                           <div className="mt-4 flex items-baseline gap-1">
-                            <span className="text-[10px] font-bold text-white/40 uppercase tracking-tight">From</span>
-                            <span className="text-2xl font-bold text-amber-500 tracking-tight">R 410</span>
+                            <span className="text-sm font-bold text-amber-500 uppercase tracking-wider">Contact for pricing</span>
                           </div>
                         </div>
                       </div>
                       <div className="block">
                         <Button
-                          onClick={() => openForm({ title: packageData.title, type: isAttractionPackage ? 'Ticket' : 'Package' })}
+                          onClick={() => openForm({
+                            title: packageData.title,
+                            type: isAttractionPackage ? 'Ticket' : 'Package',
+                            referenceId: packageData._id,
+                            category: experienceCategory?.label || packageData.packageCategory,
+                            duration: packageData.duration,
+                          })}
                           className="w-full h-14 bg-gray-900 hover:bg-black text-white font-bold uppercase tracking-widest rounded-2xl transition-all duration-300">
                           Contact Us to Book
                         </Button>
@@ -3718,22 +3741,10 @@ Key Highlights`,
                 {/* Booking Card */}
                 <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
                   <div className="p-8 text-center bg-gray-50 border-b border-gray-100">
-                    <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest mb-4">Investment of Choice</p>
+                    <p className="text-amber-600 text-[10px] font-bold uppercase tracking-widest mb-4">Tailored Quote</p>
                     <div className="flex flex-col items-center gap-2">
-                      {isPremium && packageData.price === 0 ? (
-                        <>
-                          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Custom Pricing</h2>
-                          <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-2 border-t border-gray-100 pt-2">Tailored Concierge Quote</span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Starting at</span>
-                            <h2 className="text-5xl font-bold tracking-tight text-gray-900">{formatPrice(packageData.price)}</h2>
-                          </div>
-                          <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-1">per explorer / private vehicle</span>
-                        </>
-                      )}
+                      <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Enquire for Pricing</h2>
+                      <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest mt-2 border-t border-gray-100 pt-2">We&apos;ll send a custom quote for your group</span>
                     </div>
                     {isPremium && (
                       <div className="mt-6 flex items-center justify-center gap-2 bg-amber-50 py-2 px-4 rounded-full border border-amber-100">
@@ -3747,7 +3758,13 @@ Key Highlights`,
                     <div className="space-y-4">
                       <Button
                         className="w-full h-16 bg-gray-900 hover:bg-black text-white font-bold uppercase tracking-widest rounded-2xl shadow-lg group transition-all duration-300"
-                        onClick={() => openForm({ title: packageData.title, type: 'Package' })}
+                        onClick={() => openForm({
+                          title: packageData.title,
+                          type: 'Package',
+                          referenceId: packageData._id,
+                          category: experienceCategory?.label || packageData.packageCategory,
+                          duration: packageData.duration,
+                        })}
                       >
                         <span className="flex items-center gap-3">
                           Enquire Now
@@ -3757,7 +3774,13 @@ Key Highlights`,
                       <Button
                         variant="outline"
                         className="w-full h-16 border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-bold uppercase tracking-widest rounded-2xl transition-all duration-300"
-                        onClick={() => openForm({ title: packageData.title, type: 'Package' })}
+                        onClick={() => openForm({
+                          title: packageData.title,
+                          type: 'Package',
+                          referenceId: packageData._id,
+                          category: experienceCategory?.label || packageData.packageCategory,
+                          duration: packageData.duration,
+                        })}
                       >
                         <Phone className="h-4 w-4 mr-2" />
                         Expert Consultation

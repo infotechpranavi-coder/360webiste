@@ -1,8 +1,5 @@
-import PackageExperiencePage from '@/components/PackageExperiencePage';
-import { getCategoryBySlug } from '@/lib/packageExperienceCategories';
+import { redirect } from 'next/navigation';
 
-export default function AdventureActivitiesPage() {
-  const category = getCategoryBySlug('adventure');
-  if (!category) return null;
-  return <PackageExperiencePage category={category} />;
+export default function LegacyAdventurePage() {
+  redirect('/packages/whitewater-rafting');
 }

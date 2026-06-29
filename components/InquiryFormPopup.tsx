@@ -77,18 +77,36 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
     setIsSubmitting(true);
 
     try {
+      const message =
+        formData.message.trim() ||
+        (productInfo && productInfo.type !== 'General'
+          ? `I am interested in the ${productInfo.type}: ${productInfo.title}. Please provide me with more details.`
+          : '') ||
+        [
+          formData.destination && `Destination: ${formData.destination}`,
+          formData.travelDate && `Travel date: ${formData.travelDate}`,
+          formData.travelers && `Travelers: ${formData.travelers}`,
+          formData.budget && `Budget: ${formData.budget}`,
+        ]
+          .filter(Boolean)
+          .join('\n') ||
+        'General inquiry';
+
       const payload = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        packageType: productInfo && productInfo.type !== 'General' ? productInfo.type : undefined,
-        packageName: productInfo && productInfo.type !== 'General' ? productInfo.title : undefined,
-        subject: productInfo && productInfo.type !== 'General' ? `Inquiry for ${productInfo.type}: ${productInfo.title}` : 'General Inquiry',
+        packageType: productInfo?.category || (productInfo && productInfo.type !== 'General' ? productInfo.type : ''),
+        packageName: productInfo?.title || '',
+        packageDuration: productInfo?.duration || '',
+        subject: productInfo && productInfo.type !== 'General'
+          ? `Inquiry for ${productInfo.type}: ${productInfo.title}`
+          : 'General Inquiry',
         destination: formData.destination,
         travelDate: formData.travelDate,
         travelers: formData.travelers,
         budget: formData.budget,
-        message: formData.message,
+        message,
       };
 
       const res = await fetch('/api/enquiries', {

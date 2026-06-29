@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Minus, X, Upload, Star } from "lucide-react";
 import { compressImage } from "@/lib/utils";
-import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
+import { PACKAGE_EXPERIENCE_CATEGORIES, PACKAGE_NAV_GROUPS, getNavGroupForCategory } from "@/lib/packageExperienceCategories";
 import { SITE_NAME } from "@/lib/branding";
 
 interface ItineraryDay {
@@ -62,7 +62,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
     capacity: "",
     packageType: "",
     place: "",
-    packageCategory: "Upcoming Rides",
+    packageCategory: "Yachts & Sailing Cruises",
     bestTimeToVisit: {
       yearRound: "",
       winter: "",
@@ -96,23 +96,27 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
   const [uploading, setUploading] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [packageGroupSlug, setPackageGroupSlug] = useState(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
+
+  const selectedPackageGroup =
+    PACKAGE_NAV_GROUPS.find((group) => group.slug === packageGroupSlug) ?? PACKAGE_NAV_GROUPS[0];
 
   // Initialize form data when packageData changes
   useEffect(() => {
     if (packageData) {
       // Map category value to ensure it matches SelectItem values
       const mapCategory = (category: string | undefined): string => {
-        if (!category) return "Upcoming Rides";
+        if (!category) return "Yachts & Sailing Cruises";
         const match = PACKAGE_EXPERIENCE_CATEGORIES.find(
           (item) =>
             item.value.toLowerCase() === category.toLowerCase() ||
             item.legacyValues?.some((legacy) => legacy.toLowerCase() === category.toLowerCase())
         );
-        return match?.value || "Upcoming Rides";
+        return match?.value || category;
       };
 
       const mappedCategory = mapCategory(packageData.packageCategory);
-      console.log('Package Category:', packageData.packageCategory, 'Mapped to:', mappedCategory);
+      setPackageGroupSlug(getNavGroupForCategory(mappedCategory).slug);
 
       setFormData({
         title: packageData.title || "",
@@ -230,6 +234,14 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
       ...prev,
       [field]: value
     }));
+  };
+
+  const handlePackageGroupChange = (groupSlug: string) => {
+    setPackageGroupSlug(groupSlug);
+    const group = PACKAGE_NAV_GROUPS.find((g) => g.slug === groupSlug);
+    if (group?.items[0]) {
+      handleInputChange("packageCategory", group.items[0].value);
+    }
   };
 
   const handleAddUrl = () => {
@@ -646,7 +658,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
       capacity: "",
       packageType: "international",
       place: "bhutan",
-      packageCategory: "Upcoming Rides",
+      packageCategory: "Yachts & Sailing Cruises",
       bestTimeToVisit: {
         yearRound: "",
         winter: "",
@@ -661,6 +673,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
     setWhyPremiumSkygoTours([]);
     setItinerary([{ id: "1", day: 1, title: "", description: "" }]);
     setSubmitError("");
+    setPackageGroupSlug(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
     setTransportation([]);
     setAccommodation([]);
     setInclusions([{ id: "1", category: "", items: [""] }]);
@@ -713,18 +726,39 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Experience Page *</label>
-              <Select value={formData.packageCategory || "Upcoming Rides"} onValueChange={(value) => handleInputChange('packageCategory', value)}>
-                <SelectTrigger><SelectValue placeholder="Select experience page" /></SelectTrigger>
-                <SelectContent className="z-[200]">
-                  {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
-                    <SelectItem key={category.value} value={category.value}>{category.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-gray-500">Package appears on the matching page under Packages in the navbar.</p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Experience Type *</label>
+                <Select value={packageGroupSlug} onValueChange={handlePackageGroupChange}>
+                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent className="z-[200]">
+                    {PACKAGE_NAV_GROUPS.map((group) => (
+                      <SelectItem key={group.slug} value={group.slug}>
+                        {group.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">Choose the main category (Water, Land — Motor, Land — Physical, or Sky).</p>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Experience Page *</label>
+                <Select
+                  value={formData.packageCategory || "Yachts & Sailing Cruises"}
+                  onValueChange={(value) => handleInputChange("packageCategory", value)}
+                >
+                  <SelectTrigger><SelectValue placeholder="Select experience page" /></SelectTrigger>
+                  <SelectContent className="z-[200] max-h-72">
+                    {selectedPackageGroup?.items.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}{category.isFuture ? " (Future)" : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500">Package appears on this page under Packages in the navbar.</p>
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Place / Location *</label>

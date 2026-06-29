@@ -1,8 +1,5 @@
-import PackageExperiencePage from '@/components/PackageExperiencePage';
-import { getCategoryBySlug } from '@/lib/packageExperienceCategories';
+import { redirect } from 'next/navigation';
 
-export default function BikeSuvExpeditionsPage() {
-  const category = getCategoryBySlug('bike-suv-expeditions');
-  if (!category) return null;
-  return <PackageExperiencePage category={category} />;
+export default function LegacyBikeSuvPage() {
+  redirect('/packages/domestic-north-bike-expeditions');
 }

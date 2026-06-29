@@ -10,6 +10,7 @@ import connectDB from "@/lib/mongodb";
 import Banner from "@/models/Banner";
 import Package from "@/models/Package";
 import Settings from "@/models/Settings";
+import { getHeroBannerUrl } from "@/lib/utils";
 
 export default async function Home() {
   // Use try/catch for database operations
@@ -51,6 +52,17 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen">
+      {initialBanners[0]?.image?.url && (
+        <link
+          rel="preload"
+          as="image"
+          href={getHeroBannerUrl(
+            initialBanners[0].image.url,
+            initialBanners[0].image.public_id,
+            3840
+          )}
+        />
+      )}
       <HeroExplore initialBanners={initialBanners} />
       <AboutHomeSection />
       {settings.exploreSection !== false && <ExploreWithUs />}

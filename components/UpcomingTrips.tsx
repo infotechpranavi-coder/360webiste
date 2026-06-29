@@ -8,10 +8,10 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   getCategoryBySlug,
-  packageMatchesExperienceCategory,
+  packageMatchesNavGroup,
 } from '@/lib/packageExperienceCategories';
 
-const UPCOMING_CATEGORY = getCategoryBySlug('upcoming-rides')!;
+const FEATURED_CATEGORY = getCategoryBySlug('yachts-sailing-cruises')!;
 
 interface TripCard {
   id: string;
@@ -36,7 +36,7 @@ const UpcomingTrips = () => {
         if (result.success && result.data?.length) {
           const matched = result.data
             .filter((pkg: { packageCategory?: string }) =>
-              packageMatchesExperienceCategory(pkg.packageCategory, UPCOMING_CATEGORY)
+              packageMatchesNavGroup(pkg.packageCategory, 'water')
             )
             .map((pkg: {
               _id: string;
@@ -48,7 +48,7 @@ const UpcomingTrips = () => {
               id: pkg._id,
               title: pkg.title,
               location: pkg.location || pkg.place || 'Explore 360',
-              image: pkg.images?.[0]?.url || UPCOMING_CATEGORY.heroImage,
+              image: pkg.images?.[0]?.url || FEATURED_CATEGORY.heroImage,
             }));
           setTrips(matched);
         } else {
@@ -74,23 +74,23 @@ const UpcomingTrips = () => {
         <div className="grid lg:grid-cols-4 gap-8 items-end">
           <div className="lg:col-span-3">
             <p className="text-[#bd9245] font-bold text-sm uppercase tracking-[0.2em] mb-3">
-              Upcoming Rides
+              Water Adventures
             </p>
             <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-gray-900 mb-6">
-              UPCOMING TRIPS
+              FEATURED WATER TRIPS
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl">
-              Scheduled road trips, scenic drives, and curated ride experiences — straight from our
-              Upcoming Rides collection.
+              Yacht cruises, kayaking, rafting, and more — curated water experiences from our
+              Explore 360 collection.
             </p>
           </div>
           <div className="lg:col-span-1 lg:text-right">
             <Button
               variant="outline"
               className="border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white px-8 py-6 rounded-full font-bold"
-              onClick={() => router.push(UPCOMING_CATEGORY.href)}
+              onClick={() => router.push(FEATURED_CATEGORY.href)}
             >
-              View All Rides
+              View All Water Trips
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -101,17 +101,17 @@ const UpcomingTrips = () => {
         <div className="flex flex-col items-center justify-center py-16">
           <Loader2 className="w-10 h-10 text-[#bd9245] animate-spin mb-4" />
           <p className="text-gray-500 font-semibold uppercase tracking-widest text-xs">
-            Loading upcoming rides...
+            Loading water trips...
           </p>
         </div>
       ) : trips.length === 0 ? (
         <div className="container mx-auto px-4 text-center py-12">
-          <p className="text-gray-500 mb-6">No upcoming rides published yet.</p>
+          <p className="text-gray-500 mb-6">No water trips published yet.</p>
           <Button
-            onClick={() => router.push(UPCOMING_CATEGORY.href)}
+            onClick={() => router.push(FEATURED_CATEGORY.href)}
             className="bg-[#bd9245] hover:bg-[#a07835] text-white rounded-full px-8"
           >
-            Browse Upcoming Rides
+            Browse Water Experiences
           </Button>
         </div>
       ) : (

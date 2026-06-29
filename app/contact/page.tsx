@@ -81,6 +81,19 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
+      const message =
+        formData.message.trim() ||
+        [
+          formData.subject && `Subject: ${formData.subject}`,
+          formData.destination && `Destination: ${formData.destination}`,
+          formData.travelDate && `Travel date: ${formData.travelDate}`,
+          formData.travelers && `Travelers: ${formData.travelers}`,
+          formData.budget && `Budget: ${formData.budget}`,
+        ]
+          .filter(Boolean)
+          .join('\n') ||
+        'Contact form inquiry';
+
       const res = await fetch('/api/enquiries', {
         method: 'POST',
         headers: {
@@ -94,7 +107,7 @@ const ContactForm = () => {
           travelDate: formData.travelDate,
           travelers: formData.travelers,
           budget: formData.budget,
-          message: formData.message,
+          message,
           subject: formData.subject,
           packageType: formData.packageType,
           packageName: formData.packageName,

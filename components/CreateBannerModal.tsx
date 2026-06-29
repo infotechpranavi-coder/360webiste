@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, X } from "lucide-react";
 import { BannerData } from "@/lib/types";
-import { compressImage } from "@/lib/utils";
+import { prepareBannerImageForUpload } from "@/lib/utils";
 
 interface CreateBannerModalProps {
     isOpen: boolean;
@@ -61,7 +61,7 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
             let uploadedImage = { public_id: "", url: "", alt: "" };
 
             if (image) {
-                const base64 = await compressImage(image);
+                const base64 = await prepareBannerImageForUpload(image);
                 const uploadRes = await fetch('/api/upload', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -192,7 +192,7 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
                                             <Upload className="h-6 w-6 text-gray-300 group-hover:text-[#bd9245] transition-colors" />
                                         </div>
                                         <p className="text-xs font-black text-[#111827] uppercase tracking-widest">Upload Professional Visuals</p>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mt-1">PNG, JPG or WEBP recommended</p>
+                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mt-1">PNG, JPG or WEBP — any size accepted</p>
                                         <input type="file" hidden ref={fileInputRef} onChange={handleImageChange} accept="image/*" />
                                     </div>
                                     <div className="flex gap-2">

@@ -123,8 +123,8 @@ const ExploreWithUs = () => {
               <div className="absolute top-0 left-0 w-64 h-80 bg-white p-4 shadow-2xl transform rotate-[-8deg] z-10">
                 <div className="relative w-full h-full">
                   <Image
-                    src="/cape town,south africa.webp"
-                    alt="Cape Town, South Africa"
+                    src="/safeimagekit-kayak2__1_.webp"
+                    alt="Kayaking adventure"
                     fill
                     className="object-cover"
                   />
@@ -135,8 +135,8 @@ const ExploreWithUs = () => {
               <div className="absolute top-20 left-32 w-64 h-80 bg-white p-4 shadow-2xl transform rotate-[5deg] z-20">
                 <div className="relative w-full h-full">
                   <Image
-                    src="/cape town.webp"
-                    alt="Cape Town"
+                    src="/four-adventurous-friends-whitewater-rafting-through-rapids-free-photo.webp"
+                    alt="Whitewater rafting"
                     fill
                     className="object-cover"
                   />
@@ -147,8 +147,8 @@ const ExploreWithUs = () => {
               <div className="absolute top-40 left-64 w-64 h-80 bg-white p-4 shadow-2xl transform rotate-[-3deg] z-30">
                 <div className="relative w-full h-full">
                   <Image
-                    src="/coast , south afirca.webp"
-                    alt="South Africa Coast"
+                    src="/bungee-jumping-nedir.webp"
+                    alt="Bungee jumping"
                     fill
                     className="object-cover"
                   />

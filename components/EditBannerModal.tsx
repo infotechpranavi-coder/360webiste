@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, X } from "lucide-react";
 import { BannerData } from "@/lib/types";
-import { compressImage } from "@/lib/utils";
+import { prepareBannerImageForUpload } from "@/lib/utils";
 
 interface EditBannerModalProps {
     isOpen: boolean;
@@ -76,7 +76,7 @@ const EditBannerModal = ({ isOpen, onClose, onBannerUpdated, banner }: EditBanne
             let updatedImage = banner.image;
 
             if (image) {
-                const base64 = await compressImage(image);
+                const base64 = await prepareBannerImageForUpload(image);
                 const uploadRes = await fetch('/api/upload', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

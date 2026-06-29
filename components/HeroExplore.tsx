@@ -5,26 +5,44 @@ import { useRouter } from "next/navigation";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import { BannerData } from "@/lib/types";
 import { SITE_NAME } from "@/lib/branding";
+import { getHeroBannerSrcSet, getHeroBannerUrl } from "@/lib/utils";
 
 interface HeroExploreProps {
   initialBanners?: BannerData[];
+}
+
+function useHeroImageWidth() {
+  const [width, setWidth] = useState(3840);
+
+  useEffect(() => {
+    const update = () => {
+      const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
+      const viewport = typeof window !== 'undefined' ? window.innerWidth : 1920;
+      setWidth(Math.min(3840, Math.max(1920, Math.ceil(viewport * dpr))));
+    };
+
+    update();
+    window.addEventListener('resize', update, { passive: true });
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  return width;
 }
 
 const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   const router = useRouter();
   const { openForm } = useInquiryForm();
   const sectionRef = useRef<HTMLElement>(null);
+  const heroWidth = useHeroImageWidth();
   
-  // Fallback banner if none are provided or uploaded
   const defaultBanner: BannerData = {
     _id: 'default',
     title: "TRAVEL\nMORE",
     subtitle: "WORRY LESS",
     image: {
-      url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+      url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=3840&q=100",
       public_id: "default",
       alt: "South African Safari"
     },
@@ -59,7 +77,6 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   };
 
   useEffect(() => {
-    // Only fetch if not provided via props
     if (initialBanners && initialBanners.length > 0) {
       return;
     }
@@ -99,50 +116,43 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
       ref={sectionRef}
       className="relative min-h-[110vh] flex items-center justify-center overflow-hidden bg-[#faf8f3]"
     >
-      {/* Background Images with AnimatePresence */}
       <div className="absolute inset-0 z-0">
-        <AnimatePresence initial={false}>
-          <motion.div
-            key={currentBanner._id}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="absolute inset-0"
-          >
-            <div className="absolute inset-0">
-              <Image
-                src={currentBanner.image.url}
-                alt={currentBanner.image.alt || currentBanner.title}
-                fill
-                className="object-cover"
-                priority={currentIndex === 0}
-                sizes="100vw"
-                quality={90}
-              />
-              {/* Overlay for readability */}
-              <div className="absolute inset-0 bg-black/25"></div>
-              {/* Vertical Gradient for depth */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10"></div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+        {banners.map((banner, index) => {
+          const isActive = index === currentIndex;
+          const src = getHeroBannerUrl(banner.image.url, banner.image.public_id, heroWidth);
+          const srcSet = getHeroBannerSrcSet(banner.image.url, banner.image.public_id);
+          const alt = banner.image.alt || banner.title;
 
-        {/* Bottom fade into page background for smooth section transition */}
-        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#faf8f3] via-[#faf8f3]/70 to-transparent z-10 pointer-events-none" />
+          return (
+            <img
+              key={banner._id}
+              src={src}
+              srcSet={srcSet}
+              sizes="100vw"
+              alt={alt}
+              aria-hidden={!isActive}
+              className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 ${
+                isActive ? 'opacity-100 z-[1]' : 'opacity-0 z-0'
+              }`}
+              fetchPriority={index === 0 ? 'high' : 'auto'}
+              decoding={index === 0 ? 'sync' : 'async'}
+            />
+          );
+        })}
+
+        <div className="absolute inset-0 z-[2] bg-black/15 pointer-events-none" />
+        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-black/30 via-transparent to-black/5 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-[#faf8f3] via-[#faf8f3]/70 to-transparent z-[3] pointer-events-none" />
       </div>
 
-
-
-      {/* Content with AnimatePresence */}
       <div className="relative z-20 container mx-auto px-4 text-center pt-24 md:pt-32">
         <div className="max-w-5xl mx-auto">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={currentIndex}
-              initial={{ opacity: 0, scale: 0.95, y: -40 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 1.05, y: 40 }}
+              initial={{ opacity: 0, y: -24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 24 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
             >
               <p className="text-amber-500 font-black uppercase tracking-[0.5em] text-xs sm:text-sm mb-6 drop-shadow-[0_2px_12px_rgba(0,0,0,1)]">
@@ -161,7 +171,6 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
             </motion.div>
           </AnimatePresence>
 
-          {/* Static CTA Button */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12 mb-24">
             <Button
               onClick={() => currentBanner.link ? router.push(currentBanner.link) : openForm()}
@@ -174,7 +183,6 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
         </div>
       </div>
 
-      {/* Slider Indicators */}
       {banners.length > 1 && (
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex gap-3">
           {banners.map((_, i) => (
@@ -193,8 +201,6 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   );
 };
 
-// Helper for class consolidation if not available in this scope, 
-// though typically it is. I'll check if I need to import it.
 function cn(...inputs: any[]) {
   return inputs.filter(Boolean).join(' ');
 }

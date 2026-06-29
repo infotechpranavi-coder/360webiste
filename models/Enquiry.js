@@ -8,7 +8,7 @@ const EnquirySchema = new mongoose.Schema({
   packageName: { type: String, default: '' },
   packageDuration: { type: String, default: '' },
   subject: { type: String, default: 'General Inquiry' },
-  message: { type: String, required: true },
+  message: { type: String, default: '' },
   destination: { type: String, default: '' },
   travelDate: { type: String, default: '' },
   travelers: { type: String, default: '' },
@@ -17,4 +17,8 @@ const EnquirySchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-export default mongoose.models.Enquiry || mongoose.model('Enquiry', EnquirySchema);
+if (mongoose.models.Enquiry) {
+  delete mongoose.models.Enquiry;
+}
+
+export default mongoose.model('Enquiry', EnquirySchema);
