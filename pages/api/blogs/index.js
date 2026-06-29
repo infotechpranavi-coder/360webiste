@@ -6,7 +6,9 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const blogs = await Blog.find({}).sort({ createdAt: -1 });
+      const { publishedOnly } = req.query;
+      const query = publishedOnly === 'true' ? { status: 'published' } : {};
+      const blogs = await Blog.find(query).sort({ createdAt: -1 });
       res.status(200).json({ success: true, data: blogs });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });

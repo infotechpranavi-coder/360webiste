@@ -189,7 +189,12 @@ export default async function handler(req, res) {
 
     try {
       console.log('Received package data:', JSON.stringify(req.body, null, 2));
-      const packageData = req.body;
+      const packageData = {
+        ...req.body,
+        duration: req.body.duration?.trim() || req.body.subtitle?.trim() || 'Flexible',
+        capacity: req.body.capacity?.trim() || '2 Adults',
+        subtitle: req.body.subtitle?.trim() || req.body.title?.trim() || 'Package',
+      };
       const newPackage = new Package(packageData);
       const savedPackage = await newPackage.save();
       console.log('Package saved successfully:', savedPackage._id);

@@ -167,7 +167,7 @@ const PackageSchema = new mongoose.Schema({
   },
   duration: {
     type: String,
-    required: true,
+    default: 'Flexible',
   },
   location: {
     type: String,
@@ -175,7 +175,7 @@ const PackageSchema = new mongoose.Schema({
   },
   capacity: {
     type: String,
-    required: true,
+    default: '2 Adults',
   },
   packageType: {
     type: String,
@@ -189,7 +189,7 @@ const PackageSchema = new mongoose.Schema({
   packageCategory: {
     type: String,
     required: true,
-    enum: ['Regular', 'Premium', 'Luxury', 'Adventure', 'Oman Tour', 'Attraction and Activity', 'Deluxe', 'Cultural', 'Wildlife', 'Trekking', 'Spiritual', 'Beach', 'regular'],
+    enum: ['Regular', 'Premium', 'Luxury', 'Adventure', 'Adventure Activities', 'Upcoming Rides', 'Bike & SUV 4x4 Expeditions', 'Sailing Experiences', 'Oman Tour', 'Attraction and Activity', 'Deluxe', 'Cultural', 'Wildlife', 'Trekking', 'Spiritual', 'Beach', 'regular'],
     default: 'Regular',
   },
   images: [ImageSchema],

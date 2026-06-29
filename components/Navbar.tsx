@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
+import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
 
 interface SearchPackage {
   _id: string;
@@ -94,16 +95,10 @@ const Navbar = () => {
     {
       name: 'Packages',
       href: '/packages',
-      submenu: [
-        { name: 'Exclusive Tours', href: '/tours' },
-        { name: 'International Packages', href: '/international' },
-        { name: 'Domestic Packages', href: '/domestic' },
-        { name: 'Premium Packages', href: '/packages/premium' },
-        { name: 'Luxury Packages', href: '/packages/luxury' },
-        { name: 'Adventure Activities', href: '/packages/adventure' },
-        { name: 'OMAN Tour', href: '/packages/oman' },
-        { name: 'Attraction and Activity', href: '/packages/attractions' },
-      ]
+      submenu: PACKAGE_EXPERIENCE_CATEGORIES.map((category) => ({
+        name: category.label,
+        href: category.href,
+      })),
     },
     { name: 'Travel Blog ', href: '/blogs' },
     { name: 'Contact', href: '/contact' },

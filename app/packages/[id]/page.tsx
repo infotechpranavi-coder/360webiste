@@ -43,6 +43,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { SITE_NAME, brandedText } from "@/lib/branding";
 import { useInquiryForm } from "@/contexts/InquiryFormContext";
 
 // Utility function to render text with bold formatting
@@ -316,9 +317,9 @@ Why Choose This Trip?
 • Perfect for families, couples, and honeymooners
 • Customizable activities and flexible scheduling
 
-Why SkyGo for This Trip?
+Why ${SITE_NAME} for This Trip?
 
-At SkyGo, luxury is not about exaggeration; it’s about execution, reliability, and transparency.
+At ${SITE_NAME}, luxury is not about exaggeration; it's about execution, reliability, and transparency.
 
 • Private-first approach: No shared vehicles or rushed group schedules
 • Per-vehicle pricing: Better value for families and small groups
@@ -504,7 +505,7 @@ Why Choose This Trip?
 • Ideal for families, couples, and private groups
 • Balanced mix of sightseeing and leisure
 
-Why Skygo UAE for This Journey?
+Why Explore 360 UAE for This Journey?
 
 • Dedicated private vehicles and professional drivers
 • Custom itinerary adjustments based on preferences
@@ -769,7 +770,7 @@ Why Choose This Trip ?
 • Ideal for families, honeymooners, and small groups
 • Balanced mix of culture, luxury, and leisure
 
-Why SkyGo for This Journey ?
+Why Explore 360 for This Journey ?
 
 • Per - vehicle pricing for better value
 • Private vehicles and experienced local staff
@@ -1440,7 +1441,7 @@ This transit tour operates throughout the year.
 
 Cape Town's infrastructure ensures comfort even during cooler months.
 
-Why SkyGo for This Transit Trip ?
+Why Explore 360 for This Transit Trip ?
 
 • Expertise in short - stay and stopover logistics
 • Flight - time - sensitive planning
@@ -1633,7 +1634,7 @@ With flexible hotel categories and a mix of guided tours and personal free time,
 
 Tour Overview 
 Cape Town is a destination of contrasts, historic neighborhoods sit beside futuristic skylines, calm coastal landscapes balance vibrant urban life, and traditional hospitality blends seamlessly with modern style.The Cape Town Classic Discovery tour has been crafted to reflect this diversity while maintaining simplicity and ease throughout the journey.
-From the moment you arrive, all major travel logistics are handled by SkyGo, allowing you to focus entirely on enjoying the destination. Private airport transfers ensure a smooth arrival, while carefully scheduled sightseeing days prevent fatigue.
+From the moment you arrive, all major travel logistics are handled by Explore 360, allowing you to focus entirely on enjoying the destination. Private airport transfers ensure a smooth arrival, while carefully scheduled sightseeing days prevent fatigue.
 The tour introduces Cape Town gradually, starting with a relaxed arrival day followed by guided city exploration.Guests experience historical Cape Town, with its heritage areas and traditional markets, and modern districts, known for architectural landmarks.
 A wildlife safari offers a cultural contrast to the city experience, providing insight into the region's natural landscape. The evening Harbour Cruise delivers a calm, scenic dining experience, ideal for families and couples alike.
 The inclusion of a Winelands tour adds depth to the itinerary, offering a broader understanding of the Western Cape beyond the city.A dedicated free day allows guests to shop, relax, or explore independently, an essential element for a comfortable holiday.
@@ -2696,7 +2697,7 @@ Key Highlights`,
                   </div>
 
                   <CardContent className="p-8 md:p-12">
-                    {/* About SkyGo Story */}
+                    {/* About Explore 360 Story */}
                     {packageData.about && (
                       <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl mb-12">
                         <div className="p-8 bg-gray-50 border-b border-gray-100">
@@ -2706,13 +2707,13 @@ Key Highlights`,
                             </div>
                             <div>
                               <h4 className="text-amber-600 font-bold uppercase text-[10px] tracking-[0.4em]">The Collection</h4>
-                              <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">The SkyGo Story</h3>
+                              <h3 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">The {SITE_NAME} Story</h3>
                             </div>
                           </div>
                         </div>
                         <CardContent className="p-8">
                           <p className="text-gray-600 text-xl leading-relaxed font-serif italic">
-                            {packageData.about}
+                            {brandedText(packageData.about)}
                           </p>
                         </CardContent>
                       </Card>
@@ -2836,7 +2837,7 @@ Key Highlights`,
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                               {(Array.isArray(packageData.services) ? packageData.services : packageData.services.split(',')).map((service: string, idx: number) => (
                                 <div key={idx} className="p-6 bg-gray-50 border border-gray-100 rounded-2xl text-center group transition-colors hover:bg-white hover:shadow-md">
-                                  <span className="text-gray-900 font-black text-[10px] uppercase tracking-[0.1em]">{service.trim()}</span>
+                                  <span className="text-gray-900 font-black text-[10px] uppercase tracking-[0.1em]">{brandedText(service.trim())}</span>
                                 </div>
                               ))}
                             </div>
@@ -3088,7 +3089,7 @@ Key Highlights`,
                               <div className="p-3 bg-amber-50 rounded-2xl">
                                 <Sparkles className="h-6 w-6 text-amber-600" />
                               </div>
-                              <h4 className="text-xl font-black text-gray-900 uppercase tracking-tight">Premium Edge</h4>
+                              <h4 className="text-xl font-black text-gray-900 uppercase tracking-tight">The {SITE_NAME} Edge</h4>
                             </div>
                             <ul className="space-y-4">
                               {packageData.whyPremiumSkygoTours.map((w: string, idx: number) => (
@@ -3221,10 +3222,10 @@ Key Highlights`,
                     </CardContent>
                   </Card>
 
-                  {/* About SkyGo */}
+                  {/* About Explore 360 */}
                   <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
                     <div className="bg-gray-50 px-8 py-5 border-b border-gray-100">
-                      <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">About SkyGo</h4>
+                      <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">About {SITE_NAME}</h4>
                     </div>
                     <CardContent className="p-8">
                       <p className="text-gray-600 text-base leading-relaxed italic border-l-2 border-amber-500/20 pl-6">
@@ -3246,13 +3247,13 @@ Key Highlights`,
                             {(packageData.services as string[]).map((service, idx) => (
                               <div key={idx} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                                 <CheckCircle className="h-4 w-4 text-blue-500 shrink-0" />
-                                <span className="text-gray-700 text-base font-medium">{service}</span>
+                                <span className="text-gray-700 text-base font-medium">{brandedText(service)}</span>
                               </div>
                             ))}
                           </div>
                         ) : (
                           <p className="text-gray-600 text-base leading-relaxed">
-                            {packageData.services}
+                            {brandedText(packageData.services as string)}
                           </p>
                         )}
                       </CardContent>
@@ -3305,7 +3306,7 @@ Key Highlights`,
                           </div>
                           <CardContent className="p-8">
                             <p className="text-gray-600 text-base leading-relaxed whitespace-pre-line font-medium">
-                              {packageData.tourOverview}
+                              {brandedText(packageData.tourOverview)}
                             </p>
                           </CardContent>
                         </Card>
@@ -3564,10 +3565,10 @@ Key Highlights`,
                         <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
                           <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
                             <Sparkles className="h-5 w-5 text-amber-600" />
-                            <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">The SkyGo Edge</h4>
+                            <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">The {SITE_NAME} Edge</h4>
                           </div>
                           <CardContent className="p-8">
-                             <h3 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Why Premium SkyGo?</h3>
+                             <h3 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tighter">Why Premium {SITE_NAME}?</h3>
                             <ul className="space-y-4">
                               {packageData.whyPremiumSkygoTours.map((w: string, idx: number) => (
                                 <li key={idx} className="flex items-start gap-4 p-4 bg-amber-50/30 rounded-2xl border border-amber-50">

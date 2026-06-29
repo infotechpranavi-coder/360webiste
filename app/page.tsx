@@ -1,5 +1,6 @@
 import HeroExplore from "../components/HeroExplore";
 export const dynamic = 'force-dynamic';
+import AboutHomeSection from "../components/AboutHomeSection";
 import ExploreWithUs from "../components/ExploreWithUs";
 import DestinationsGrid from "../components/DestinationsGrid";
 import UpcomingTrips from "../components/UpcomingTrips";
@@ -51,6 +52,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen">
       <HeroExplore initialBanners={initialBanners} />
+      <AboutHomeSection />
       {settings.exploreSection !== false && <ExploreWithUs />}
       {settings.destinationsSection !== false && <DestinationsGrid />}
       {settings.upcomingSection !== false && <UpcomingTrips />}

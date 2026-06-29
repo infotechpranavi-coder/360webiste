@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Minus, X, Upload, Star } from "lucide-react";
 import { compressImage } from "@/lib/utils";
+import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
+import { SITE_NAME, DEFAULT_ABOUT_TEXT, DEFAULT_SERVICES_TEXT } from "@/lib/branding";
 
 interface ItineraryDay {
   id: string;
@@ -44,8 +46,8 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     ideaFor: "",
     abstract: "",
     tourOverview: "",
-    about: "Premium SkyGo Tours is a specialized travel management company dedicated to crafting exceptional journeys across dynamic destinations.",
-    services: "Customized travel planning, Guided tours & local experiences, Group & family vacations, Luxury & adventure travel",
+    about: DEFAULT_ABOUT_TEXT,
+    services: DEFAULT_SERVICES_TEXT,
     tourDetails: "This carefully curated package offers a perfect blend of iconic landmarks, cultural immersion, and leisure activities.",
     price: "",
     duration: "",
@@ -53,7 +55,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     capacity: "",
     packageType: "international" as "international" | "domestic",
     place: "dubai",
-    packageCategory: "Regular",
+    packageCategory: "Upcoming Rides",
     bestTimeToVisit: { yearRound: "", winter: "", summer: "" },
     isFeaturedDestination: false,
     isPopularPackage: false,
@@ -89,11 +91,33 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
   const handleInputChange = (field: string, value: string) => setFormData(prev => ({ ...prev, [field]: value }));
 
   const handleAddUrl = () => {
-    if (currentImageUrl.trim() && !externalImageUrls.includes(currentImageUrl.trim())) {
-      setExternalImageUrls(prev => [...prev, currentImageUrl.trim()]);
+    const url = currentImageUrl.trim();
+    if (!url) return;
+    const total = images.length + externalImageUrls.length;
+    if (total >= 5) {
+      setSubmitError('Maximum 5 images allowed.');
+      return;
+    }
+    if (!externalImageUrls.includes(url)) {
+      setExternalImageUrls(prev => [...prev, url]);
       setCurrentImageUrl("");
+      setSubmitError("");
     }
   };
+
+  const addImageFiles = (fileList: FileList | null) => {
+    if (!fileList) return;
+    const remaining = 5 - images.length - externalImageUrls.length;
+    if (remaining <= 0) {
+      setSubmitError('Maximum 5 images allowed.');
+      return;
+    }
+    const newFiles = Array.from(fileList).slice(0, remaining);
+    setImages(prev => [...prev, ...newFiles]);
+    setSubmitError("");
+  };
+
+  const totalSelectedImages = images.length + externalImageUrls.length;
 
   // Image compression is now handled within handleSubmit using the global utility
 
@@ -127,7 +151,11 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
       // 2. Build payload
       const payload = {
         ...formData,
-        location: formData.place, // Use place as location to sync both fields
+        packageType: 'international',
+        location: formData.place,
+        duration: formData.duration?.trim() || formData.subtitle?.trim() || 'Flexible',
+        capacity: formData.capacity?.trim() || '2 Adults',
+        subtitle: formData.subtitle?.trim() || formData.title?.trim() || 'Package',
         price: parseFloat(formData.price as string),
         keyHighlights: keyHighlights.filter(h => h.trim()),
         hotelOptions: hotelOptions.filter(h => h.trim()),
@@ -169,11 +197,11 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
   const handleClose = () => {
     setFormData({
       title: "", subtitle: "", ideaFor: "", abstract: "", tourOverview: "",
-      about: "Premium SkyGo Tours is a specialized travel management company dedicated to crafting exceptional journeys across dynamic destinations.",
-      services: "Customized travel planning, Guided tours & local experiences, Group & family vacations, Luxury & adventure travel",
+      about: DEFAULT_ABOUT_TEXT,
+      services: DEFAULT_SERVICES_TEXT,
       tourDetails: "This carefully curated package offers a perfect blend of iconic landmarks, cultural immersion, and leisure activities.",
       price: "", duration: "", location: "", capacity: "",
-      packageType: "international", place: "dubai", packageCategory: "Regular",
+      packageType: "international", place: "dubai", packageCategory: "Upcoming Rides",
       bestTimeToVisit: { yearRound: "", winter: "", summer: "" },
       isFeaturedDestination: false,
       isPopularPackage: false,
@@ -234,43 +262,30 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Package Type *</label>
-              <Select value={formData.packageType} onValueChange={v => handleInputChange('packageType', v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <label className="text-sm font-medium">Experience Page *</label>
+              <Select value={formData.packageCategory} onValueChange={v => handleInputChange('packageCategory', v)}>
+                <SelectTrigger><SelectValue placeholder="Select experience page" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="domestic">Domestic</SelectItem>
-                  <SelectItem value="international">International</SelectItem>
+                  {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
+              <p className="text-xs text-gray-500">
+                Package appears on the matching page under Packages in the navbar.
+              </p>
             </div>
-            <div className="space-y-2 col-span-2">
+            <div className="space-y-2">
               <label className="text-sm font-medium">Place / Location *</label>
               <Input 
-                placeholder="e.g. Darjeeling, West Bengal or Dubai, UAE" 
+                placeholder="e.g. Cape Town, South Africa or Dubai, UAE" 
                 value={formData.place} 
                 onChange={e => handleInputChange('place', e.target.value)} 
               />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Category *</label>
-              <Select value={formData.packageCategory} onValueChange={v => handleInputChange('packageCategory', v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Regular">Regular</SelectItem>
-                  <SelectItem value="Premium">Premium</SelectItem>
-                  <SelectItem value="Luxury">Luxury</SelectItem>
-                  <SelectItem value="Adventure">Adventure</SelectItem>
-                  <SelectItem value="Deluxe">Deluxe</SelectItem>
-                  <SelectItem value="Oman Tour">Oman Tour</SelectItem>
-                  <SelectItem value="Attraction and Activity">Attraction & Activity</SelectItem>
-                  <SelectItem value="Cultural">Cultural</SelectItem>
-                  <SelectItem value="Wildlife">Wildlife</SelectItem>
-                  <SelectItem value="Trekking">Trekking</SelectItem>
-                  <SelectItem value="Beach">Beach</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </div>
 
@@ -383,7 +398,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
           {/* Why Premium Tours */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium">Why Premium SkyGo Tours?</label>
+              <label className="text-sm font-medium">Why Premium {SITE_NAME}?</label>
               <Button type="button" variant="outline" size="sm" onClick={() => setWhyPremiumDubaiTours(p => [...p, ""])}><Plus className="h-4 w-4 mr-1" /> Add</Button>
             </div>
             {whyPremiumDubaiTours.map((w, i) => (
@@ -514,37 +529,48 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
 
           {/* Images */}
           <div className="space-y-4">
-            <label className="text-sm font-medium">Package Images (Max 5)</label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Package Images (Max 5)</label>
+              <span className="text-xs text-gray-500">{totalSelectedImages}/5 selected</span>
+            </div>
             <div className="flex flex-col gap-4">
               <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 flex flex-col items-center gap-3 bg-gray-50/50 cursor-pointer hover:border-[#bd9245] transition-all" onClick={() => fileInputRef.current?.click()}>
                 <Upload className="h-8 w-8 text-gray-400" />
                 <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">Select Professional Images</p>
-                <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl">Choose Files</Button>
-                <input ref={fileInputRef} type="file" multiple accept="image/*" className="hidden" onChange={e => {
-                  const files = e.target.files;
-                  if (files) setImages(p => [...p, ...Array.from(files)].slice(0, 5));
-                }} />
-                {images.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {images.map((f, i) => (
-                      <Badge key={i} variant="secondary" className="flex items-center gap-1 bg-white border-gray-100 rounded-lg">
-                        {f.name.length > 15 ? f.name.substring(0, 15) + '...' : f.name}
-                        <X className="h-3 w-3 cursor-pointer text-red-400" onClick={(e) => { e.stopPropagation(); setImages(p => p.filter((_, j) => j !== i)); }} />
-                      </Badge>
-                    ))}
-                  </div>
-                )}
+                <Button variant="outline" size="sm" className="h-9 px-4 rounded-xl" type="button">Choose Files</Button>
+                <input ref={fileInputRef} type="file" multiple accept="image/*" className="hidden" onChange={e => addImageFiles(e.target.files)} />
               </div>
+
+              {images.length > 0 && (
+                <div className="flex flex-wrap gap-3">
+                  {images.map((file, i) => (
+                    <div key={`${file.name}-${file.lastModified}-${i}`} className="relative w-24 h-24 rounded-xl border border-gray-100 overflow-hidden group shadow-sm">
+                      <img src={URL.createObjectURL(file)} alt={file.name} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setImages(p => p.filter((_, j) => j !== i))}
+                        className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] px-1 py-0.5 truncate">
+                        {file.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <div className="flex gap-2">
                 <Input placeholder="OR Paste Image URL here..." value={currentImageUrl} onChange={e => setCurrentImageUrl(e.target.value)} className="h-12 rounded-xl flex-1" />
-                <Button variant="outline" onClick={handleAddUrl} className="h-12 rounded-xl font-bold uppercase text-[10px] tracking-widest px-6 hover:bg-[#bd9245] hover:text-white transition-all">Add URL</Button>
+                <Button type="button" variant="outline" onClick={handleAddUrl} disabled={totalSelectedImages >= 5} className="h-12 rounded-xl font-bold uppercase text-[10px] tracking-widest px-6 hover:bg-[#bd9245] hover:text-white transition-all">Add URL</Button>
               </div>
               {externalImageUrls.length > 0 && (
-                <div className="flex flex-wrap gap-3 mt-2">
+                <div className="flex flex-wrap gap-3">
                   {externalImageUrls.map((url, i) => (
-                    <div key={i} className="relative w-16 h-16 rounded-xl border border-gray-100 overflow-hidden group">
-                      <img src={url} className="w-full h-full object-cover" alt="" />
-                      <button onClick={() => setExternalImageUrls(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><X className="h-3 w-3" /></button>
+                    <div key={url} className="relative w-24 h-24 rounded-xl border border-gray-100 overflow-hidden group shadow-sm">
+                      <img src={url} className="w-full h-full object-cover" alt={`Package image ${i + 1}`} onError={(e) => { (e.target as HTMLImageElement).src = '/explore360-logo.png'; }} />
+                      <button type="button" onClick={() => setExternalImageUrls(prev => prev.filter((_, idx) => idx !== i))} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><X className="h-3 w-3" /></button>
                     </div>
                   ))}
                 </div>

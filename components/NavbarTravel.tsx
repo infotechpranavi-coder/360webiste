@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useRef } from "react";
-import { Search, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Menu, X, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
@@ -9,18 +9,29 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
+import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
+
+type NavSubItem = { name: string; href: string };
+type NavItem = {
+  name: string;
+  href: string;
+  submenu?: NavSubItem[];
+};
+
 const NavbarTravel = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [pillStyle, setPillStyle] = useState({ width: 0, left: 0, opacity: 0 });
-  const navRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const contactRef = useRef<HTMLAnchorElement | null>(null);
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
+  const [contactHovered, setContactHovered] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { openForm } = useInquiryForm();
+
+  const isBlogDetail = Boolean(pathname?.startsWith('/blogs/') && pathname !== '/blogs');
+  const useSolidNav = isScrolled || isBlogDetail;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,98 +41,47 @@ const NavbarTravel = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navigation = [
+  const navigation: NavItem[] = [
     { name: 'Home', href: '/' },
     { name: 'About', href: '/about' },
-    { name: 'Package', href: '/packages' },
-    { name: 'Tours', href: '/tours' },
-    { name: 'Tickets', href: '/tickets' },
-    { name: 'International', href: '/international' },
-    { name: 'Domestic', href: '/domestic' },
+    {
+      name: 'Package',
+      href: '/packages',
+      submenu: PACKAGE_EXPERIENCE_CATEGORIES.map((category) => ({
+        name: category.label,
+        href: category.href,
+      })),
+    },
     { name: 'Blogs', href: '/blogs' },
+    { name: 'Gallery', href: '/gallery' },
   ];
 
-  const isActive = (href: string) => {
+  const isActive = (href: string, submenu?: NavSubItem[]) => {
     if (href === '/') return pathname === '/';
-    return pathname?.startsWith(href) || false;
+    if (submenu?.length) {
+      return (
+        pathname === href ||
+        pathname?.startsWith(`${href}/`) ||
+        submenu.some((item) => pathname === item.href || pathname?.startsWith(`${item.href}/`))
+      );
+    }
+    return pathname === href || pathname?.startsWith(`${href}/`) || false;
   };
 
-  // Find active index
-  const activeIndex = navigation.findIndex(item => isActive(item.href));
   const isContactActive = isActive('/contact');
-  // Use index 8 for Contact Us (after the 8 navigation items)
-  const contactIndex = 8;
-  const currentIndex = hoveredIndex !== null
-    ? hoveredIndex
-    : (isContactActive ? contactIndex : (activeIndex >= 0 ? activeIndex : null));
 
-  // Update pill position on hover/active change
-  useEffect(() => {
-    // Small delay to ensure refs are set
-    const timer = setTimeout(() => {
-      let element: HTMLAnchorElement | null = null;
+  const isHighlighted = (index: number, active: boolean) =>
+    active || hoveredIndex === index || openDropdownIndex === index;
 
-      // Check if it's Contact Us (index 5) or a navigation item
-      if (currentIndex === contactIndex) {
-        element = contactRef.current;
-      } else if (currentIndex !== null && navRefs.current[currentIndex]) {
-        element = navRefs.current[currentIndex];
-      }
+  const isDropdownOpen = (index: number) =>
+    hoveredIndex === index || openDropdownIndex === index;
 
-      if (element) {
-        const parent = element.parentElement;
-        if (parent) {
-          const parentRect = parent.getBoundingClientRect();
-          const elementRect = element.getBoundingClientRect();
-          const left = elementRect.left - parentRect.left;
-          const width = elementRect.width;
-
-          setPillStyle({
-            width,
-            left,
-            opacity: 1
-          });
-        }
-      } else if (currentIndex === null) {
-        setPillStyle(prev => ({ ...prev, opacity: 0 }));
-      }
-    }, 10);
-
-    return () => clearTimeout(timer);
-  }, [currentIndex, pathname]);
-
-  // Update on window resize
-  useEffect(() => {
-    const handleResize = () => {
-      let element: HTMLAnchorElement | null = null;
-
-      // Check if it's Contact Us (index 5) or a navigation item
-      if (currentIndex === contactIndex) {
-        element = contactRef.current;
-      } else if (currentIndex !== null && navRefs.current[currentIndex]) {
-        element = navRefs.current[currentIndex];
-      }
-
-      if (element) {
-        const parent = element.parentElement;
-        if (parent) {
-          const parentRect = parent.getBoundingClientRect();
-          const elementRect = element.getBoundingClientRect();
-          const left = elementRect.left - parentRect.left;
-          const width = elementRect.width;
-
-          setPillStyle({
-            width,
-            left,
-            opacity: 1
-          });
-        }
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [currentIndex]);
+  const navItemClass = (highlighted: boolean) =>
+    `relative z-10 px-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
+      highlighted
+        ? 'bg-white text-gray-900 font-bold shadow-sm'
+        : 'text-white/90 hover:bg-white/15 hover:text-white'
+    }`;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,20 +89,14 @@ const NavbarTravel = () => {
 
     const query = searchQuery.toLowerCase();
     
-    if (query.includes('tour') || query.includes('visit') || query.includes('sightsee')) {
-      router.push(`/tours?search=${encodeURIComponent(searchQuery)}`);
-    } else if (query.includes('ticket') || query.includes('flight') || query.includes('air')) {
-      router.push(`/tickets?search=${encodeURIComponent(searchQuery)}`);
-    } else {
-      router.push(`/packages?search=${encodeURIComponent(searchQuery)}`);
-    }
+    router.push(`/packages?search=${encodeURIComponent(searchQuery)}`);
     
     setIsSearchOpen(false);
     setSearchQuery("");
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${useSolidNav
       ? 'bg-white/95 backdrop-blur-md shadow-lg'
       : 'bg-transparent'
       }`}>
@@ -163,60 +117,98 @@ const NavbarTravel = () => {
 
           {/* Centered Navigation Pill */}
           <div className={`hidden lg:flex items-center justify-center flex-1 transition-all duration-300 ${isSearchOpen ? 'opacity-0 pointer-events-none scale-95' : 'opacity-100'}`}>
-            <div className="relative flex items-center gap-[10px] rounded-full px-[12px] py-[10px] bg-black/55 backdrop-blur-[10px] border border-black/20">
-              {/* Sliding White Pill Indicator */}
-              <div
-                className="absolute bg-white rounded-full transition-all duration-500 ease-out pointer-events-none"
-                style={{
-                  width: `${pillStyle.width}px`,
-                  left: `${pillStyle.left}px`,
-                  height: '32px',
-                  opacity: pillStyle.opacity,
-                  transform: 'translateY(-50%)',
-                  top: '50%'
-                }}
-              />
-
+            <div className="relative flex items-center gap-1 rounded-full px-2 py-1.5 bg-black/55 backdrop-blur-md border border-white/10 shadow-lg">
               {navigation.map((item, index) => {
                 const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-                  // If on home page and clicking Home, scroll to top
                   if (pathname === '/' && item.href === '/') {
                     e.preventDefault();
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }
                 };
 
+                const active = isActive(item.href, item.submenu);
+                const highlighted = isHighlighted(index, active);
+
+                if (item.submenu?.length) {
+                  const dropdownOpen = isDropdownOpen(index);
+
+                  return (
+                    <div
+                      key={item.name}
+                      className="relative"
+                      onMouseEnter={() => {
+                        setHoveredIndex(index);
+                        setOpenDropdownIndex(index);
+                      }}
+                      onMouseLeave={() => {
+                        setHoveredIndex(null);
+                        setOpenDropdownIndex(null);
+                      }}
+                    >
+                      <Link
+                        href={item.href}
+                        aria-current={active ? 'page' : undefined}
+                        aria-expanded={dropdownOpen}
+                        className={`${navItemClass(highlighted)} inline-flex items-center gap-1`}
+                      >
+                        {item.name}
+                        <ChevronDown
+                          className={`h-3.5 w-3.5 transition-transform ${
+                            dropdownOpen ? 'rotate-180' : ''
+                          } ${highlighted ? 'text-gray-700' : ''}`}
+                        />
+                      </Link>
+                      <div
+                        className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 z-[60] transition-all duration-200 ${
+                          dropdownOpen
+                            ? 'opacity-100 visible translate-y-0'
+                            : 'opacity-0 invisible translate-y-1 pointer-events-none'
+                        }`}
+                      >
+                        <div className="min-w-[260px] rounded-xl bg-white shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
+                          {item.submenu.map((subItem) => (
+                            <Link
+                              key={subItem.href}
+                              href={subItem.href}
+                              onClick={() => {
+                                setOpenDropdownIndex(null);
+                                setHoveredIndex(null);
+                              }}
+                              className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
+                                pathname === subItem.href || pathname?.startsWith(`${subItem.href}/`)
+                                  ? 'bg-[#bd9245]/10 text-[#bd9245] font-semibold'
+                                  : 'text-gray-700 hover:bg-gray-50 hover:text-[#bd9245]'
+                              }`}
+                            >
+                              {subItem.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <Link
                     key={item.name}
-                    ref={(el) => {
-                      navRefs.current[index] = el;
-                    }}
                     href={item.href}
                     onClick={handleClick}
-                    aria-current={isActive(item.href) ? 'page' : undefined}
+                    aria-current={active ? 'page' : undefined}
                     onMouseEnter={() => setHoveredIndex(index)}
                     onMouseLeave={() => setHoveredIndex(null)}
-                    className={`relative z-10 px-3 py-1 rounded-full text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black/55 ${isActive(item.href)
-                      ? 'text-gray-900 font-bold'
-                      : 'text-white/90 hover:text-gray-900'
-                      }`}
+                    className={navItemClass(highlighted)}
                   >
                     {item.name}
                   </Link>
                 );
               })}
-              {/* Contact Us CTA Button */}
               <Link
-                ref={contactRef}
                 href="/contact"
-                aria-current={isActive('/contact') ? 'page' : undefined}
-                onMouseEnter={() => setHoveredIndex(contactIndex)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className={`relative z-10 px-[14px] py-2 rounded-full font-bold text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-black/55 ${isActive('/contact')
-                  ? 'text-gray-900 font-bold'
-                  : 'text-white/90 hover:text-gray-900'
-                  }`}
+                aria-current={isContactActive ? 'page' : undefined}
+                onMouseEnter={() => setContactHovered(true)}
+                onMouseLeave={() => setContactHovered(false)}
+                className={navItemClass(isContactActive || contactHovered)}
               >
                 Contact Us
               </Link>
@@ -244,7 +236,7 @@ const NavbarTravel = () => {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsSearchOpen(true)}
-                  className={`${isScrolled ? 'text-gray-700' : 'text-white'} hover:bg-white/10`}
+                  className={`${useSolidNav ? 'text-gray-700' : 'text-white'} hover:bg-white/10`}
                 >
                   <Search className="h-5 w-5" />
                 </Button>
@@ -262,7 +254,7 @@ const NavbarTravel = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className={`lg:hidden p-2 rounded-md ${isScrolled ? 'text-gray-700' : 'text-white'}`}
+            className={`lg:hidden p-2 rounded-md ${useSolidNav ? 'text-gray-700' : 'text-white'}`}
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -274,18 +266,34 @@ const NavbarTravel = () => {
         <div className="lg:hidden bg-white border-t shadow-lg">
           <div className="container mx-auto px-4 py-4 space-y-2">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-                className={`block px-4 py-2 rounded-lg transition-colors ${isActive(item.href)
-                  ? 'bg-primary text-white font-bold'
-                  : 'text-gray-700 hover:bg-gray-100'
+              <div key={item.name}>
+                <Link
+                  href={item.href}
+                  aria-current={isActive(item.href, item.submenu) ? 'page' : undefined}
+                  className={`block px-4 py-2 rounded-lg transition-colors ${
+                    isActive(item.href, item.submenu)
+                      ? 'bg-primary text-white font-bold'
+                      : 'text-gray-700 hover:bg-gray-100'
                   }`}
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
+                  onClick={() => !item.submenu?.length && setIsMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+                {item.submenu?.map((subItem) => (
+                  <Link
+                    key={subItem.href}
+                    href={subItem.href}
+                    className={`block pl-8 pr-4 py-2 text-sm rounded-lg transition-colors ${
+                      pathname === subItem.href || pathname?.startsWith(`${subItem.href}/`)
+                        ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {subItem.name}
+                  </Link>
+                ))}
+              </div>
             ))}
             <Link
               href="/contact"

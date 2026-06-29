@@ -18,9 +18,9 @@ import CreateTourModal from "../../components/CreateTourModal";
 import CreateTicketModal from "../../components/CreateTicketModal";
 import EditTourModal from "../../components/EditTourModal";
 import EditTicketModal from "../../components/EditTicketModal";
-import PackageDetailModal from "../../components/PackageDetailModal";
 import EditPackageModal from "../../components/EditPackageModal";
 import CreateBannerModal from "../../components/CreateBannerModal";
+import CreateGalleryModal from "../../components/CreateGalleryModal";
 import EditBannerModal from "../../components/EditBannerModal";
 import CreateBlogModal from "../../components/CreateBlogModal";
 import EditBlogModal from "../../components/EditBlogModal";
@@ -33,7 +33,6 @@ import axios from 'axios';
 import {
   Package,
   Star,
-  Eye,
   Plus,
   Edit,
   Trash2,
@@ -54,6 +53,7 @@ import {
   Compass,
   Plane,
   Image as ImageIcon,
+  LayoutGrid,
   Settings as SettingsIcon,
   CheckCircle2,
   AlertCircle,
@@ -72,10 +72,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Switch } from "../../components/ui/switch";
 import { cn } from "../../lib/utils";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
+import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
 
-import { PackageData, TourData, TicketData, BannerData, BlogData } from "@/lib/types";
+import { PackageData, TourData, TicketData, BannerData, BlogData, GalleryData } from "@/lib/types";
 
-type DashboardView = 'packages' | 'tours' | 'tickets' | 'banners' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
+type DashboardView = 'packages' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -84,11 +85,11 @@ export default function DashboardPage() {
   const [isCreatePackageModalOpen, setIsCreatePackageModalOpen] = useState(false);
   const [isCreateTourModalOpen, setIsCreateTourModalOpen] = useState(false);
   const [isCreateTicketModalOpen, setIsCreateTicketModalOpen] = useState(false);
-  const [isViewPackageModalOpen, setIsViewPackageModalOpen] = useState(false);
   const [isEditPackageModalOpen, setIsEditPackageModalOpen] = useState(false);
   const [isEditTourModalOpen, setIsEditTourModalOpen] = useState(false);
   const [isEditTicketModalOpen, setIsEditTicketModalOpen] = useState(false);
   const [isCreateBannerModalOpen, setIsCreateBannerModalOpen] = useState(false);
+  const [isCreateGalleryModalOpen, setIsCreateGalleryModalOpen] = useState(false);
   const [isEditBannerModalOpen, setIsEditBannerModalOpen] = useState(false);
   const [isCreateTestimonialModalOpen, setIsCreateTestimonialModalOpen] = useState(false);
   const [isEditTestimonialModalOpen, setIsEditTestimonialModalOpen] = useState(false);
@@ -103,15 +104,16 @@ export default function DashboardPage() {
   const [tours, setTours] = useState<TourData[]>([]);
   const [tickets, setTickets] = useState<TicketData[]>([]);
   const [banners, setBanners] = useState<BannerData[]>([]);
+  const [galleryItems, setGalleryItems] = useState<GalleryData[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [filteredPackages, setFilteredPackages] = useState<PackageData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [packageTypeFilter, setPackageTypeFilter] = useState("all");
   const [placeFilter, setPlaceFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [reportModule, setReportModule] = useState<DashboardView>('packages');
+  const [seedingPackages, setSeedingPackages] = useState(false);
   const [seedingTours, setSeedingTours] = useState(false);
   const [seedingTickets, setSeedingTickets] = useState(false);
   const [seedingBanners, setSeedingBanners] = useState(false);
@@ -189,6 +191,16 @@ export default function DashboardPage() {
       if (data.success) setBanners(data.data);
     } catch (error) {
       console.error('Error fetching banners:', error);
+    }
+  };
+
+  const fetchGallery = async () => {
+    try {
+      const response = await fetch('/api/gallery', { cache: 'no-store' });
+      const data = await response.json();
+      if (data.success) setGalleryItems(data.data);
+    } catch (error) {
+      console.error('Error fetching gallery:', error);
     }
   };
 
@@ -275,6 +287,24 @@ export default function DashboardPage() {
     }
   };
 
+  const handleSeedPackages = async () => {
+    setSeedingPackages(true);
+    try {
+      const res = await fetch('/api/packages/seed', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        alert(`✅ Sample packages added: ${data.results.created} created, ${data.results.skipped} already existed.`);
+        await fetchPackages();
+      } else {
+        alert('❌ Failed to seed packages: ' + (data.error || data.message || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('❌ Error seeding packages. Please try again.');
+    } finally {
+      setSeedingPackages(false);
+    }
+  };
+
   const handleSeedTours = async () => {
     setSeedingTours(true);
     try {
@@ -352,26 +382,12 @@ export default function DashboardPage() {
     fetchTours();
     fetchTickets();
     fetchBanners();
+    fetchGallery();
     fetchEnquiries();
     fetchTestimonials();
     fetchBlogs();
     fetchSettings();
   }, []);
-
-  // Reset place filter when package type changes
-  useEffect(() => {
-    if (packageTypeFilter !== "all" && placeFilter !== "all") {
-      // Check if current place filter is valid for the selected package type
-      const domesticPlaces = ['darjeeling', 'sikkim', 'meghalaya', 'arunachal', 'himachal-pradesh', 'kashmir', 'leh-ladakh'];
-      const internationalPlaces = ['vietnam', 'sri-lanka', 'bali', 'malaysia', 'singapore'];
-
-      if (packageTypeFilter === 'domestic' && !domesticPlaces.includes(placeFilter)) {
-        setPlaceFilter("all");
-      } else if (packageTypeFilter === 'international' && !internationalPlaces.includes(placeFilter)) {
-        setPlaceFilter("all");
-      }
-    }
-  }, [packageTypeFilter, placeFilter]);
 
   const filterPackages = useCallback(() => {
     let filtered = packages;
@@ -385,23 +401,18 @@ export default function DashboardPage() {
       );
     }
 
-    // Package type filter
-    if (packageTypeFilter !== "all") {
-      filtered = filtered.filter(pkg => pkg.packageType === packageTypeFilter);
-    }
-
     // Place filter
     if (placeFilter !== "all") {
       filtered = filtered.filter(pkg => pkg.place === placeFilter);
     }
 
-    // Category filter
+    // Experience page filter
     if (categoryFilter !== "all") {
       filtered = filtered.filter(pkg => pkg.packageCategory === categoryFilter);
     }
 
     setFilteredPackages(filtered);
-  }, [packages, searchTerm, packageTypeFilter, placeFilter, categoryFilter]);
+  }, [packages, searchTerm, placeFilter, categoryFilter]);
 
   useEffect(() => {
     filterPackages();
@@ -425,6 +436,11 @@ export default function DashboardPage() {
   const handleBannerCreated = (newBanner: BannerData) => {
     setBanners(prev => [newBanner, ...prev]);
     setIsCreateBannerModalOpen(false);
+  };
+
+  const handleGalleryCreated = (newItem: GalleryData) => {
+    setGalleryItems(prev => [newItem, ...prev]);
+    setIsCreateGalleryModalOpen(false);
   };
 
   const handleTestimonialCreated = (newTestimonial: any) => {
@@ -499,6 +515,36 @@ export default function DashboardPage() {
     }
   };
 
+  const handleDeleteGalleryItem = async (item: GalleryData) => {
+    if (window.confirm(`Are you sure you want to delete "${item.title}" from the gallery?`)) {
+      try {
+        const res = await fetch(`/api/gallery/${item._id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          setGalleryItems(prev => prev.filter(g => g._id !== item._id));
+        }
+      } catch (err) {
+        console.error('Error deleting gallery item:', err);
+      }
+    }
+  };
+
+  const handleToggleGalleryActive = async (item: GalleryData) => {
+    try {
+      const res = await fetch(`/api/gallery/${item._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !item.isActive }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setGalleryItems(prev => prev.map(g => g._id === item._id ? data.data : g));
+      }
+    } catch (err) {
+      console.error('Error updating gallery item:', err);
+    }
+  };
+
   const handleDeleteBlog = async (blog: BlogData) => {
     if (!confirm(`Are you sure you want to delete "${blog.title}"?`)) return;
     try {
@@ -517,11 +563,7 @@ export default function DashboardPage() {
     else if (activeView === 'tours') setIsCreateTourModalOpen(true);
     else if (activeView === 'tickets') setIsCreateTicketModalOpen(true);
     else if (activeView === 'banners') setIsCreateBannerModalOpen(true);
-  };
-
-  const handleViewPackage = (pkg: PackageData) => {
-    setSelectedPackage(pkg);
-    setIsViewPackageModalOpen(true);
+    else if (activeView === 'gallery') setIsCreateGalleryModalOpen(true);
   };
 
   const handleEditPackage = (pkg: PackageData) => {
@@ -1300,19 +1342,14 @@ export default function DashboardPage() {
       icon: Package,
     },
     {
-      id: 'tours' as DashboardView,
-      label: 'Tours',
-      icon: Compass,
-    },
-    {
-      id: 'tickets' as DashboardView,
-      label: 'Tickets',
-      icon: Plane,
-    },
-    {
       id: 'banners' as DashboardView,
       label: 'Banners',
       icon: ImageIcon,
+    },
+    {
+      id: 'gallery' as DashboardView,
+      label: 'Gallery',
+      icon: LayoutGrid,
     },
     {
       id: 'testimonials' as DashboardView,
@@ -1472,6 +1509,7 @@ export default function DashboardPage() {
                     {activeView === 'tours' && 'Tours Management'}
                     {activeView === 'tickets' && 'Tickets Inventory'}
                     {activeView === 'banners' && 'Home Banners'}
+                    {activeView === 'gallery' && 'Photo Gallery'}
                     {activeView === 'testimonials' && 'Guest Feedback'}
                     {activeView === 'blogs' && 'Content Studio'}
                     {activeView === 'settings' && 'Home Configuration'}
@@ -1482,6 +1520,7 @@ export default function DashboardPage() {
                     {activeView === 'tours' && 'Managing specialized guided local experiences'}
                     {activeView === 'tickets' && 'Coordinating global air travel inventory'}
                     {activeView === 'banners' && 'Management of homepage hero slider visuals'}
+                    {activeView === 'gallery' && 'Upload and manage photos shown on the public gallery page'}
                     {activeView === 'testimonials' && 'Monitoring guest satisfaction and reviews'}
                     {activeView === 'blogs' && 'Managing luxury travel narratives'}
                     {activeView === 'settings' && 'Customize homepage section visibility and features'}
@@ -1579,29 +1618,18 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {/* Package Type Filter */}
-                      <Select value={packageTypeFilter} onValueChange={setPackageTypeFilter}>
-                        <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
-                          <SelectValue placeholder="Package Type" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-white shadow-xl">
-                          <SelectItem value="all">All Market Segments</SelectItem>
-                          <SelectItem value="domestic">Domestic Experiences</SelectItem>
-                          <SelectItem value="international">Global Destinations</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      {/* Category Filter */}
+                      {/* Experience Page Filter */}
                       <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                         <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
-                          <SelectValue placeholder="Category" />
+                          <SelectValue placeholder="Experience Page" />
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl border-white shadow-xl">
-                          <SelectItem value="all">All Experiences</SelectItem>
-                          <SelectItem value="Cultural">Cultural Immersive</SelectItem>
-                          <SelectItem value="Adventure">High Adventure</SelectItem>
-                          <SelectItem value="Wildlife">Safari & Wildlife</SelectItem>
-                          <SelectItem value="Luxury">Premium Luxury</SelectItem>
+                          <SelectItem value="all">All Experience Pages</SelectItem>
+                          {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
+                            <SelectItem key={category.value} value={category.value}>
+                              {category.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
 
@@ -1612,34 +1640,25 @@ export default function DashboardPage() {
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl border-white shadow-xl">
                           <SelectItem value="all">All Regions</SelectItem>
-                          {packageTypeFilter === 'domestic' ? (
-                            <>
-                              <SelectItem value="darjeeling">Darjeeling Hub</SelectItem>
-                              <SelectItem value="sikkim">Sikkim Valley</SelectItem>
-                              <SelectItem value="meghalaya">Meghalaya Plateau</SelectItem>
-                              <SelectItem value="cape-town">Cape Town Central</SelectItem>
-                              <SelectItem value="kruger">Kruger National Park</SelectItem>
-                            </>
-                          ) : (
-                            <>
-                              <SelectItem value="vietnam">Vietnam Coastal</SelectItem>
-                              <SelectItem value="sri-lanka">Sri Lanka Island</SelectItem>
-                              <SelectItem value="bali">Bali Tropical</SelectItem>
-                            </>
-                          )}
+                          <SelectItem value="cape-town">Cape Town</SelectItem>
+                          <SelectItem value="kruger">Kruger</SelectItem>
+                          <SelectItem value="garden-route">Garden Route</SelectItem>
+                          <SelectItem value="dubai">Dubai</SelectItem>
+                          <SelectItem value="mauritius">Mauritius</SelectItem>
+                          <SelectItem value="vietnam">Vietnam</SelectItem>
+                          <SelectItem value="namibia">Namibia</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     {/* Clear Filters Button */}
-                    {(searchTerm || packageTypeFilter !== "all" || placeFilter !== "all" || categoryFilter !== "all") && (
+                    {(searchTerm || placeFilter !== "all" || categoryFilter !== "all") && (
                       <div className="mt-4">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => {
                             setSearchTerm("");
-                            setPackageTypeFilter("all");
                             setPlaceFilter("all");
                             setCategoryFilter("all");
                           }}
@@ -1655,8 +1674,7 @@ export default function DashboardPage() {
                       <thead>
                         <tr className="border-b">
                           <th className="text-left p-3">Package Title</th>
-                          <th className="text-left p-3">Type</th>
-                          <th className="text-left p-3">Category</th>
+                          <th className="text-left p-3">Experience Page</th>
                           <th className="text-left p-3">Place</th>
                           <th className="text-left p-3">Duration</th>
                           <th className="text-left p-3">Price</th>
@@ -1690,18 +1708,8 @@ export default function DashboardPage() {
                                 </div>
                               </td>
                               <td className="p-4">
-                                <Badge className={cn(
-                                  "rounded-lg px-2 py-0.5 text-[10px] font-black uppercase tracking-widest border-none",
-                                  pkg.packageType === 'domestic'
-                                    ? "bg-emerald-50 text-emerald-600"
-                                    : "bg-blue-50 text-blue-600"
-                                )}>
-                                  {pkg.packageType}
-                                </Badge>
-                              </td>
-                              <td className="p-4">
                                 <span className="text-[11px] font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-tight">
-                                  {pkg.packageCategory || 'Luxury'}
+                                  {pkg.packageCategory || 'Upcoming Rides'}
                                 </span>
                               </td>
                               <td className="p-4">
@@ -1730,14 +1738,6 @@ export default function DashboardPage() {
                               </td>
                               <td className="p-4">
                                 <div className="flex items-center justify-center gap-2">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => handleViewPackage(pkg)}
-                                    className="w-10 h-10 rounded-xl bg-white border border-gray-100 hover:bg-[#111827] hover:text-white shadow-sm flex items-center justify-center p-0 transition-all"
-                                  >
-                                    <Eye className="h-5 w-5" />
-                                  </Button>
                                   <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <Button
@@ -1770,16 +1770,21 @@ export default function DashboardPage() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={9} className="p-8 text-center text-gray-500">
+                            <td colSpan={7} className="p-8 text-center text-gray-500">
                               <div className="flex flex-col items-center space-y-2">
                                 <Package className="h-12 w-12 text-gray-300" />
                                 {packages.length === 0 ? (
                                   <>
                                     <p>No packages created yet</p>
-                                    <Button onClick={openCreatePackageModal} size="sm">
-                                      <Plus className="h-4 w-4 mr-2" />
-                                      Create Your First Package
-                                    </Button>
+                                    <div className="flex gap-3">
+                                      <Button onClick={openCreatePackageModal} size="sm">
+                                        <Plus className="h-4 w-4 mr-2" />
+                                        Create Your First Package
+                                      </Button>
+                                      <Button onClick={handleSeedPackages} disabled={seedingPackages} size="sm" variant="outline" className="rounded-xl border-[#bd9245] text-[#bd9245] hover:bg-[#bd9245] hover:text-white">
+                                        {seedingPackages ? 'Adding...' : '✨ Add Sample Packages'}
+                                      </Button>
+                                    </div>
                                   </>
                                 ) : (
                                   <>
@@ -1789,7 +1794,6 @@ export default function DashboardPage() {
                                       size="sm"
                                       onClick={() => {
                                         setSearchTerm("");
-                                        setPackageTypeFilter("all");
                                         setPlaceFilter("all");
                                         setCategoryFilter("all");
                                       }}
@@ -2030,6 +2034,92 @@ export default function DashboardPage() {
                             Create Custom Banner
                           </Button>
                         </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {activeView === 'gallery' && (
+            <div className="container mx-auto px-8 py-10 space-y-10">
+              <Card className="rounded-[40px] border-white shadow-sm overflow-hidden">
+                <CardHeader className="p-8 pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    <div>
+                      <CardTitle className="text-2xl font-black text-[#111827] tracking-tight uppercase">Gallery Images</CardTitle>
+                      <CardDescription className="text-sm font-medium text-gray-400">
+                        Upload photos that appear on the public gallery page at /gallery
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button asChild variant="outline" className="rounded-2xl border-[#bd9245] text-[#bd9245] hover:bg-[#bd9245] hover:text-white font-black uppercase tracking-widest text-xs h-12 px-6">
+                        <Link href="/gallery" target="_blank">
+                          <ExternalLink className="h-4 w-4 mr-2 inline" />
+                          View Gallery
+                        </Link>
+                      </Button>
+                      <Button onClick={() => setIsCreateGalleryModalOpen(true)} className="bg-[#111827] hover:bg-[#bd9245] text-white rounded-2xl px-6 h-12 font-black uppercase tracking-widest text-xs shadow-xl flex gap-2">
+                        <Plus className="h-4 w-4" /> Upload Image
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-8 pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {galleryItems.map((item) => (
+                      <Card key={item._id} className="rounded-3xl border-gray-100 overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500">
+                        <div className="relative aspect-square">
+                          <img src={item.image?.url} className="w-full h-full object-cover" alt={item.title} />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <h4 className="text-white font-black text-sm uppercase tracking-tight leading-tight">{item.title}</h4>
+                            {item.caption && (
+                              <p className="text-white/70 text-xs mt-1 line-clamp-2">{item.caption}</p>
+                            )}
+                          </div>
+                          <div className="absolute top-3 left-3">
+                            <Badge className={cn(
+                              "rounded-lg px-2 py-0.5 text-[9px] font-black uppercase tracking-widest border-none",
+                              item.isActive ? "bg-emerald-500 text-white" : "bg-gray-500 text-white"
+                            )}>
+                              {item.isActive ? 'Visible' : 'Hidden'}
+                            </Badge>
+                          </div>
+                          <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="secondary"
+                              size="icon"
+                              onClick={() => handleToggleGalleryActive(item)}
+                              className="h-8 w-8 rounded-lg bg-white/90 text-[#111827] hover:bg-[#bd9245] hover:text-white"
+                              title={item.isActive ? 'Hide from gallery' : 'Show on gallery'}
+                            >
+                              {item.isActive ? <X className="h-4 w-4" /> : <Check className="h-4 w-4" />}
+                            </Button>
+                            <Button variant="secondary" size="icon" onClick={() => handleDeleteGalleryItem(item)} className="h-8 w-8 rounded-lg bg-white/90 text-red-500 hover:bg-red-500 hover:text-white">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <CardContent className="p-3 bg-white flex justify-between items-center">
+                          <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                            <Clock className="h-3 w-3" /> Order: {item.order ?? 0}
+                          </div>
+                          <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                            {new Date(item.createdAt).toLocaleDateString()}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                    {galleryItems.length === 0 && (
+                      <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 rounded-[40px] bg-gray-50/30">
+                        <LayoutGrid className="h-12 w-12 text-gray-200 mx-auto mb-4" />
+                        <h4 className="text-[#111827] font-black uppercase tracking-tighter text-xl">No Gallery Images Yet</h4>
+                        <p className="text-gray-400 text-sm font-medium mt-2">Upload your first photo to populate the gallery page.</p>
+                        <Button onClick={() => setIsCreateGalleryModalOpen(true)} className="mt-6 bg-[#bd9245] hover:bg-[#111827] text-white rounded-2xl px-8 h-12 font-black uppercase tracking-widest text-[10px]">
+                          Upload First Image
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -2942,16 +3032,6 @@ export default function DashboardPage() {
         onTicketCreated={handleTicketCreated}
       />
 
-      {/* View Package Modal */}
-      <PackageDetailModal
-        isOpen={isViewPackageModalOpen}
-        onClose={() => {
-          setIsViewPackageModalOpen(false);
-          setSelectedPackage(null);
-        }}
-        packageData={selectedPackage}
-      />
-
       {/* Edit Package Modal */}
       <EditPackageModal
         isOpen={isEditPackageModalOpen}
@@ -3006,6 +3086,12 @@ export default function DashboardPage() {
         isOpen={isCreateBannerModalOpen}
         onClose={() => setIsCreateBannerModalOpen(false)}
         onBannerCreated={handleBannerCreated}
+      />
+
+      <CreateGalleryModal
+        isOpen={isCreateGalleryModalOpen}
+        onClose={() => setIsCreateGalleryModalOpen(false)}
+        onGalleryCreated={handleGalleryCreated}
       />
 
       <EditBannerModal

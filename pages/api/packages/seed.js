@@ -1,6 +1,332 @@
+import connectDB from '../../../lib/mongodb';
+import Package from '../../../models/Package';
+import { isConnected } from '../../../lib/mongodb';
+
+const samplePackages = [
+  {
+    title: 'Cape Town Coastal Adventure',
+    subtitle: 'Explore the Mother City and its spectacular coastline',
+    about: 'Experience the best of Cape Town with our comprehensive coastal tour. Visit Table Mountain, enjoy the V&A Waterfront, and drive along scenic Chapmans Peak for breathtaking ocean views.',
+    services: 'Private airport transfers, guided Table Mountain tour, V&A Waterfront exploration, scenic coastal drives',
+    tourDetails: 'Full-day Cape Town tour including Table Mountain cable car, Bo-Kaap heritage walk, and a sunset cruise from the Waterfront.',
+    price: 1299,
+    duration: '1 Day',
+    location: 'Cape Town, South Africa',
+    capacity: '2-8 persons',
+    packageType: 'domestic',
+    place: 'cape-town',
+    packageCategory: 'Deluxe',
+    images: [
+      { public_id: 'pkg-ct-1', url: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Cape Town Skyline' },
+    ],
+    itinerary: [
+      { day: 1, title: 'The Mother City Highlights', description: 'Morning cable car ride to Table Mountain, afternoon Bo-Kaap cultural tour, and evening at the V&A Waterfront.' },
+    ],
+    transportation: [{ type: 'Private', vehicle: 'Luxury SUV', description: 'Door-to-door transfers included' }],
+    accommodation: [],
+    inclusions: ['Table Mountain tickets', 'Private vehicle', 'Expert guide'],
+    exclusions: ['Meals', 'Personal expenses'],
+    reviews: [],
+    bookings: 45,
+    rating: 4.9,
+    isFeaturedDestination: true,
+    isPopularPackage: true,
+  },
+  {
+    title: 'Kruger Safari Experience',
+    subtitle: 'The ultimate Big Five wildlife safari',
+    about: 'Immerse yourself in the wild heart of South Africa. Witness lions, elephants, and leopards in their natural habitat with expert trackers and luxurious bush lodge stays.',
+    services: 'Professional game drives, luxury bush accommodation, traditional boma dinners',
+    tourDetails: 'Multi-day safari at a private concession within Kruger National Park, including sunrise and sunset game drives.',
+    price: 8499,
+    duration: '3 Days',
+    location: 'Kruger Park, Mpumalanga',
+    capacity: '2-12 persons',
+    packageType: 'domestic',
+    place: 'kruger',
+    packageCategory: 'Luxury',
+    images: [
+      { public_id: 'pkg-kruger-1', url: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Kruger Wildlife' },
+    ],
+    itinerary: [
+      { day: 1, title: 'Into the Wild', description: 'Arrival at the lodge, afternoon game drive, and welcome dinner under the stars.' },
+      { day: 2, title: 'Big Five Game Drive', description: 'Early morning and late afternoon game drives with expert ranger.' },
+      { day: 3, title: 'Departure', description: 'Final morning drive and transfer back to Johannesburg.' },
+    ],
+    transportation: [{ type: 'Private', vehicle: '4x4 Safari Vehicle', description: 'Open vehicle game drives' }],
+    accommodation: [{ city: 'Kruger', hotel: 'Bush Lodge', rooms: '1', roomType: 'Luxury Tent', nights: '2' }],
+    inclusions: ['All meals', 'All game drives', 'Conservation fees'],
+    exclusions: ['Flights', 'Premium beverages'],
+    reviews: [],
+    bookings: 32,
+    rating: 4.8,
+    isPopularPackage: true,
+  },
+  {
+    title: 'Garden Route Scenic Quest',
+    subtitle: 'Pristine beaches and ancient forests',
+    about: 'Journey through the most beautiful coastal stretch of South Africa. Explore Knysna, Plettenberg Bay, and the Tsitsikamma forest on this spectacular road trip.',
+    services: 'Boutique hotel stays, coastal hiking tours, whale watching (seasonal)',
+    tourDetails: 'Panoramic tour of the Garden Route including world-class beaches and indigenous forests.',
+    price: 4999,
+    duration: '4 Days',
+    location: 'Garden Route, Western Cape',
+    capacity: '1-10 persons',
+    packageType: 'domestic',
+    place: 'garden-route',
+    packageCategory: 'Premium',
+    images: [
+      { public_id: 'pkg-gr-1', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Garden Route Coast' },
+    ],
+    itinerary: [
+      { day: 1, title: 'Tsitsikamma Forest', description: 'Hiking in Tsitsikamma and crossing the suspension bridge.' },
+      { day: 2, title: 'Knysna Lagoon', description: 'Explore Knysna Heads and waterfront dining.' },
+      { day: 3, title: 'Plettenberg Bay', description: 'Beach day and optional whale watching.' },
+      { day: 4, title: 'Return to Cape Town', description: 'Scenic drive back with coastal stops.' },
+    ],
+    transportation: [{ type: 'Private', vehicle: 'Minibus', description: 'Comfortable inter-city transport' }],
+    accommodation: [{ city: 'Knysna', hotel: 'Lagoon View Hotel', rooms: '1', roomType: 'Standard', nights: '3' }],
+    inclusions: ['Activity fees', 'Transport', 'Breakfast', 'Accommodation'],
+    exclusions: ['Lunch and dinner', 'Optional activities'],
+    reviews: [],
+    bookings: 28,
+    rating: 4.7,
+  },
+  {
+    title: 'Dubai Premium Escape',
+    subtitle: '4 Nights / 5 Days luxury city experience',
+    about: 'Discover Dubai with private transfers, iconic landmarks, desert safari, and curated leisure time. A complete introduction to the city designed for comfort and flexibility.',
+    services: 'Private airport transfers, guided city tours, desert safari, marina cruise',
+    tourDetails: 'Premium Dubai itinerary covering Burj Khalifa, Dubai Mall, Old Dubai, desert safari, and Abu Dhabi day trip option.',
+    price: 18500,
+    duration: '4N/5D',
+    location: 'Dubai, UAE',
+    capacity: 'Up to 6 guests per vehicle',
+    packageType: 'international',
+    place: 'dubai',
+    packageCategory: 'Premium',
+    images: [
+      { public_id: 'pkg-dubai-1', url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Dubai Skyline' },
+    ],
+    itinerary: [
+      { day: 1, title: 'Arrival & Marina', description: 'Private airport transfer, hotel check-in, and evening marina walk.' },
+      { day: 2, title: 'Modern Dubai', description: 'Burj Khalifa, Dubai Mall, and Dubai Fountain show.' },
+      { day: 3, title: 'Desert Safari', description: 'Afternoon dune bashing, camel ride, and BBQ dinner under the stars.' },
+      { day: 4, title: 'Cultural Dubai', description: 'Old Dubai, gold souk, spice souk, and abra ride across the creek.' },
+      { day: 5, title: 'Departure', description: 'Leisure morning and private transfer to the airport.' },
+    ],
+    transportation: [{ type: 'Private', vehicle: 'Toyota Previa', description: 'Private vehicle for up to 6 guests' }],
+    accommodation: [{ city: 'Dubai', hotel: '4-Star City Hotel', rooms: '1', roomType: 'Deluxe', nights: '4' }],
+    inclusions: ['Private transfers', 'Desert safari', 'City tour', 'Daily breakfast'],
+    exclusions: ['International flights', 'Visa fees', 'Lunch and dinner'],
+    reviews: [],
+    bookings: 18,
+    rating: 4.9,
+    isFeaturedDestination: true,
+  },
+  {
+    title: 'Mauritius Island Retreat',
+    subtitle: 'Tropical beaches and turquoise lagoons',
+    about: 'Unwind on the white sands of Mauritius with a perfectly balanced mix of relaxation, water activities, and island exploration.',
+    services: 'Resort stay, catamaran cruise, island tour, airport transfers',
+    tourDetails: '5-night Mauritius package with beach resort, north island tour, and optional water sports.',
+    price: 24999,
+    duration: '5N/6D',
+    location: 'Mauritius',
+    capacity: '2-4 persons',
+    packageType: 'international',
+    place: 'mauritius',
+    packageCategory: 'Luxury',
+    images: [
+      { public_id: 'pkg-mauritius-1', url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Mauritius Beach' },
+    ],
+    itinerary: [
+      { day: 1, title: 'Arrival', description: 'Airport pickup and resort check-in with welcome drink.' },
+      { day: 2, title: 'Beach Day', description: 'Free day at the resort with optional spa treatments.' },
+      { day: 3, title: 'North Island Tour', description: 'Visit Port Louis, Pamplemousses Garden, and Grand Baie.' },
+      { day: 4, title: 'Catamaran Cruise', description: 'Full-day cruise with snorkelling and BBQ lunch.' },
+      { day: 5, title: 'Leisure Day', description: 'Relax or add optional water sports.' },
+      { day: 6, title: 'Departure', description: 'Transfer to the airport for your return flight.' },
+    ],
+    transportation: [{ type: 'Private', vehicle: 'Sedan', description: 'Airport and tour transfers' }],
+    accommodation: [{ city: 'Flic en Flac', hotel: 'Beach Resort', rooms: '1', roomType: 'Ocean View', nights: '5' }],
+    inclusions: ['Resort accommodation', 'Daily breakfast', 'Island tour', 'Catamaran cruise'],
+    exclusions: ['Flights', 'Lunch and dinner', 'Spa treatments'],
+    reviews: [],
+    bookings: 12,
+    rating: 4.8,
+  },
+  {
+    title: 'Vietnam Cultural Discovery',
+    subtitle: 'Hanoi, Halong Bay & Hoi An heritage trail',
+    about: 'Explore Vietnam from north to central regions with guided cultural experiences, a Halong Bay cruise, and the ancient town of Hoi An.',
+    services: 'Guided tours, Halong Bay cruise, domestic flights, heritage walks',
+    tourDetails: '7-night Vietnam package covering Hanoi, overnight Halong Bay cruise, and Hoi An old town.',
+    price: 32999,
+    duration: '7N/8D',
+    location: 'Vietnam',
+    capacity: '2-15 persons',
+    packageType: 'international',
+    place: 'vietnam',
+    packageCategory: 'Cultural',
+    images: [
+      { public_id: 'pkg-vietnam-1', url: 'https://images.unsplash.com/photo-1528127269322-539801943592?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Halong Bay Vietnam' },
+    ],
+    itinerary: [
+      { day: 1, title: 'Hanoi Arrival', description: 'Airport pickup and old quarter walking tour.' },
+      { day: 2, title: 'Hanoi City Tour', description: 'Ho Chi Minh Mausoleum, Temple of Literature, and water puppet show.' },
+      { day: 3, title: 'Halong Bay Cruise', description: 'Transfer to Halong Bay and board overnight cruise.' },
+      { day: 4, title: 'Halong to Hoi An', description: 'Morning kayaking, return to port, and flight to Da Nang.' },
+      { day: 5, title: 'Hoi An Old Town', description: 'Guided walking tour of the UNESCO heritage town.' },
+      { day: 6, title: 'Free Day', description: 'Beach time or optional cooking class.' },
+      { day: 7, title: 'My Son Sanctuary', description: 'Half-day excursion to ancient Cham ruins.' },
+      { day: 8, title: 'Departure', description: 'Transfer to Da Nang airport.' },
+    ],
+    transportation: [{ type: 'Shared', vehicle: 'Coach', description: 'Inter-city transfers and tours' }],
+    accommodation: [
+      { city: 'Hanoi', hotel: 'Boutique Hotel', rooms: '1', roomType: 'Standard', nights: '2' },
+      { city: 'Hoi An', hotel: 'Heritage Hotel', rooms: '1', roomType: 'Deluxe', nights: '4' },
+    ],
+    inclusions: ['Hotels', 'Halong Bay cruise', 'Domestic flight', 'Guided tours', 'Breakfast daily'],
+    exclusions: ['International flights', 'Visa', 'Lunch and dinner'],
+    reviews: [],
+    bookings: 9,
+    rating: 4.6,
+  },
+  {
+    title: 'Coastal Sunset Ride Experience',
+    subtitle: 'Scenic evening drive along the Garden Route',
+    about: 'Join our upcoming guided ride along one of South Africa\'s most beautiful coastal routes with photo stops and local guides.',
+    services: 'Guided drive, photo stops, refreshments',
+    tourDetails: 'Half-day upcoming ride package with flexible departure slots.',
+    price: 2499,
+    duration: '1 Day',
+    location: 'Garden Route, South Africa',
+    capacity: '2-8 persons',
+    packageType: 'domestic',
+    place: 'garden-route',
+    packageCategory: 'Upcoming Rides',
+    images: [{ public_id: 'pkg-rides-1', url: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Coastal Ride' }],
+    itinerary: [{ day: 1, title: 'Sunset Coastal Drive', description: 'Pickup, scenic drive, and sunset viewpoint stop.' }],
+    transportation: [{ type: 'Private', vehicle: 'SUV', description: 'Comfortable vehicle for the ride' }],
+    accommodation: [],
+    inclusions: ['Guide', 'Vehicle', 'Refreshments'],
+    exclusions: ['Meals', 'Personal expenses'],
+    reviews: [],
+    bookings: 5,
+    rating: 4.7,
+  },
+  {
+    title: 'Namib Desert 4x4 Expedition',
+    subtitle: 'Off-road SUV adventure through dune trails',
+    about: 'Experience rugged 4x4 trails with expert drivers across dramatic desert landscapes.',
+    services: '4x4 vehicle, expert driver-guide, safety equipment',
+    tourDetails: 'Full-day 4x4 expedition with dune bashing and photography stops.',
+    price: 5999,
+    duration: '1 Day',
+    location: 'Namibia',
+    capacity: '2-6 persons',
+    packageType: 'international',
+    place: 'namibia',
+    packageCategory: 'Bike & SUV 4x4 Expeditions',
+    images: [{ public_id: 'pkg-4x4-1', url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: '4x4 Expedition' }],
+    itinerary: [{ day: 1, title: 'Desert Trail Day', description: 'Morning briefing, dune trails, and picnic lunch.' }],
+    transportation: [{ type: 'Private', vehicle: '4x4 SUV', description: 'Off-road expedition vehicle' }],
+    accommodation: [],
+    inclusions: ['4x4 transport', 'Guide', 'Lunch'],
+    exclusions: ['Flights', 'Travel insurance'],
+    reviews: [],
+    bookings: 8,
+    rating: 4.8,
+  },
+  {
+    title: 'Indian Ocean Sailing Charter',
+    subtitle: 'Private yacht day sail with snorkelling',
+    about: 'Sail the turquoise waters on a private yacht with crew, lunch onboard, and snorkelling at a reef stop.',
+    services: 'Yacht charter, crew, snorkelling gear, lunch',
+    tourDetails: '6-hour sailing experience with swimming and coastal views.',
+    price: 8900,
+    duration: '1 Day',
+    location: 'Mauritius',
+    capacity: '2-10 persons',
+    packageType: 'international',
+    place: 'mauritius',
+    packageCategory: 'Sailing Experiences',
+    images: [{ public_id: 'pkg-sail-1', url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Sailing' }],
+    itinerary: [{ day: 1, title: 'Open Water Sail', description: 'Board yacht, sail, snorkel, and return at sunset.' }],
+    transportation: [{ type: 'Private', vehicle: 'Yacht', description: 'Crewed sailing yacht' }],
+    accommodation: [],
+    inclusions: ['Yacht charter', 'Lunch', 'Snorkelling gear'],
+    exclusions: ['Hotel transfers', 'Alcoholic beverages'],
+    reviews: [],
+    bookings: 6,
+    rating: 4.9,
+  },
+  {
+    title: 'Desert Dune Bashing Adventure',
+    subtitle: 'High-adrenaline desert safari activity',
+    about: 'Thrilling dune bashing, sandboarding, and camel ride in a premium desert adventure package.',
+    services: 'Desert safari, dune bashing, sandboarding, BBQ dinner',
+    tourDetails: 'Afternoon desert adventure with sunset photo stop and traditional dinner.',
+    price: 1899,
+    duration: '6 Hours',
+    location: 'Dubai, UAE',
+    capacity: 'Up to 6 guests',
+    packageType: 'international',
+    place: 'dubai',
+    packageCategory: 'Adventure Activities',
+    images: [{ public_id: 'pkg-adv-1', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80', alt: 'Desert Adventure' }],
+    itinerary: [{ day: 1, title: 'Desert Adventure', description: 'Pickup, dune bashing, sandboarding, and BBQ dinner.' }],
+    transportation: [{ type: 'Private', vehicle: '4x4', description: 'Desert safari vehicle' }],
+    accommodation: [],
+    inclusions: ['Safari', 'Dinner', 'Transfers'],
+    exclusions: ['Quad biking', 'Personal expenses'],
+    reviews: [],
+    bookings: 14,
+    rating: 4.8,
+  },
+];
+
 export default async function handler(req, res) {
-  res.status(200).json({ 
-    success: true, 
-    message: 'Seeding is currently disabled. Demo data has been removed per administrator request.' 
-  });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ success: false, error: 'Method not allowed' });
+  }
+
+  try {
+    await connectDB();
+
+    if (!isConnected()) {
+      return res.status(503).json({ success: false, error: 'Database not available' });
+    }
+
+    const results = { created: [], skipped: [], errors: [] };
+
+    for (const pkg of samplePackages) {
+      try {
+        const existing = await Package.findOne({ title: pkg.title });
+        if (existing) {
+          results.skipped.push(pkg.title);
+          continue;
+        }
+        await Package.create(pkg);
+        results.created.push(pkg.title);
+      } catch (error) {
+        results.errors.push({ title: pkg.title, error: error.message });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Packages seeded successfully',
+      results: {
+        total: samplePackages.length,
+        created: results.created.length,
+        skipped: results.skipped.length,
+        errors: results.errors.length,
+      },
+      details: results,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
 }

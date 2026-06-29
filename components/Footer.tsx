@@ -1,27 +1,49 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Mail, Facebook, Instagram, Twitter, Youtube, Linkedin, MessageSquare } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import { SITE_NAME, SITE_DESCRIPTION, LOGO_SRC } from "@/lib/branding";
+import { useState, useEffect, FormEvent, ReactNode } from 'react';
+import { ArrowUpRight, Facebook, Instagram, Twitter, Linkedin, Youtube } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, LOGO_SRC } from '@/lib/branding';
+import { PACKAGE_EXPERIENCE_CATEGORIES } from '@/lib/packageExperienceCategories';
+
+const FOOTER_BG =
+  'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
+
+const quickLinks = [
+  { label: 'Home', href: '/' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Packages', href: '/packages' },
+  { label: 'Blog', href: '/blogs' },
+  { label: 'Gallery', href: '/gallery' },
+  { label: 'Contact Us', href: '/contact' },
+];
+
+const FooterLink = ({ href, children }: { href: string; children: ReactNode }) => (
+  <li>
+    <Link
+      href={href}
+      className="group flex items-center gap-2.5 text-gray-700 hover:text-gray-900 transition-colors text-sm font-medium"
+    >
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#9aab6b] group-hover:bg-[#bd9245] transition-colors" />
+      {children}
+    </Link>
+  </li>
+);
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
   const [settings, setSettings] = useState<any>({
     facebookEnabled: true,
-    facebookUrl: "",
+    facebookUrl: '',
     instagramEnabled: true,
-    instagramUrl: "",
+    instagramUrl: '',
     twitterEnabled: true,
-    twitterUrl: "",
+    twitterUrl: '',
     linkedinEnabled: true,
-    linkedinUrl: "",
+    linkedinUrl: '',
     youtubeEnabled: true,
-    youtubeUrl: "",
-    whatsappEnabled: true,
-    whatsappUrl: ""
+    youtubeUrl: '',
   });
 
   useEffect(() => {
@@ -29,145 +51,153 @@ const Footer = () => {
       try {
         const res = await fetch('/api/settings');
         const data = await res.json();
-        if (data.success && data.data) {
-          setSettings(data.data);
-        }
+        if (data.success && data.data) setSettings(data.data);
       } catch (error) {
-        console.error("Failed to fetch footer settings:", error);
+        console.error('Failed to fetch footer settings:', error);
       }
     };
     fetchSettings();
   }, []);
 
+  const handleNewsletter = (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setEmail('');
+  };
+
+  const socialItems = [
+    { key: 'facebook', enabled: settings?.facebookEnabled, url: settings?.facebookUrl, Icon: Facebook },
+    { key: 'twitter', enabled: settings?.twitterEnabled, url: settings?.twitterUrl, Icon: Twitter },
+    { key: 'instagram', enabled: settings?.instagramEnabled, url: settings?.instagramUrl, Icon: Instagram },
+    { key: 'linkedin', enabled: settings?.linkedinEnabled, url: settings?.linkedinUrl, Icon: Linkedin },
+  ].filter((item) => item.enabled);
+
   return (
-    <footer className="relative bg-[#f4f7f9] text-gray-900 overflow-hidden border-t border-gray-200 font-inter">
-      <div className="relative z-10 container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Company Info */}
-          <div className="space-y-0 -mt-8">
-            <div className="flex items-center justify-start">
-              <div className="relative w-56 h-20 md:w-72 md:h-24 flex items-center justify-center -ml-2 z-[0]">
-                <Image
-                  src={LOGO_SRC}
-                  alt={`${SITE_NAME} Logo`}
-                  fill
-                  sizes="(max-width: 640px) 224px, (max-width: 768px) 288px, 288px"
-                  className="object-contain object-left opacity-90"
-                  priority
-                />
+    <footer className="relative overflow-hidden font-inter">
+      {/* Forest background */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src={FOOTER_BG}
+          alt=""
+          fill
+          className="object-cover object-center"
+          sizes="100vw"
+          priority={false}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-white/95 via-55% to-black/30" />
+      </div>
+
+      <div className="relative z-10">
+        {/* Main columns */}
+        <div className="container mx-auto px-4 pt-14 pb-10 md:pt-16 md:pb-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-0">
+            {/* Brand + social */}
+            <div className="lg:pr-10 space-y-6">
+              <Link href="/" className="inline-flex items-center gap-3">
+                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-white shadow-sm">
+                  <Image src={LOGO_SRC} alt={SITE_NAME} fill className="object-contain p-1.5" sizes="56px" />
+                </div>
+                <div>
+                  <p className="text-xl font-black text-gray-900 tracking-tight">{SITE_NAME}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#9aab6b]">{SITE_TAGLINE}</p>
+                </div>
+              </Link>
+
+              <p className="text-sm leading-relaxed text-gray-600 max-w-xs">
+                {SITE_DESCRIPTION.split('.')[0]}.
+              </p>
+
+              <div className="space-y-3">
+                <p className="text-sm font-bold text-gray-900">Social Media:</p>
+                <div className="flex flex-wrap gap-2.5">
+                  {socialItems.length > 0 ? (
+                    socialItems.map(({ key, url, Icon }) => (
+                      <Link
+                        key={key}
+                        href={url || '#'}
+                        target={url ? '_blank' : undefined}
+                        rel={url ? 'noopener noreferrer' : undefined}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm transition-all hover:border-[#9aab6b] hover:bg-[#f4f7ef]"
+                        aria-label={key}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </Link>
+                    ))
+                  ) : (
+                    <>
+                      {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
+                        <span
+                          key={i}
+                          className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-800 shadow-sm"
+                        >
+                          <Icon className="h-4 w-4" />
+                        </span>
+                      ))}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-            <p className="relative z-10 text-gray-600 text-[13px] font-medium leading-relaxed max-w-sm -mt-4 md:-mt-6 pl-2 drop-shadow-sm">
-              {SITE_DESCRIPTION}
-            </p>
-            
-            <div className="flex flex-wrap gap-4">
-              {settings?.facebookEnabled && settings?.facebookUrl && (
-                <Link href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#1877F2] hover:border-[#1877F2]/30 hover:bg-[#1877F2]/5 transition-all duration-300">
-                  <Facebook className="h-5 w-5" />
-                </Link>
-              )}
-              {settings?.instagramEnabled && settings?.instagramUrl && (
-                <Link href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#E4405F] hover:border-[#E4405F]/30 hover:bg-[#E4405F]/5 transition-all duration-300">
-                  <Instagram className="h-5 w-5" />
-                </Link>
-              )}
-              {settings?.twitterEnabled && settings?.twitterUrl && (
-                <Link href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-black hover:border-black/30 hover:bg-black/5 transition-all duration-300">
-                  <Twitter className="h-5 w-5" />
-                </Link>
-              )}
-              {settings?.linkedinEnabled && settings?.linkedinUrl && (
-                <Link href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#0A66C2] hover:border-[#0A66C2]/30 hover:bg-[#0A66C2]/5 transition-all duration-300">
-                  <Linkedin className="h-5 w-5" />
-                </Link>
-              )}
-              {settings?.youtubeEnabled && settings?.youtubeUrl && (
-                <Link href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#FF0000] hover:border-[#FF0000]/30 hover:bg-[#FF0000]/5 transition-all duration-300">
-                  <Youtube className="h-5 w-5" />
-                </Link>
-              )}
-              {settings?.whatsappEnabled && settings?.whatsappUrl && (
-                <Link href={settings.whatsappUrl} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:text-[#25D366] hover:border-[#25D366]/30 hover:bg-[#25D366]/5 transition-all duration-300">
-                  <MessageSquare className="h-5 w-5" />
-                </Link>
-              )}
+
+            {/* Quick links */}
+            <div className="lg:border-l lg:border-gray-200 lg:pl-10 space-y-5">
+              <h4 className="text-base font-bold text-gray-900">quick links</h4>
+              <ul className="space-y-3">
+                {quickLinks.map((link) => (
+                  <FooterLink key={link.href} href={link.href}>
+                    {link.label}
+                  </FooterLink>
+                ))}
+              </ul>
             </div>
-          </div>
 
-          {/* Quick Links */}
-          <div className="space-y-6">
-            <h4 className="text-base font-bold text-gray-900 uppercase tracking-widest">Quick Links</h4>
-            <ul className="space-y-3">
-              <li><Link href="/" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Home</Link></li>
-              <li><Link href="/about" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">About</Link></li>
-              <li><Link href="/packages" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Packages</Link></li>
-              <li><Link href="/blogs" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Travel Blog </Link></li>
-              <li><Link href="/contact" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Contact</Link></li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div className="space-y-6">
-            <h4 className="text-base font-bold text-gray-900 uppercase tracking-widest">Our Services</h4>
-            <ul className="space-y-3">
-              <li><Link href="/tours" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Exclusive Tours</Link></li>
-              <li><Link href="/international" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">International Packages</Link></li>
-              <li><Link href="/domestic" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Domestic Packages</Link></li>
-              <li><Link href="/packages/premium" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Premium Packages</Link></li>
-              <li><Link href="/packages/luxury" className="text-gray-600 hover:text-[#bd9245] transition-colors text-sm font-medium">Luxury Packages</Link></li>
-            </ul>
-          </div>
-
-          {/* Contact Info & Newsletter */}
-          <div className="space-y-6">
-            <h4 className="text-base font-bold text-gray-900 uppercase tracking-widest">Contact Us</h4>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-[#bd9245] mt-0.5" />
-                <span className="text-gray-600 text-sm font-medium leading-tight">Head office - Yaoundé, Cameroon</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-[#bd9245]" />
-                <span className="text-gray-600 text-sm font-medium">+237 6 83 57 76 76</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-[#bd9245]" />
-                <span className="text-gray-600 text-sm font-medium">sales@skygovoyages.com</span>
-              </div>
+            {/* Experience pages */}
+            <div className="lg:border-l lg:border-gray-200 lg:pl-10 space-y-5">
+              <h4 className="text-base font-bold text-gray-900">Experience Pages</h4>
+              <ul className="space-y-3">
+                {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
+                  <FooterLink key={category.slug} href={category.href}>
+                    {category.label}
+                  </FooterLink>
+                ))}
+              </ul>
             </div>
 
             {/* Newsletter */}
-            <div className="space-y-4 pt-2">
-              <h5 className="text-sm font-bold text-gray-900 uppercase">Subscribe</h5>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Email"
-                  className="bg-white border-gray-200 text-gray-900 placeholder-gray-400 text-sm h-10"
+            <div className="lg:border-l lg:border-gray-200 lg:pl-10 space-y-5">
+              <h4 className="text-base font-bold text-gray-900 leading-snug">
+                Subscribe To Our Newsletter
+              </h4>
+              <p className="text-xs text-gray-500 leading-relaxed">
+                * Sign up to receive curated travel ideas, seasonal discounts.
+              </p>
+              <form onSubmit={handleNewsletter} className="flex overflow-hidden rounded-full border border-gray-200 bg-gray-50/80 shadow-sm">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter Email Address *"
+                  className="min-w-0 flex-1 bg-transparent px-4 py-3.5 text-sm text-gray-800 placeholder:text-gray-400 outline-none"
+                  required
                 />
-                <Button size="sm" className="bg-[#bd9245] hover:bg-[#a07835] text-white font-bold h-10 border-none px-4">
-                  Join
-                </Button>
-              </div>
+                <button
+                  type="submit"
+                  className="flex shrink-0 items-center justify-center bg-[#c8d4a8] px-4 transition-colors hover:bg-[#bd9245] hover:text-white"
+                  aria-label="Subscribe"
+                >
+                  <ArrowUpRight className="h-5 w-5 text-gray-900" />
+                </button>
+              </form>
             </div>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-gray-200 mt-16 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-500 text-xs font-medium">
-              © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
-            </p>
-            <div className="flex space-x-8">
-              <Link href="/privacy" className="text-gray-500 hover:text-gray-900 text-xs font-medium transition-colors underline-offset-4 hover:underline">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-gray-500 hover:text-gray-900 text-xs font-medium transition-colors underline-offset-4 hover:underline">
-                Terms of Service
-              </Link>
-            </div>
-          </div>
+        {/* Copyright on forest */}
+        <div className="relative py-10 md:py-12">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+          <p className="relative text-center text-sm font-medium text-white/95 tracking-wide">
+            Copyright © {new Date().getFullYear()} {SITE_NAME}. All Rights Reserved.
+          </p>
         </div>
       </div>
     </footer>

@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { PACKAGE_EXPERIENCE_CATEGORIES } from "@/lib/packageExperienceCategories";
 
 interface Package {
   _id: string;
@@ -237,6 +238,37 @@ const PackagesPage = () => {
         </div>
       </section>
 
+      {/* Experience Categories */}
+      <section className="py-10 bg-[#faf8f3] border-b">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-[#1e1f44] mb-3">Explore by Experience</h2>
+              <p className="text-gray-600">Choose your adventure style and browse curated packages</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
+                <Link
+                  key={category.slug}
+                  href={category.href}
+                  className="group rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm hover:shadow-lg transition-all"
+                >
+                  <div
+                    className="h-32 bg-cover bg-center relative"
+                    style={{ backgroundImage: `url('${category.heroImage}')` }}
+                  >
+                    <div className="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition-colors" />
+                    <div className="absolute bottom-3 left-3 right-3">
+                      <p className="text-white font-bold text-sm leading-tight">{category.label}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Filters Section */}
       <section className="py-8 bg-white border-b">
         <div className="container mx-auto px-4">
@@ -255,16 +287,18 @@ const PackagesPage = () => {
                 </div>
               </div>
 
-              {/* Category Filter */}
+              {/* Experience Page Filter */}
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Category" />
+                  <SelectValue placeholder="Experience Page" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Deluxe">Deluxe</SelectItem>
-                  <SelectItem value="Premium">Premium</SelectItem>
-                  <SelectItem value="Luxury">Luxury</SelectItem>
+                  <SelectItem value="all">All Experience Pages</SelectItem>
+                  {PACKAGE_EXPERIENCE_CATEGORIES.map((category) => (
+                    <SelectItem key={category.value} value={category.value}>
+                      {category.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 

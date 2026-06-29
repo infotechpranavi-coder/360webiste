@@ -152,6 +152,21 @@ export interface BannerData {
     updatedAt: string;
 }
 
+export interface GalleryData {
+    _id: string;
+    title: string;
+    caption?: string;
+    image: {
+        public_id?: string;
+        url: string;
+        alt: string;
+    };
+    order?: number;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
 export interface BlogData {
     _id: string;
     title: string;

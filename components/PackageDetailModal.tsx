@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { SITE_NAME, brandedText } from "@/lib/branding";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -67,17 +67,17 @@ const DetailCard = ({
   className?: string;
 }) => (
   <Card className={cn("overflow-hidden border-none shadow-sm rounded-2xl", className)}>
-    <div className={cn("px-8 py-5 flex items-center gap-4", headerBg)}>
+    <div className={cn("px-5 py-3 flex items-center gap-3", headerBg)}>
       {iconBg ? (
-        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-sm", iconBg)}>
-          <Icon className={cn("h-6 w-6", iconColor || "text-white")} />
+        <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center shadow-sm", iconBg)}>
+          <Icon className={cn("h-4 w-4", iconColor || "text-white")} />
         </div>
       ) : (
-        <Icon className={cn("h-7 w-7", iconColor || "text-gray-800")} />
+        <Icon className={cn("h-5 w-5", iconColor || "text-gray-800")} />
       )}
-      <h3 className="text-2xl font-black tracking-tight font-serif text-gray-900">{title}</h3>
+      <h3 className="text-lg font-bold tracking-tight text-gray-900">{title}</h3>
     </div>
-    <CardContent className="p-8 bg-white">
+    <CardContent className="p-5 bg-white">
       {children}
     </CardContent>
   </Card>
@@ -88,11 +88,11 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl p-0 border-none bg-gray-50/30 overflow-hidden rounded-[32px] shadow-2xl">
-        <div className="max-h-[85vh] overflow-y-auto scrollbar-hide">
+      <DialogContent className="max-w-3xl w-[92vw] p-0 border-none bg-gray-50/30 overflow-hidden rounded-2xl shadow-2xl [&>button.absolute]:hidden">
+        <div className="max-h-[70vh] overflow-y-auto scrollbar-hide">
           <div className="relative">
             {/* Hero Section */}
-            <div className="relative h-[450px] w-full">
+            <div className="relative h-[200px] w-full">
               {packageData.images && packageData.images.length > 0 ? (
                 <img
                   src={packageData.images[0].url}
@@ -108,49 +108,49 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
 
               <button
                 onClick={onClose}
-                className="absolute top-8 right-8 w-12 h-12 rounded-full bg-black/30 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/50 transition-all z-20 group"
+                className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/30 backdrop-blur-xl border border-white/20 flex items-center justify-center text-white hover:bg-black/50 transition-all z-20 group"
               >
-                <X className="h-6 w-6 group-hover:rotate-90 transition-transform" />
+                <X className="h-4 w-4 group-hover:rotate-90 transition-transform" />
               </button>
 
-              <div className="absolute bottom-12 left-12 right-12 z-10">
-                <div className="flex flex-wrap gap-3 mb-6">
-                  <Badge className="bg-[#bd9245] text-white hover:bg-[#bd9245] border-none px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-lg shadow-[#bd9245]/20">
+              <div className="absolute bottom-4 left-5 right-5 z-10">
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <Badge className="bg-[#bd9245] text-white hover:bg-[#bd9245] border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
                     {packageData.packageCategory}
                   </Badge>
-                  <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest">
+                  <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
                     {packageData.duration}
                   </Badge>
-                  <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest">
+                  <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
                     {packageData.location}
                   </Badge>
                 </div>
-                <h1 className="text-5xl md:text-6xl font-black text-white mb-4 tracking-tight drop-shadow-2xl">
+                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 tracking-tight drop-shadow-lg line-clamp-2">
                   {packageData.title}
                 </h1>
-                <p className="text-white/90 text-xl font-medium tracking-wide max-w-2xl leading-relaxed">
+                <p className="text-white/90 text-sm font-medium tracking-wide max-w-2xl leading-snug line-clamp-2">
                   {packageData.subtitle}
                 </p>
               </div>
             </div>
 
-            <div className="p-12 space-y-12">
+            <div className="p-5 space-y-6">
               {/* Experience Highlights Section Header */}
-              <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
-                <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center shadow-inner">
-                  <PlayCircle className="h-7 w-7 text-gray-800" />
+              <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
+                  <PlayCircle className="h-5 w-5 text-gray-800" />
                 </div>
-                <h2 className="text-3xl font-black text-gray-900 tracking-tight">Experience Highlights</h2>
+                <h2 className="text-xl font-bold text-gray-900 tracking-tight">Experience Highlights</h2>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                 {/* Idea For & Services */}
-                <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-5">
                   {packageData.ideaFor && (
-                    <div className="bg-emerald-50/50 p-8 rounded-3xl border border-emerald-100/50">
-                      <div className="flex items-center gap-4 mb-4">
-                        <Users className="h-6 w-6 text-emerald-600" />
-                        <h4 className="text-xl font-bold text-gray-900">Ideal For</h4>
+                    <div className="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100/50">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Users className="h-5 w-5 text-emerald-600" />
+                        <h4 className="text-base font-bold text-gray-900">Ideal For</h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {packageData.ideaFor.split(',').map((tag, idx) => (
@@ -163,10 +163,10 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
                   )}
 
                   {packageData.services && (
-                    <div className="bg-blue-50/50 p-8 rounded-3xl border border-blue-100/50">
-                      <div className="flex items-center gap-4 mb-4">
-                        <Award className="h-6 w-6 text-blue-600" />
-                        <h4 className="text-xl font-bold text-gray-900">Our Services</h4>
+                    <div className="bg-blue-50/50 p-5 rounded-2xl border border-blue-100/50">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Award className="h-5 w-5 text-blue-600" />
+                        <h4 className="text-base font-bold text-gray-900">Our Services</h4>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {typeof packageData.services === 'string' ? (
@@ -195,7 +195,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
                     headerBg="bg-blue-50"
                     iconColor="text-blue-900"
                   >
-                    <p className="text-gray-600 leading-[1.8] text-xl font-medium">
+                    <p className="text-gray-600 leading-relaxed text-sm">
                       {packageData.abstract}
                     </p>
                   </DetailCard>
@@ -209,7 +209,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
                     headerBg="bg-purple-50"
                     iconColor="text-purple-900"
                   >
-                    <p className="text-gray-600 leading-[1.8] text-xl font-medium">
+                    <p className="text-gray-600 leading-relaxed text-sm">
                       {packageData.tourOverview}
                     </p>
                   </DetailCard>
@@ -313,7 +313,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
 
                 {/* Why Premium [Brand] Tours Card */}
                 <DetailCard
-                  title={`Why Premium ${packageData.place === 'dubai' ? 'Dubai' : 'SkyGo'} Tours for This Journey?`}
+                  title={`Why Premium ${packageData.place === 'dubai' ? 'Dubai' : SITE_NAME} for This Journey?`}
                   icon={ShieldCheck}
                   headerBg="bg-teal-50"
                   iconBg="bg-teal-600"
@@ -333,41 +333,40 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
 
                 {/* About [Brand] Card */}
                 <DetailCard
-                  title={`About Premium ${packageData.place === 'dubai' ? 'Dubai' : 'SkyGo'} Tours`}
+                  title={`About ${packageData.place === 'dubai' ? 'Premium Dubai' : SITE_NAME}`}
                   icon={Info}
                   headerBg="bg-amber-50"
                   iconColor="text-amber-900"
                   className="lg:col-span-2"
                 >
                   <p className="text-gray-700 leading-[1.8] text-xl font-medium">
-                    {packageData.about}
+                    {brandedText(packageData.about)}
                   </p>
                 </DetailCard>
               </div>
 
               {/* Daily Itinerary Section */}
-              <div className="space-y-10">
-                <div className="flex items-center gap-4 pb-4 border-b border-gray-100">
-                  <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center shadow-inner">
-                    <Calendar className="h-7 w-7 text-gray-800" />
+              <div className="space-y-5">
+                <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                  <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
+                    <Calendar className="h-5 w-5 text-gray-800" />
                   </div>
-                  <h2 className="text-3xl font-black text-gray-900 tracking-tight">Daily Itinerary Schedule</h2>
+                  <h2 className="text-xl font-bold text-gray-900 tracking-tight">Daily Itinerary Schedule</h2>
                 </div>
 
-                <div className="space-y-8">
+                <div className="space-y-4">
                   {packageData.itinerary.map((day, idx) => (
-                    <Card key={idx} className="overflow-hidden border-none shadow-sm rounded-2xl hover:shadow-lg transition-all transform hover:-translate-y-1">
-                      <div className="flex flex-col md:flex-row min-h-[160px]">
-                        <div className="md:w-40 bg-gray-900 text-white flex flex-col items-center justify-center p-8 shrink-0 relative overflow-hidden">
-                          <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full -mr-10 -mt-10" />
-                          <span className="text-xs font-black uppercase tracking-[0.2em] opacity-40 mb-2 relative z-10">Day</span>
-                          <span className="text-5xl font-black relative z-10">{day.day}</span>
+                    <Card key={idx} className="overflow-hidden border-none shadow-sm rounded-xl">
+                      <div className="flex flex-col md:flex-row min-h-[100px]">
+                        <div className="md:w-24 bg-gray-900 text-white flex flex-col items-center justify-center p-4 shrink-0 relative overflow-hidden">
+                          <span className="text-[10px] font-bold uppercase tracking-widest opacity-40 mb-1 relative z-10">Day</span>
+                          <span className="text-3xl font-bold relative z-10">{day.day}</span>
                         </div>
-                        <div className="p-10 bg-white flex-grow flex flex-col justify-center">
-                          <h4 className="text-2xl font-black text-gray-900 mb-4 tracking-tight leading-tight">{day.title}</h4>
-                          <div className="space-y-2">
+                        <div className="p-5 bg-white flex-grow flex flex-col justify-center">
+                          <h4 className="text-base font-bold text-gray-900 mb-2 tracking-tight leading-tight">{day.title}</h4>
+                          <div className="space-y-1">
                             {day.description.split('\n').map((line, lIdx) => (
-                              <p key={lIdx} className="text-gray-600 leading-relaxed font-bold text-xl italic flex items-start gap-2">
+                              <p key={lIdx} className="text-gray-600 leading-relaxed text-sm flex items-start gap-2">
                                 {day.description.includes('\n') && <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0" />}
                                 {line}
                               </p>
@@ -575,24 +574,24 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
         </div>
 
         {/* Footer Action Bar */}
-        <div className="p-12 bg-white border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8 rounded-b-[40px] z-30 shadow-[0_-20px_50px_-20px_rgba(0,0,0,0.1)]">
-          <div className="text-center md:text-left">
-            <p className="text-xs text-gray-400 font-black uppercase tracking-[0.3em] mb-2">Package Investment</p>
-            <div className="flex items-baseline gap-3">
-              <span className="text-5xl font-black text-[#111827] tracking-tight">R {packageData.price.toLocaleString()}</span>
-              <span className="text-gray-400 font-bold text-lg">/ Complete Journey</span>
+        <div className="p-5 bg-white border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-b-2xl z-30">
+          <div className="text-center sm:text-left">
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Package Investment</p>
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-bold text-[#111827] tracking-tight">R {packageData.price.toLocaleString()}</span>
+              <span className="text-gray-400 font-medium text-sm">/ Complete Journey</span>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
             <Button
               onClick={onClose}
               variant="outline"
-              className="w-full sm:w-auto border-gray-200 text-gray-600 font-black uppercase tracking-widest h-16 px-12 rounded-2xl hover:bg-gray-50 transition-all text-xs"
+              className="w-full sm:w-auto border-gray-200 text-gray-600 font-bold uppercase tracking-widest h-10 px-6 rounded-xl hover:bg-gray-50 transition-all text-[10px]"
             >
               Close Details
             </Button>
-            <Button className="w-full sm:w-auto bg-[#bd9245] hover:bg-[#a67e3a] text-white font-black uppercase tracking-widest h-16 px-12 rounded-2xl shadow-2xl shadow-[#bd9245]/30 group transition-all text-xs">
-              Reservations & Support <TrendingUp className="ml-3 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            <Button className="w-full sm:w-auto bg-[#bd9245] hover:bg-[#a67e3a] text-white font-bold uppercase tracking-widest h-10 px-6 rounded-xl shadow-lg shadow-[#bd9245]/20 group transition-all text-[10px]">
+              Reservations & Support <TrendingUp className="ml-2 h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Button>
           </div>
         </div>
