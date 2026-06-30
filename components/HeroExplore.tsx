@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BannerData } from "@/lib/types";
 import { SITE_NAME } from "@/lib/branding";
 import { getHeroBannerSrcSet, getHeroBannerUrl } from "@/lib/utils";
-import { getYoutubeEmbedUrl, getYoutubeThumbnail } from "@/lib/bannerMedia";
+import { getYoutubeThumbnail } from "@/lib/bannerMedia";
+import HeroYoutubePlayer from "@/components/HeroYoutubePlayer";
 
 interface HeroExploreProps {
   initialBanners?: BannerData[];
@@ -45,6 +46,11 @@ function getHeroTitle(title: string) {
   return SITE_NAME.toUpperCase();
 }
 
+function isPlayToEndBanner(banner: BannerData) {
+  const mediaType = banner.mediaType || 'image';
+  return mediaType === 'video' || mediaType === 'youtube';
+}
+
 const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   const router = useRouter();
   const { openForm } = useInquiryForm();
@@ -71,6 +77,15 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   const [banners, setBanners] = useState<BannerData[]>(initialBanners || []);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const advanceBanner = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % Math.max(banners.length, 1));
+  }, [banners.length]);
+
+  const handleMediaEnded = useCallback(() => {
+    if (banners.length <= 1) return;
+    advanceBanner();
+  }, [banners.length, advanceBanner]);
+
   useEffect(() => {
     if (initialBanners && initialBanners.length > 0) {
       return;
@@ -96,12 +111,12 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   useEffect(() => {
     if (banners.length <= 1) return;
 
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % banners.length);
-    }, 6000);
+    const current = banners[currentIndex];
+    if (current && isPlayToEndBanner(current)) return;
 
+    const interval = setInterval(advanceBanner, 6000);
     return () => clearInterval(interval);
-  }, [banners]);
+  }, [banners, currentIndex, advanceBanner]);
 
   const currentBanner = banners[currentIndex] || defaultBanner;
   const heroTitle = getHeroTitle(currentBanner.title);
@@ -126,41 +141,36 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
       'h-full w-full object-cover object-[72%_center] sm:object-[78%_center] lg:object-right';
 
     if (mediaType === 'youtube' && banner.youtubeUrl) {
-      const embedUrl = getYoutubeEmbedUrl(banner.youtubeUrl);
       const poster =
         banner.image?.url || getYoutubeThumbnail(banner.youtubeUrl) || undefined;
 
-      if (embedUrl) {
-        return (
-          <div key={banner._id} className={`${visibilityClass} overflow-hidden`} aria-hidden={!isActive}>
-            {isActive ? (
-              <iframe
-                src={embedUrl}
-                title={banner.title}
-                className="pointer-events-none absolute top-1/2 left-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2"
-                allow="autoplay; encrypted-media; picture-in-picture"
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            ) : poster ? (
-              <img src={poster} alt="" className={`${objectClass}`} aria-hidden />
-            ) : null}
-          </div>
-        );
-      }
+      return (
+        <div key={banner._id} className={`${visibilityClass} overflow-hidden`} aria-hidden={!isActive}>
+          <HeroYoutubePlayer
+            youtubeUrl={banner.youtubeUrl}
+            isActive={isActive}
+            onEnded={handleMediaEnded}
+            poster={poster}
+            objectClass={objectClass}
+          />
+        </div>
+      );
     }
 
     if (mediaType === 'video' && banner.video?.url) {
       return (
         <video
-          key={banner._id}
+          key={`${banner._id}-${isActive ? 'active' : 'idle'}`}
           src={banner.video.url}
           className={`${visibilityClass} ${objectClass}`}
           autoPlay={isActive}
           muted
-          loop
           playsInline
           poster={banner.image?.url}
           aria-hidden={!isActive}
+          onEnded={() => {
+            if (isActive) handleMediaEnded();
+          }}
         />
       );
     }
