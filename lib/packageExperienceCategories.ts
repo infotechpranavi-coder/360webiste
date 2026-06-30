@@ -23,7 +23,7 @@ export interface PackageNavGroup {
 const local = (path: string) => path;
 
 export const CATEGORY_IMAGES = {
-  'yachts-sailing-cruises': local('/coast , south afirca.webp'),
+  'yachts-sailing-cruises': local('/yaht/1629138.jpg'),
   'kayaking-boat-rides': local('/safeimagekit-kayak2__1_.webp'),
   'whitewater-rafting': local('/four-adventurous-friends-whitewater-rafting-through-rapids-free-photo.webp'),
   'sailing-school': local('/cape town.webp'),
@@ -451,7 +451,7 @@ export const accentStyles = {
     focusRing: 'focus:ring-green-500/30',
   },
   teal: {
-    gradient: 'from-teal-900/75 via-cyan-900/60 to-teal-900/75',
+    gradient: 'from-teal-900/55 via-cyan-900/40 to-teal-900/55',
     badge: 'from-teal-500 to-cyan-600',
     button: 'bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700',
     outline: 'border-teal-500 text-teal-600 hover:bg-teal-50',

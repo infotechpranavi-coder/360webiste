@@ -74,6 +74,7 @@ import { cn } from "../../lib/utils";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 import { PACKAGE_NAV_GROUPS, getCategoryByValue, packageMatchesExperienceCategory } from "@/lib/packageExperienceCategories";
 
+import { getBannerPreviewImage, getBannerMediaLabel } from "@/lib/bannerMedia";
 import { PackageData, TourData, TicketData, BannerData, BlogData, GalleryData } from "@/lib/types";
 
 type DashboardView = 'packages' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
@@ -2005,21 +2006,33 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent className="p-8 pt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {banners.map((banner) => (
+                    {banners.map((banner) => {
+                      const previewImage = getBannerPreviewImage(banner);
+                      const mediaLabel = getBannerMediaLabel(banner.mediaType);
+                      return (
                       <Card key={banner._id} className="rounded-3xl border-gray-100 overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-500">
                         <div className="relative aspect-video">
-                          <img src={banner.image?.url} className="w-full h-full object-cover" alt={banner.title} />
+                          {banner.mediaType === 'video' && banner.video?.url ? (
+                            <video src={banner.video.url} className="w-full h-full object-cover" muted playsInline />
+                          ) : previewImage ? (
+                            <img src={previewImage} className="w-full h-full object-cover" alt={banner.title} />
+                          ) : (
+                            <div className="w-full h-full bg-gray-100" />
+                          )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                           <div className="absolute bottom-4 left-4 right-4">
                             <h4 className="text-white font-black text-lg uppercase tracking-tighter leading-none">{banner.title}</h4>
                             <p className="text-[#bd9245] font-bold text-[10px] uppercase tracking-widest mt-1">{banner.subtitle}</p>
                           </div>
-                          <div className="absolute top-4 left-4">
+                          <div className="absolute top-4 left-4 flex flex-col gap-2">
                             <Badge className={cn(
                               "rounded-lg px-2 py-0.5 text-[9px] font-black uppercase tracking-widest border-none",
                               banner.isActive ? "bg-emerald-500 text-white" : "bg-gray-500 text-white"
                             )}>
                               {banner.isActive ? 'Active' : 'Inactive'}
+                            </Badge>
+                            <Badge className="rounded-lg px-2 py-0.5 text-[9px] font-black uppercase tracking-widest border-none bg-[#111827]/80 text-white">
+                              {mediaLabel}
                             </Badge>
                           </div>
                           <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -2036,7 +2049,8 @@ export default function DashboardPage() {
                           </div>
                         </CardContent>
                       </Card>
-                    ))}
+                      );
+                    })}
                     {banners.length === 0 && (
                       <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 rounded-[40px] bg-gray-50/30">
                         <ImageIcon className="h-12 w-12 text-gray-200 mx-auto mb-4" />

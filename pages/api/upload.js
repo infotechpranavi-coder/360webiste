@@ -9,7 +9,7 @@ cloudinary.config({
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '25mb',
+      sizeLimit: '100mb',
     },
   },
 };
@@ -20,28 +20,31 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { data, folder } = req.body;
+    const { data, folder, resourceType } = req.body;
 
     if (!data) {
-      return res.status(400).json({ success: false, error: 'No image data provided' });
+      return res.status(400).json({ success: false, error: 'No file data provided' });
     }
 
     const uploadFolder = folder || process.env.CLOUDINARY_UPLOAD_FOLDER || 'skygo/packages';
     const isBanner = String(folder || '').includes('banner');
+    const isVideo = resourceType === 'video';
 
     const result = await cloudinary.uploader.upload(data, {
       folder: uploadFolder,
-      resource_type: 'image',
-      ...(isBanner
-        ? {
-            quality: 100,
-            flags: 'keep_iptc',
-          }
-        : {
-            transformation: [
-              { width: 1920, crop: 'limit', quality: 'auto:good' },
-            ],
-          }),
+      resource_type: isVideo ? 'video' : 'image',
+      ...(isVideo
+        ? {}
+        : isBanner
+          ? {
+              quality: 100,
+              flags: 'keep_iptc',
+            }
+          : {
+              transformation: [
+                { width: 1920, crop: 'limit', quality: 'auto:good' },
+              ],
+            }),
     });
 
     return res.status(200).json({
@@ -50,6 +53,7 @@ export default async function handler(req, res) {
       url: result.secure_url,
       width: result.width,
       height: result.height,
+      resource_type: result.resource_type,
     });
   } catch (error) {
     console.error('Cloudinary upload error:', error);

@@ -53,7 +53,9 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen">
-      {initialBanners[0]?.image?.url && (
+      {initialBanners[0]?.mediaType !== 'video' &&
+        initialBanners[0]?.mediaType !== 'youtube' &&
+        initialBanners[0]?.image?.url && (
         <link
           rel="preload"
           as="image"

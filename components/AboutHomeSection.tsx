@@ -53,8 +53,8 @@ const AboutHomeSection = () => {
           >
             <div className="relative aspect-[4/5] max-h-[620px] w-full overflow-hidden rounded-[32px] md:rounded-[40px] shadow-xl">
               <Image
-                src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-                alt={`${SITE_NAME} travel experience`}
+                src="/yaht/photo-1535024966840-e7424dc2635b.avif"
+                alt={`${SITE_NAME} yacht and travel experience`}
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"

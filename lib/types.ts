@@ -140,11 +140,18 @@ export interface BannerData {
     _id: string;
     title: string;
     subtitle: string;
-    image: {
+    mediaType?: 'image' | 'video' | 'youtube';
+    image?: {
         public_id: string;
         url: string;
         alt: string;
     };
+    video?: {
+        public_id: string;
+        url: string;
+        alt: string;
+    };
+    youtubeUrl?: string;
     link?: string;
     order?: number;
     isActive: boolean;

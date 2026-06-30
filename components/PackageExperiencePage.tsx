@@ -14,6 +14,7 @@ import {
 } from '@/lib/packageExperienceCategories';
 import { useInquiryForm } from '@/contexts/InquiryFormContext';
 import PackagePageEnquiryForm from '@/components/PackagePageEnquiryForm';
+import CategoryHeroBackground from '@/components/CategoryHeroBackground';
 
 interface PackageItem {
   _id: string;
@@ -109,12 +110,11 @@ export default function PackageExperiencePage({ category }: PackageExperiencePag
   return (
     <div className="min-h-screen bg-[#faf8f3]">
       <section className="relative text-white pt-28 pb-20 md:pb-24 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0 scale-105"
-          style={{ backgroundImage: `url('${category.heroImage}')` }}
-        >
-          <div className={`absolute inset-0 bg-gradient-to-br ${styles.gradient}`} />
-        </div>
+        <CategoryHeroBackground
+          src={category.heroImage}
+          alt={category.heroTitle}
+          gradientClass={styles.gradient}
+        />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/25 rounded-full px-5 py-2 mb-6">

@@ -91,11 +91,17 @@ const NavbarTravel = () => {
     hoveredIndex === index || openDropdownIndex === index;
 
   const navItemClass = (highlighted: boolean) =>
-    `relative z-10 px-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
-      highlighted
-        ? 'bg-white text-gray-900 font-bold shadow-sm'
-        : 'text-white/90 hover:bg-white/15 hover:text-white'
-    }`;
+    useSolidNav
+      ? `relative z-10 px-3 py-1.5 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#bd9245]/40 ${
+          highlighted
+            ? 'bg-[#bd9245]/10 text-[#bd9245] font-bold'
+            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+        }`
+      : `relative z-10 px-2 py-1 text-sm font-medium transition-all duration-200 whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
+          highlighted
+            ? 'text-white font-semibold'
+            : 'text-white/85 hover:text-white'
+        }`;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,7 +129,9 @@ const NavbarTravel = () => {
                 src={LOGO_SRC}
                 alt={SITE_NAME}
                 fill
-                className="object-contain object-left"
+                className={`object-contain object-left transition-all duration-300 ${
+                  useSolidNav ? '' : 'brightness-0 invert'
+                }`}
                 priority
               />
             </div>
@@ -131,7 +139,11 @@ const NavbarTravel = () => {
 
           {/* Centered Navigation Pill */}
           <div className={`hidden lg:flex items-center justify-center flex-1 transition-all duration-300 ${isSearchOpen ? 'opacity-0 pointer-events-none scale-95' : 'opacity-100'}`}>
-            <div className="relative flex items-center gap-1 rounded-full px-2 py-1.5 bg-black/55 backdrop-blur-md border border-white/10 shadow-lg">
+            <div className={`relative flex items-center gap-6 xl:gap-8 ${
+              useSolidNav
+                ? 'rounded-full px-2 py-1.5 bg-gray-100/90 border border-gray-200/80'
+                : ''
+            }`}>
               {navigation.map((item, index) => {
                 const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
                   if (pathname === '/' && item.href === '/') {
@@ -171,7 +183,7 @@ const NavbarTravel = () => {
                         <ChevronDown
                           className={`h-3.5 w-3.5 transition-transform ${
                             dropdownOpen ? 'rotate-180' : ''
-                          } ${highlighted ? 'text-gray-700' : ''}`}
+                          } ${useSolidNav && highlighted ? 'text-gray-700' : ''}`}
                         />
                       </Link>
                       <div
@@ -269,7 +281,7 @@ const NavbarTravel = () => {
                         <ChevronDown
                           className={`h-3.5 w-3.5 transition-transform ${
                             dropdownOpen ? 'rotate-180' : ''
-                          } ${highlighted ? 'text-gray-700' : ''}`}
+                          } ${useSolidNav && highlighted ? 'text-gray-700' : ''}`}
                         />
                       </Link>
                       <div
@@ -317,20 +329,11 @@ const NavbarTravel = () => {
                   </Link>
                 );
               })}
-              <Link
-                href="/contact"
-                aria-current={isContactActive ? 'page' : undefined}
-                onMouseEnter={() => setContactHovered(true)}
-                onMouseLeave={() => setContactHovered(false)}
-                className={navItemClass(isContactActive || contactHovered)}
-              >
-                Contact Us
-              </Link>
             </div>
           </div>
 
-          {/* Right Side: Search + Book Now */}
-          <div className="hidden lg:flex items-center space-x-4 relative">
+          {/* Right Side: Search + CTA */}
+          <div className="hidden lg:flex items-center space-x-3 relative">
             <div className={`flex items-center transition-all duration-500 overflow-hidden ${isSearchOpen ? 'w-[400px] absolute right-32' : 'w-10'}`}>
               {isSearchOpen ? (
                 <form onSubmit={handleSearch} className="flex items-center w-full bg-white/80 backdrop-blur-xl rounded-full border border-[#bd9245]/30 shadow-sm px-2 overflow-hidden">
@@ -356,10 +359,32 @@ const NavbarTravel = () => {
                 </Button>
               )}
             </div>
+
+            <Link
+              href="/contact"
+              aria-current={isContactActive ? 'page' : undefined}
+              onMouseEnter={() => setContactHovered(true)}
+              onMouseLeave={() => setContactHovered(false)}
+              className={`inline-flex h-10 items-center justify-center rounded-full px-6 text-[11px] font-bold uppercase tracking-[0.18em] transition-all ${
+                useSolidNav
+                  ? isContactActive || contactHovered
+                    ? 'bg-[#bd9245] text-white'
+                    : 'bg-[#111827] text-white hover:bg-[#bd9245]'
+                  : isContactActive || contactHovered
+                    ? 'bg-white text-[#17303f]'
+                    : 'bg-[#c8d8e2] text-[#17303f] hover:bg-white'
+              }`}
+            >
+              Contact Us
+            </Link>
             
             <Button
               onClick={() => openForm()}
-              className="bg-[#bd9245] hover:bg-[#a07835] text-gray-900 font-bold px-6 py-2 rounded-full shadow-lg h-10 whitespace-nowrap"
+              className={`${
+                useSolidNav
+                  ? 'bg-[#bd9245] hover:bg-[#a07835] text-gray-900'
+                  : 'bg-transparent border border-white/35 text-white hover:bg-white/10 hover:text-white'
+              } font-bold px-5 py-2 rounded-full shadow-none h-10 whitespace-nowrap text-[11px] uppercase tracking-[0.16em]`}
             >
               Book Now
             </Button>

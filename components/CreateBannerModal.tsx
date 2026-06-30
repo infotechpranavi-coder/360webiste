@@ -1,13 +1,13 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, X } from "lucide-react";
 import { BannerData } from "@/lib/types";
-import { prepareBannerImageForUpload } from "@/lib/utils";
+import { BannerMediaType } from "@/lib/bannerMedia";
+import { buildBannerMediaPayload } from "@/lib/bannerUpload";
+import BannerMediaForm from "@/components/BannerMediaForm";
 
 interface CreateBannerModalProps {
     isOpen: boolean;
@@ -24,33 +24,46 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
         isActive: true,
     });
 
+    const [mediaType, setMediaType] = useState<BannerMediaType>('image');
     const [image, setImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [externalImageUrl, setExternalImageUrl] = useState("");
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [video, setVideo] = useState<File | null>(null);
+    const [videoPreview, setVideoPreview] = useState<string | null>(null);
+    const [externalVideoUrl, setExternalVideoUrl] = useState("");
+    const [youtubeUrl, setYoutubeUrl] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
 
     const handleInputChange = (field: string, value: any) => setFormData(prev => ({ ...prev, [field]: value }));
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    const handleImageFileChange = (file: File | null) => {
+        setImage(file);
         if (file) {
-            setImage(file);
-            setExternalImageUrl(""); // Clear URL if file selected
+            setExternalImageUrl("");
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string);
-            };
+            reader.onloadend = () => setImagePreview(reader.result as string);
             reader.readAsDataURL(file);
+            return;
         }
+        setImagePreview(null);
     };
 
-    // Image compression is now handled within handleSubmit using the global utility
+    const handleVideoFileChange = (file: File | null) => {
+        setVideo(file);
+        if (file) {
+            setExternalVideoUrl("");
+            const reader = new FileReader();
+            reader.onloadend = () => setVideoPreview(reader.result as string);
+            reader.readAsDataURL(file);
+            return;
+        }
+        setVideoPreview(null);
+    };
 
     const handleSubmit = async () => {
-        if (!formData.title || !formData.subtitle || (!image && !externalImageUrl)) {
-            setSubmitError("Title, subtitle and image (file or URL) are required.");
+        if (!formData.title || !formData.subtitle) {
+            setSubmitError("Title and subtitle are required.");
             return;
         }
 
@@ -58,37 +71,23 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
         setSubmitError("");
 
         try {
-            let uploadedImage = { public_id: "", url: "", alt: "" };
-
-            if (image) {
-                const base64 = await prepareBannerImageForUpload(image);
-                const uploadRes = await fetch('/api/upload', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: base64, folder: 'skygo/banners' }),
-                });
-                const uploadData = await uploadRes.json();
-                if (uploadData.success) {
-                    uploadedImage = {
-                        public_id: uploadData.public_id,
-                        url: uploadData.url,
-                        alt: formData.title
-                    };
-                } else {
-                    throw new Error(uploadData.error || "Failed to upload image.");
-                }
-            } else if (externalImageUrl) {
-                uploadedImage = {
-                    public_id: "",
-                    url: externalImageUrl,
-                    alt: formData.title
-                };
-            }
+            const media = await buildBannerMediaPayload({
+                mediaType,
+                title: formData.title,
+                imageFile: image,
+                externalImageUrl,
+                videoFile: video,
+                externalVideoUrl,
+                youtubeUrl,
+            });
 
             const payload = {
                 ...formData,
                 order: Number(formData.order) || 0,
-                image: uploadedImage,
+                mediaType: media.mediaType,
+                image: media.image,
+                video: media.video,
+                youtubeUrl: media.youtubeUrl,
             };
 
             const res = await fetch('/api/banners', {
@@ -119,9 +118,14 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
             order: "0",
             isActive: true,
         });
+        setMediaType('image');
         setImage(null);
         setImagePreview(null);
         setExternalImageUrl("");
+        setVideo(null);
+        setVideoPreview(null);
+        setExternalVideoUrl("");
+        setYoutubeUrl("");
         setSubmitError("");
         onClose();
     };
@@ -131,7 +135,7 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
             <DialogContent className="max-w-2xl rounded-[32px] border-none shadow-2xl p-0 bg-white overflow-hidden">
                 <DialogHeader className="p-8 pb-4 bg-gray-50/50">
                     <DialogTitle className="text-3xl font-black text-[#111827] uppercase tracking-tighter">Add Home Banner</DialogTitle>
-                    <DialogDescription className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-1">Create a new hero banner for the home page slider.</DialogDescription>
+                    <DialogDescription className="text-gray-400 font-bold uppercase tracking-widest text-[10px] mt-1">Create a hero banner with image, uploaded video, or YouTube background.</DialogDescription>
                 </DialogHeader>
 
                 <div className="p-8 space-y-6 max-h-[60vh] overflow-y-auto">
@@ -139,22 +143,21 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Banner Title</label>
                             <Textarea 
-                                placeholder="e.g. TRAVEL&#10;MORE" 
+                                placeholder="e.g. ADVENTURES BEGIN WITH&#10;EXPLORE 360" 
                                 value={formData.title} 
                                 onChange={e => handleInputChange("title", e.target.value)} 
                                 className="min-h-[100px] rounded-xl resize-none" 
                             />
-                            <p className="text-[9px] text-gray-400 font-bold ml-1 uppercase">Press Enter for 2nd line. 1st line=White, 2nd line=Amber.</p>
+                            <p className="text-[9px] text-gray-400 font-bold ml-1 uppercase">Press Enter for a second headline line.</p>
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Subtitle / Tagline</label>
                             <Textarea 
-                                placeholder="e.g. WORRY LESS" 
+                                placeholder="e.g. Start your exciting travel adventure..." 
                                 value={formData.subtitle} 
                                 onChange={e => handleInputChange("subtitle", e.target.value)} 
                                 className="min-h-[100px] rounded-xl resize-none" 
                             />
-                            <p className="text-[9px] text-gray-400 font-bold ml-1 uppercase">Optional: Use Enter for multiple lines.</p>
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Redirect Link (Optional)</label>
@@ -166,42 +169,38 @@ const CreateBannerModal = ({ isOpen, onClose, onBannerCreated }: CreateBannerMod
                         </div>
                     </div>
 
-                    <div className="space-y-4">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Banner Image</label>
-                        <div className="space-y-4">
-                            {(imagePreview || externalImageUrl) ? (
-                                <div className="relative rounded-2xl overflow-hidden aspect-video group shadow-lg border border-gray-100">
-                                    <img src={imagePreview || externalImageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                    <button
-                                        onClick={() => { setImage(null); setImagePreview(null); setExternalImageUrl(""); }}
-                                        className="absolute top-4 right-4 bg-red-500 p-2 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all shadow-xl hover:scale-110"
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </button>
-                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                                        <p className="text-white text-[10px] font-bold uppercase tracking-widest">{image ? 'Local File Selected' : 'External URL Selected'}</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col gap-4">
-                                    <div
-                                        className="border-2 border-dashed border-gray-100 rounded-[24px] p-10 text-center cursor-pointer hover:border-[#bd9245] hover:bg-gray-50/50 transition-all group"
-                                        onClick={() => fileInputRef.current?.click()}
-                                    >
-                                        <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-[#bd9245]/10 transition-colors">
-                                            <Upload className="h-6 w-6 text-gray-300 group-hover:text-[#bd9245] transition-colors" />
-                                        </div>
-                                        <p className="text-xs font-black text-[#111827] uppercase tracking-widest">Upload Professional Visuals</p>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mt-1">PNG, JPG or WEBP — any size accepted</p>
-                                        <input type="file" hidden ref={fileInputRef} onChange={handleImageChange} accept="image/*" />
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <Input placeholder="OR Paste high-res image URL here..." value={externalImageUrl} onChange={e => { setExternalImageUrl(e.target.value); setImage(null); setImagePreview(null); }} className="h-14 rounded-2xl flex-1 border-gray-100 shadow-sm" />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    <BannerMediaForm
+                        mediaType={mediaType}
+                        onMediaTypeChange={setMediaType}
+                        imagePreview={imagePreview}
+                        externalImageUrl={externalImageUrl}
+                        onImageFileChange={handleImageFileChange}
+                        onExternalImageUrlChange={(url) => {
+                            setExternalImageUrl(url);
+                            setImage(null);
+                            setImagePreview(null);
+                        }}
+                        onClearImage={() => {
+                            setImage(null);
+                            setImagePreview(null);
+                            setExternalImageUrl("");
+                        }}
+                        videoPreview={videoPreview}
+                        externalVideoUrl={externalVideoUrl}
+                        onVideoFileChange={handleVideoFileChange}
+                        onExternalVideoUrlChange={(url) => {
+                            setExternalVideoUrl(url);
+                            setVideo(null);
+                            setVideoPreview(null);
+                        }}
+                        onClearVideo={() => {
+                            setVideo(null);
+                            setVideoPreview(null);
+                            setExternalVideoUrl("");
+                        }}
+                        youtubeUrl={youtubeUrl}
+                        onYoutubeUrlChange={setYoutubeUrl}
+                    />
 
                     <div className="flex items-center space-x-2">
                         <input
