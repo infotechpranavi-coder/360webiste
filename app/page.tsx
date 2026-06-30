@@ -11,11 +11,12 @@ import Banner from "@/models/Banner";
 import Package from "@/models/Package";
 import Settings from "@/models/Settings";
 import { getHeroBannerUrl } from "@/lib/utils";
+import { BannerData, PackageData } from "@/lib/types";
 
 export default async function Home() {
   // Use try/catch for database operations
-  let initialBanners = [];
-  let initialPackages = [];
+  let initialBanners: BannerData[] = [];
+  let initialPackages: PackageData[] = [];
   let settings = { 
     popularSection: true, 
     upcomingSection: true,
