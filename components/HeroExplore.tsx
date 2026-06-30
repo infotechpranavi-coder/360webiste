@@ -31,27 +31,18 @@ function useHeroImageWidth() {
   return width;
 }
 
-function splitHeadline(title: string) {
-  if (title.includes('\n')) {
-    const [lead, ...rest] = title.split('\n').filter((line) => line.trim());
-    return {
-      lead: lead?.trim() || 'ADVENTURES BEGIN WITH',
-      accent: rest.join(' ').trim() || SITE_NAME,
-    };
+function getHeroTitle(title: string) {
+  const lines = title
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => line.toUpperCase() !== 'ADVENTURES BEGIN WITH');
+
+  if (lines.length > 0) {
+    return lines.join(' ').toUpperCase();
   }
 
-  const words = title.trim().split(/\s+/);
-  if (words.length > 2) {
-    return {
-      lead: words.slice(0, -1).join(' ').toUpperCase(),
-      accent: words[words.length - 1].toUpperCase(),
-    };
-  }
-
-  return {
-    lead: 'ADVENTURES BEGIN WITH',
-    accent: title.trim().toUpperCase() || SITE_NAME.toUpperCase(),
-  };
+  return SITE_NAME.toUpperCase();
 }
 
 const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
@@ -62,7 +53,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
 
   const defaultBanner: BannerData = {
     _id: 'default',
-    title: `ADVENTURES BEGIN WITH\n${SITE_NAME.toUpperCase()}`,
+    title: SITE_NAME.toUpperCase(),
     subtitle:
       'Start your exciting travel adventure with Explore 360, where safety and memorable experiences come first.',
     image: {
@@ -113,7 +104,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   }, [banners]);
 
   const currentBanner = banners[currentIndex] || defaultBanner;
-  const headline = splitHeadline(currentBanner.title);
+  const heroTitle = getHeroTitle(currentBanner.title);
   const description =
     currentBanner.subtitle?.trim() ||
     'Start your exciting travel adventure with Explore 360, where safety and memorable experiences come first.';
@@ -210,46 +201,32 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
         <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#0a2233]/35 via-transparent to-[#0a2233]/15 pointer-events-none" />
       </div>
 
-      <div className="relative z-20 mx-auto flex min-h-screen max-w-[1400px] flex-col justify-between px-5 pb-10 pt-28 sm:px-8 sm:pb-14 sm:pt-32 lg:px-12 lg:pb-16 lg:pt-36">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`top-${currentIndex}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
-            className="max-w-xl"
-          >
-            <p className="text-sm font-medium leading-relaxed text-white/90 sm:text-base md:max-w-md md:text-[17px]">
-              {description}
-            </p>
-
-            <button
-              type="button"
-              onClick={handlePrimaryAction}
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-[#c8d8e2] px-7 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-[#17303f] transition hover:bg-white sm:mt-8 sm:px-8 sm:py-3.5 sm:text-xs"
-            >
-              {currentBanner.link ? 'View Details' : 'Book An Experience'}
-            </button>
-          </motion.div>
-        </AnimatePresence>
-
-        <div className="mt-10 flex flex-col gap-8 sm:mt-0 sm:flex-row sm:items-end sm:justify-between">
+      <div className="relative z-20 mx-auto flex min-h-screen max-w-[1400px] flex-col justify-end px-5 pb-12 pt-28 sm:px-8 sm:pb-16 sm:pt-32 lg:px-12 lg:pb-20 lg:pt-36">
+        <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
           <AnimatePresence mode="wait">
             <motion.div
-              key={`bottom-${currentIndex}`}
-              initial={{ opacity: 0, y: 28 }}
+              key={`hero-${currentIndex}`}
+              initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 16 }}
+              exit={{ opacity: 0, y: 12 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
               className="max-w-3xl"
             >
-              <p className="text-3xl font-black uppercase leading-[0.95] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
-                {headline.lead}
-              </p>
-              <h1 className="mt-1 text-[clamp(3.5rem,12vw,9rem)] font-black uppercase leading-[0.82] tracking-tighter text-white">
-                {headline.accent}
+              <h1 className="text-[clamp(3.5rem,12vw,9rem)] font-black uppercase leading-[0.82] tracking-tighter text-white">
+                {heroTitle}
               </h1>
+
+              <p className="mt-5 max-w-xl text-sm font-medium leading-relaxed text-white/90 sm:text-base md:max-w-md md:text-[17px]">
+                {description}
+              </p>
+
+              <button
+                type="button"
+                onClick={handlePrimaryAction}
+                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#c8d8e2] px-7 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-[#17303f] transition hover:bg-white sm:mt-8 sm:px-8 sm:py-3.5 sm:text-xs"
+              >
+                {currentBanner.link ? 'View Details' : 'Book An Experience'}
+              </button>
             </motion.div>
           </AnimatePresence>
 
