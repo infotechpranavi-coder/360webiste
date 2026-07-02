@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Minus, X, Upload, Star } from "lucide-react";
 import { compressImage } from "@/lib/utils";
-import { PACKAGE_EXPERIENCE_CATEGORIES, PACKAGE_NAV_GROUPS, getNavGroupForCategory } from "@/lib/packageExperienceCategories";
+import { PACKAGE_EXPERIENCE_CATEGORIES, getNavGroupForCategory } from "@/lib/packageExperienceCategories";
+import ExperienceCategoryNameFields from "@/components/ExperienceCategoryNameFields";
+import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 import { SITE_NAME } from "@/lib/branding";
 
 interface ItineraryDay {
@@ -47,6 +49,7 @@ interface EditPackageModalProps {
 }
 
 const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: EditPackageModalProps) => {
+  const { navGroups, getCategoryByValue: resolveCategoryByValue } = useCategoryLabels();
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
@@ -63,6 +66,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
     packageType: "",
     place: "",
     packageCategory: "Yachts & Sailing Cruises",
+    packageMiniCategory: "",
     bestTimeToVisit: {
       yearRound: "",
       winter: "",
@@ -70,6 +74,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
     },
     isFeaturedDestination: false,
     isPopularPackage: false,
+    isFeaturedTrip: false,
   });
 
   const [keyHighlights, setKeyHighlights] = useState<string[]>([]);
@@ -96,17 +101,16 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
   const [uploading, setUploading] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [packageGroupSlug, setPackageGroupSlug] = useState(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
-
-  const selectedPackageGroup =
-    PACKAGE_NAV_GROUPS.find((group) => group.slug === packageGroupSlug) ?? PACKAGE_NAV_GROUPS[0];
+  const [packageGroupSlug, setPackageGroupSlug] = useState(navGroups[0]?.slug ?? "water");
 
   // Initialize form data when packageData changes
   useEffect(() => {
     if (packageData) {
       // Map category value to ensure it matches SelectItem values
       const mapCategory = (category: string | undefined): string => {
-        if (!category) return "Yachts & Sailing Cruises";
+        if (!category) return navGroups[0]?.items[0]?.value ?? "Yachts & Sailing Cruises";
+        const resolved = resolveCategoryByValue(category);
+        if (resolved) return resolved.value;
         const match = PACKAGE_EXPERIENCE_CATEGORIES.find(
           (item) =>
             item.value.toLowerCase() === category.toLowerCase() ||
@@ -134,6 +138,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
         packageType: packageData.packageType || "",
         place: packageData.place || "",
         packageCategory: mappedCategory,
+        packageMiniCategory: packageData.packageMiniCategory || "",
         bestTimeToVisit: {
           yearRound: packageData.bestTimeToVisit?.yearRound || "",
           winter: packageData.bestTimeToVisit?.winter || "",
@@ -141,6 +146,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
         },
         isFeaturedDestination: packageData.isFeaturedDestination || false,
         isPopularPackage: packageData.isPopularPackage || false,
+        isFeaturedTrip: packageData.isFeaturedTrip || false,
       });
 
       setKeyHighlights(packageData.keyHighlights?.length ? packageData.keyHighlights : [""]);
@@ -227,7 +233,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
       setExternalImageUrls([]);
       setCurrentImageUrl("");
     }
-  }, [packageData]);
+  }, [packageData, navGroups, resolveCategoryByValue]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -238,10 +244,15 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
 
   const handlePackageGroupChange = (groupSlug: string) => {
     setPackageGroupSlug(groupSlug);
-    const group = PACKAGE_NAV_GROUPS.find((g) => g.slug === groupSlug);
-    if (group?.items[0]) {
-      handleInputChange("packageCategory", group.items[0].value);
-    }
+  };
+
+  const handlePackageCategoryChange = (categoryValue: string) => {
+    handleInputChange("packageCategory", categoryValue);
+    handleInputChange("packageMiniCategory", "");
+  };
+
+  const handlePackageMiniCategoryChange = (miniValue: string) => {
+    handleInputChange("packageMiniCategory", miniValue);
   };
 
   const handleAddUrl = () => {
@@ -599,6 +610,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
         images: [...existingImages, ...uploadedNewImages, ...externalImageUrls.map(url => ({ url, alt: formData.title }))],
         isFeaturedDestination: formData.isFeaturedDestination,
         isPopularPackage: formData.isPopularPackage,
+        isFeaturedTrip: formData.isFeaturedTrip,
         bookings: packageData?.bookings || 0,
         rating: packageData?.rating || 0
       };
@@ -659,6 +671,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
       packageType: "international",
       place: "bhutan",
       packageCategory: "Yachts & Sailing Cruises",
+    packageMiniCategory: "",
       bestTimeToVisit: {
         yearRound: "",
         winter: "",
@@ -666,6 +679,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
       },
       isFeaturedDestination: false,
       isPopularPackage: false,
+      isFeaturedTrip: false,
     });
     setKeyHighlights([]);
     setHotelOptions([]);
@@ -673,7 +687,7 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
     setWhyPremiumSkygoTours([]);
     setItinerary([{ id: "1", day: 1, title: "", description: "" }]);
     setSubmitError("");
-    setPackageGroupSlug(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
+    setPackageGroupSlug(navGroups[0]?.slug ?? "water");
     setTransportation([]);
     setAccommodation([]);
     setInclusions([{ id: "1", category: "", items: [""] }]);
@@ -727,39 +741,15 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Experience Type *</label>
-                <Select value={packageGroupSlug} onValueChange={handlePackageGroupChange}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                  <SelectContent className="z-[200]">
-                    {PACKAGE_NAV_GROUPS.map((group) => (
-                      <SelectItem key={group.slug} value={group.slug}>
-                        {group.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500">Choose the main category (Water, Land — Motor, Land — Physical, or Sky).</p>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Experience Page *</label>
-                <Select
-                  value={formData.packageCategory || "Yachts & Sailing Cruises"}
-                  onValueChange={(value) => handleInputChange("packageCategory", value)}
-                >
-                  <SelectTrigger><SelectValue placeholder="Select experience page" /></SelectTrigger>
-                  <SelectContent className="z-[200] max-h-72">
-                    {selectedPackageGroup?.items.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}{category.isFuture ? " (Future)" : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500">Package appears on this page under Packages in the navbar.</p>
-              </div>
-            </div>
+            <ExperienceCategoryNameFields
+              packageGroupSlug={packageGroupSlug}
+              packageCategory={formData.packageCategory || navGroups[0]?.items[0]?.value || "Yachts & Sailing Cruises"}
+              packageMiniCategory={formData.packageMiniCategory || ""}
+              onGroupChange={handlePackageGroupChange}
+              onCategoryChange={handlePackageCategoryChange}
+              onMiniCategoryChange={handlePackageMiniCategoryChange}
+              selectContentClassName="z-[200]"
+            />
             <div className="space-y-2">
               <label className="text-sm font-medium">Place / Location *</label>
               <Input placeholder="e.g. Cape Town, South Africa or Dubai, UAE" value={formData.place} onChange={(e) => handleInputChange('place', e.target.value)} />
@@ -779,6 +769,14 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
             <div className="grid gap-1.5 leading-none">
               <label htmlFor="isPopularPackageEdit" className="text-sm font-bold uppercase tracking-widest leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Show in Homepage Popular Packages Section</label>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">If checked, this package will appear in the Popular Packages section on the home page.</p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2 py-2 px-4 bg-teal-50/50 rounded-2xl border border-dashed border-teal-200">
+            <Checkbox id="isFeaturedTripEdit" checked={formData.isFeaturedTrip} onCheckedChange={(checked) => handleCheckboxChange('isFeaturedTrip', !!checked)} />
+            <div className="grid gap-1.5 leading-none">
+              <label htmlFor="isFeaturedTripEdit" className="text-sm font-bold uppercase tracking-widest leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Show in Homepage Featured Water Trips Section</label>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">If checked, this package appears in the Featured Water Trips carousel on the home page.</p>
             </div>
           </div>
 

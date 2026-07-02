@@ -11,8 +11,8 @@ import {
   PackageNavGroup,
   GROUP_HERO_IMAGES,
   accentStyles,
-  getCategoryByValue,
 } from '@/lib/packageExperienceCategories';
+import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
 import { useInquiryForm } from '@/contexts/InquiryFormContext';
 import PackagePageEnquiryForm from '@/components/PackagePageEnquiryForm';
 import CategoryHeroBackground from '@/components/CategoryHeroBackground';
@@ -42,7 +42,9 @@ interface PackageGroupPageProps {
   group: PackageNavGroup;
 }
 
-export default function PackageGroupPage({ group }: PackageGroupPageProps) {
+export default function PackageGroupPage({ group: baseGroup }: PackageGroupPageProps) {
+  const { navGroups, getCategoryByValue: resolveCategoryByValue } = useCategoryLabels();
+  const group = navGroups.find((item) => item.slug === baseGroup.slug) ?? baseGroup;
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [filteredPackages, setFilteredPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +88,7 @@ export default function PackageGroupPage({ group }: PackageGroupPageProps) {
   };
 
   const openPackageEnquiry = (pkg: PackageItem) => {
-    const cat = getCategoryByValue(pkg.packageCategory);
+    const cat = resolveCategoryByValue(pkg.packageCategory);
     openForm({
       type: 'Package',
       title: pkg.title,
@@ -181,7 +183,7 @@ export default function PackageGroupPage({ group }: PackageGroupPageProps) {
             ) : (
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
                 {filteredPackages.map((pkg) => {
-                  const cat = getCategoryByValue(pkg.packageCategory);
+                  const cat = resolveCategoryByValue(pkg.packageCategory);
                   return (
                     <article
                       key={pkg._id}

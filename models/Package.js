@@ -191,6 +191,10 @@ const PackageSchema = new mongoose.Schema({
     required: true,
     default: 'Yachts & Sailing Cruises',
   },
+  packageMiniCategory: {
+    type: String,
+    default: '',
+  },
   images: [ImageSchema],
   itinerary: [ItineraryDaySchema],
   transportation: [TransportationSchema],
@@ -221,6 +225,10 @@ const PackageSchema = new mongoose.Schema({
     default: false,
   },
   isPopularPackage: {
+    type: Boolean,
+    default: false,
+  },
+  isFeaturedTrip: {
     type: Boolean,
     default: false,
   },

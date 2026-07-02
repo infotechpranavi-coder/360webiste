@@ -10,8 +10,9 @@ import { Clock, MapPin, Search, Star, Users, ArrowRight, Compass } from 'lucide-
 import {
   PackageExperienceCategory,
   accentStyles,
-  getNavGroupLabel,
 } from '@/lib/packageExperienceCategories';
+import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
+import { getResolvedCategoryBySlugFromCatalog } from '@/lib/categoryCatalog';
 import { useInquiryForm } from '@/contexts/InquiryFormContext';
 import PackagePageEnquiryForm from '@/components/PackagePageEnquiryForm';
 import CategoryHeroBackground from '@/components/CategoryHeroBackground';
@@ -32,9 +33,14 @@ interface PackageItem {
 
 interface PackageExperiencePageProps {
   category: PackageExperienceCategory;
+  miniCategorySlug?: string;
 }
 
-export default function PackageExperiencePage({ category }: PackageExperiencePageProps) {
+export default function PackageExperiencePage({ category: baseCategory, miniCategorySlug }: PackageExperiencePageProps) {
+  const { catalog, getGroupLabel } = useCategoryLabels();
+  const category = miniCategorySlug
+    ? baseCategory
+    : (getResolvedCategoryBySlugFromCatalog(baseCategory.slug, catalog) ?? baseCategory);
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [filteredPackages, setFilteredPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,14 +48,14 @@ export default function PackageExperiencePage({ category }: PackageExperiencePag
   const router = useRouter();
   const { openForm } = useInquiryForm();
   const styles = accentStyles[category.accent];
-  const groupLabel = getNavGroupLabel(category.group);
+  const groupLabel = getGroupLabel(category.group);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const searchParam = urlParams.get('search');
     if (searchParam) setSearchTerm(searchParam);
     fetchPackages();
-  }, [category.slug]);
+  }, [category.slug, miniCategorySlug]);
 
   useEffect(() => {
     let filtered = packages;
@@ -69,9 +75,10 @@ export default function PackageExperiencePage({ category }: PackageExperiencePag
   const fetchPackages = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `/api/packages?category=${encodeURIComponent(category.slug)}`
-      );
+      const query = miniCategorySlug
+        ? `mini=${encodeURIComponent(miniCategorySlug)}`
+        : `category=${encodeURIComponent(category.slug)}`;
+      const response = await fetch(`/api/packages?${query}`);
       const result = await response.json();
       if (result.success && result.data) {
         setPackages(result.data);

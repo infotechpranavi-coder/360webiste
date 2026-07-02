@@ -1,5 +1,5 @@
 import { SITE_NAME, brandedText } from "@/lib/branding";
-import { getCategoryByValue } from "@/lib/packageExperienceCategories";
+import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +86,7 @@ const DetailCard = ({
 );
 
 const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModalProps) => {
+  const { getCategoryByValue: resolveCategoryByValue } = useCategoryLabels();
   if (!packageData) return null;
 
   return (
@@ -118,7 +119,7 @@ const PackageDetailModal = ({ isOpen, onClose, packageData }: PackageDetailModal
               <div className="absolute bottom-4 left-5 right-5 z-10">
                 <div className="flex flex-wrap gap-2 mb-3">
                   <Badge className="bg-[#bd9245] text-white hover:bg-[#bd9245] border-none px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
-                    {getCategoryByValue(packageData.packageCategory)?.label || packageData.packageCategory}
+                    {resolveCategoryByValue(packageData.packageCategory)?.label || packageData.packageCategory}
                   </Badge>
                   <Badge className="bg-white/10 backdrop-blur-md text-white border-white/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
                     {packageData.duration}

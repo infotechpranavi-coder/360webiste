@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Minus, X, Upload, Star } from "lucide-react";
 import { compressImage } from "@/lib/utils";
-import { PACKAGE_NAV_GROUPS, getNavGroupForCategory } from "@/lib/packageExperienceCategories";
 import { SITE_NAME, DEFAULT_ABOUT_TEXT, DEFAULT_SERVICES_TEXT } from "@/lib/branding";
+import ExperienceCategoryNameFields from "@/components/ExperienceCategoryNameFields";
+import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 
 interface ItineraryDay {
   id: string;
@@ -40,6 +41,7 @@ interface CreatePackageModalProps {
 }
 
 const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackageModalProps) => {
+  const { navGroups } = useCategoryLabels();
   const [formData, setFormData] = useState({
     title: "",
     subtitle: "",
@@ -56,9 +58,11 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     packageType: "international" as "international" | "domestic",
     place: "dubai",
     packageCategory: "Yachts & Sailing Cruises",
+    packageMiniCategory: "",
     bestTimeToVisit: { yearRound: "", winter: "", summer: "" },
     isFeaturedDestination: false,
     isPopularPackage: false,
+    isFeaturedTrip: false,
     transportation: [] as Array<{ type: string; vehicle: string; description: string }>,
     accommodation: [] as Array<{ city: string; hotel: string; rooms: string; roomType: string; nights: string }>,
   });
@@ -86,20 +90,22 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
-  const [packageGroupSlug, setPackageGroupSlug] = useState(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
-
-  const selectedPackageGroup =
-    PACKAGE_NAV_GROUPS.find((group) => group.slug === packageGroupSlug) ?? PACKAGE_NAV_GROUPS[0];
+  const [packageGroupSlug, setPackageGroupSlug] = useState(navGroups[0]?.slug ?? "water");
 
   // --- Handlers ---
   const handleInputChange = (field: string, value: string) => setFormData(prev => ({ ...prev, [field]: value }));
 
   const handlePackageGroupChange = (groupSlug: string) => {
     setPackageGroupSlug(groupSlug);
-    const group = PACKAGE_NAV_GROUPS.find((g) => g.slug === groupSlug);
-    if (group?.items[0]) {
-      handleInputChange("packageCategory", group.items[0].value);
-    }
+  };
+
+  const handlePackageCategoryChange = (categoryValue: string) => {
+    handleInputChange("packageCategory", categoryValue);
+    handleInputChange("packageMiniCategory", "");
+  };
+
+  const handlePackageMiniCategoryChange = (miniValue: string) => {
+    handleInputChange("packageMiniCategory", miniValue);
   };
 
   const handleAddUrl = () => {
@@ -185,6 +191,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
         bookings: 0,
         rating: 0,
         isFeaturedDestination: formData.isFeaturedDestination,
+        isFeaturedTrip: formData.isFeaturedTrip,
       };
 
       // 3. Save to MongoDB
@@ -213,10 +220,11 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
       services: DEFAULT_SERVICES_TEXT,
       tourDetails: "This carefully curated package offers a perfect blend of iconic landmarks, cultural immersion, and leisure activities.",
       price: "", duration: "", location: "", capacity: "",
-      packageType: "international", place: "dubai", packageCategory: "Yachts & Sailing Cruises",
+      packageType: "international", place: "dubai", packageCategory: "Yachts & Sailing Cruises", packageMiniCategory: "",
       bestTimeToVisit: { yearRound: "", winter: "", summer: "" },
       isFeaturedDestination: false,
       isPopularPackage: false,
+      isFeaturedTrip: false,
       transportation: [],
       accommodation: [],
     });
@@ -234,7 +242,7 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     setExternalImageUrls([]);
     setCurrentImageUrl("");
     setSubmitError("");
-    setPackageGroupSlug(PACKAGE_NAV_GROUPS[0]?.slug ?? "water");
+    setPackageGroupSlug(navGroups[0]?.slug ?? "water");
     onClose();
   };
 
@@ -276,41 +284,14 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Experience Type *</label>
-                <Select value={packageGroupSlug} onValueChange={handlePackageGroupChange}>
-                  <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                  <SelectContent>
-                    {PACKAGE_NAV_GROUPS.map((group) => (
-                      <SelectItem key={group.slug} value={group.slug}>
-                        {group.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500">Choose the main category (Water, Land — Motor, Land — Physical, or Sky).</p>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Experience Page *</label>
-                <Select
-                  value={formData.packageCategory}
-                  onValueChange={(v) => handleInputChange("packageCategory", v)}
-                >
-                  <SelectTrigger><SelectValue placeholder="Select experience page" /></SelectTrigger>
-                  <SelectContent className="max-h-72">
-                    {selectedPackageGroup?.items.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}{category.isFuture ? " (Future)" : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500">
-                  Package appears on this page under Packages in the navbar.
-                </p>
-              </div>
-            </div>
+            <ExperienceCategoryNameFields
+              packageGroupSlug={packageGroupSlug}
+              packageCategory={formData.packageCategory}
+              packageMiniCategory={formData.packageMiniCategory}
+              onGroupChange={handlePackageGroupChange}
+              onCategoryChange={handlePackageCategoryChange}
+              onMiniCategoryChange={handlePackageMiniCategoryChange}
+            />
             <div className="space-y-2">
               <label className="text-sm font-medium">Place / Location *</label>
               <Input 
@@ -355,6 +336,26 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
               </label>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
                 If checked, this package will appear in the Popular Packages section on the home page.
+              </p>
+            </div>
+          </div>
+
+
+          <div className="flex items-center space-x-2 py-2 px-4 bg-teal-50/50 rounded-2xl border border-dashed border-teal-200">
+            <Checkbox 
+              id="isFeaturedTrip" 
+              checked={formData.isFeaturedTrip} 
+              onCheckedChange={(checked) => handleInputChange('isFeaturedTrip', !!checked as any)} 
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="isFeaturedTrip"
+                className="text-sm font-bold uppercase tracking-widest leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Show in Homepage Featured Water Trips Section
+              </label>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
+                If checked, this package appears in the Featured Water Trips carousel on the home page.
               </p>
             </div>
           </div>

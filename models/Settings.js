@@ -20,6 +20,20 @@ const SettingsSchema = new mongoose.Schema({
   youtubeEnabled: { type: Boolean, default: true },
   whatsappUrl: { type: String, default: "" },
   whatsappEnabled: { type: Boolean, default: true },
+
+  // Custom display names for experience types and pages (keyed by slug)
+  groupLabelOverrides: { type: mongoose.Schema.Types.Mixed, default: {} },
+  categoryLabelOverrides: { type: mongoose.Schema.Types.Mixed, default: {} },
+
+  // User-added experience types and pages
+  customGroups: { type: mongoose.Schema.Types.Mixed, default: [] },
+  customSubcategories: { type: mongoose.Schema.Types.Mixed, default: [] },
+  customMiniCategories: { type: mongoose.Schema.Types.Mixed, default: [] },
+  miniCategoryLabelOverrides: { type: mongoose.Schema.Types.Mixed, default: {} },
 }, { timestamps: true });
 
-export default mongoose.models.Settings || mongoose.model('Settings', SettingsSchema);
+if (mongoose.models.Settings) {
+  delete mongoose.models.Settings;
+}
+
+export default mongoose.model('Settings', SettingsSchema);

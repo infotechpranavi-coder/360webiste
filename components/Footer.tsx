@@ -5,7 +5,7 @@ import { ArrowUpRight, Facebook, Instagram, Twitter, Linkedin, Youtube } from 'l
 import Link from 'next/link';
 import Image from 'next/image';
 import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, LOGO_SRC } from '@/lib/branding';
-import { PACKAGE_NAV_GROUPS } from '@/lib/packageExperienceCategories';
+import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
 
 const FOOTER_BG =
   'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
@@ -32,6 +32,7 @@ const FooterLink = ({ href, children }: { href: string; children: ReactNode }) =
 );
 
 const Footer = () => {
+  const { navGroups } = useCategoryLabels();
   const [email, setEmail] = useState('');
   const [settings, setSettings] = useState<any>({
     facebookEnabled: true,
@@ -155,7 +156,7 @@ const Footer = () => {
             <div className="lg:border-l lg:border-gray-200 lg:pl-10 space-y-5">
               <h4 className="text-base font-bold text-gray-900">Experience Categories</h4>
               <ul className="space-y-3">
-                {PACKAGE_NAV_GROUPS.map((group) => (
+                {navGroups.map((group) => (
                   <FooterLink key={group.slug} href={`/packages/${group.slug}`}>
                     {group.label}
                   </FooterLink>

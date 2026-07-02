@@ -27,6 +27,7 @@ import EditBlogModal from "../../components/EditBlogModal";
 import CreateTestimonialModal from "../../components/CreateTestimonialModal";
 import EditTestimonialModal from "../../components/EditTestimonialModal";
 import ReplyEnquiryModal from "../../components/ReplyEnquiryModal";
+import DashboardCategoriesPanel from "../../components/DashboardCategoriesPanel";
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, HeadingLevel, ImageRun } from 'docx';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
@@ -65,22 +66,25 @@ import {
   Youtube,
   Save,
   Check,
-  ExternalLink
+  ExternalLink,
+  FolderTree
 } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { Switch } from "../../components/ui/switch";
 import { cn } from "../../lib/utils";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
-import { PACKAGE_NAV_GROUPS, getCategoryByValue, packageMatchesExperienceCategory } from "@/lib/packageExperienceCategories";
+import { packageMatchesExperienceCategory, packageMatchesNavGroup } from "@/lib/packageExperienceCategories";
+import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 
 import { getBannerPreviewImage, getBannerMediaLabel } from "@/lib/bannerMedia";
 import { PackageData, TourData, TicketData, BannerData, BlogData, GalleryData } from "@/lib/types";
 
-type DashboardView = 'packages' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
+type DashboardView = 'packages' | 'categories' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { navGroups, getCategoryByValue: resolveCategoryByValue, catalog } = useCategoryLabels();
   const [activeView, setActiveView] = useState<DashboardView>('packages');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCreatePackageModalOpen, setIsCreatePackageModalOpen] = useState(false);
@@ -112,7 +116,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [placeFilter, setPlaceFilter] = useState("all");
+  const [groupFilter, setGroupFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [miniFilter, setMiniFilter] = useState("all");
   const [reportModule, setReportModule] = useState<DashboardView>('packages');
   const [seedingPackages, setSeedingPackages] = useState(false);
   const [seedingTours, setSeedingTours] = useState(false);
@@ -396,8 +402,85 @@ export default function DashboardPage() {
     }
   }, [activeView]);
 
+  useEffect(() => {
+    if (activeView === 'packages') {
+      fetchPackages();
+    }
+  }, [catalog.groupLabels, catalog.categoryLabels, catalog.customGroups, catalog.customSubcategories, catalog.customMiniCategories, activeView]);
+
+  const filterCategoryOptions = useMemo(() => {
+    if (groupFilter === "all") {
+      return navGroups.flatMap((group) => group.items);
+    }
+    const group = navGroups.find((g) => g.slug === groupFilter);
+    return group?.items ?? [];
+  }, [groupFilter, navGroups]);
+
+  const filterMiniOptions = useMemo(() => {
+    if (categoryFilter !== "all") {
+      const sub = filterCategoryOptions.find(
+        (item) =>
+          item.value === categoryFilter ||
+          item.value.toLowerCase() === categoryFilter.toLowerCase()
+      );
+      return sub?.miniItems ?? [];
+    }
+    if (groupFilter !== "all") {
+      const group = navGroups.find((g) => g.slug === groupFilter);
+      return group?.items.flatMap((item) => item.miniItems ?? []) ?? [];
+    }
+    return navGroups.flatMap((group) => group.items.flatMap((item) => item.miniItems ?? []));
+  }, [categoryFilter, groupFilter, filterCategoryOptions, navGroups]);
+
+  const resolveMiniLabel = useCallback(
+    (miniValue: string | undefined) => {
+      if (!miniValue) return '';
+      const allMinis = navGroups.flatMap((g) => g.items.flatMap((item) => item.miniItems ?? []));
+      return allMinis.find((m) => m.value.toLowerCase() === miniValue.toLowerCase())?.label ?? miniValue;
+    },
+    [navGroups]
+  );
+
+  const handleGroupFilterChange = (value: string) => {
+    setGroupFilter(value);
+    setCategoryFilter("all");
+    setMiniFilter("all");
+  };
+
+  const handleCategoryFilterChange = (value: string) => {
+    setCategoryFilter(value);
+    setMiniFilter("all");
+  };
+
   const filterPackages = useCallback(() => {
     let filtered = packages;
+
+    if (groupFilter !== "all") {
+      const group = navGroups.find((item) => item.slug === groupFilter);
+      filtered = filtered.filter((pkg) => {
+        if (!group) return packageMatchesNavGroup(pkg.packageCategory, groupFilter);
+        return group.items.some(
+          (cat) =>
+            cat.value.toLowerCase() === String(pkg.packageCategory || '').toLowerCase() ||
+            packageMatchesExperienceCategory(pkg.packageCategory, cat)
+        );
+      });
+    }
+
+    if (categoryFilter !== "all") {
+      const category = resolveCategoryByValue(categoryFilter);
+      filtered = filtered.filter((pkg) =>
+        category
+          ? packageMatchesExperienceCategory(pkg.packageCategory, category)
+          : pkg.packageCategory === categoryFilter
+      );
+    }
+
+    if (miniFilter !== "all") {
+      filtered = filtered.filter(
+        (pkg) => String(pkg.packageMiniCategory || '').toLowerCase() === miniFilter.toLowerCase()
+      );
+    }
 
     // Search filter
     if (searchTerm) {
@@ -413,18 +496,8 @@ export default function DashboardPage() {
       filtered = filtered.filter(pkg => pkg.place === placeFilter);
     }
 
-    // Experience page filter
-    if (categoryFilter !== "all") {
-      const category = getCategoryByValue(categoryFilter);
-      filtered = filtered.filter((pkg) =>
-        category
-          ? packageMatchesExperienceCategory(pkg.packageCategory, category)
-          : pkg.packageCategory === categoryFilter
-      );
-    }
-
     setFilteredPackages(filtered);
-  }, [packages, searchTerm, placeFilter, categoryFilter]);
+  }, [packages, searchTerm, placeFilter, groupFilter, categoryFilter, miniFilter, resolveCategoryByValue, navGroups]);
 
   useEffect(() => {
     filterPackages();
@@ -1354,6 +1427,11 @@ export default function DashboardPage() {
       icon: Package,
     },
     {
+      id: 'categories' as DashboardView,
+      label: 'Categories',
+      icon: FolderTree,
+    },
+    {
       id: 'banners' as DashboardView,
       label: 'Banners',
       icon: ImageIcon,
@@ -1518,6 +1596,7 @@ export default function DashboardPage() {
                 <div>
                   <h1 className="text-4xl font-black text-[#111827] tracking-tighter uppercase">
                     {activeView === 'packages' && 'Package Management'}
+                    {activeView === 'categories' && 'Category Management'}
                     {activeView === 'tours' && 'Tours Management'}
                     {activeView === 'tickets' && 'Tickets Inventory'}
                     {activeView === 'banners' && 'Home Banners'}
@@ -1529,6 +1608,7 @@ export default function DashboardPage() {
                   </h1>
                   <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1">
                     {activeView === 'packages' && 'Curating premium experiences for global travelers'}
+                    {activeView === 'categories' && 'Add and edit experience types and subcategories for packages'}
                     {activeView === 'tours' && 'Managing specialized guided local experiences'}
                     {activeView === 'tickets' && 'Coordinating global air travel inventory'}
                     {activeView === 'banners' && 'Management of homepage hero slider visuals'}
@@ -1616,9 +1696,72 @@ export default function DashboardPage() {
                 <CardContent className="p-8 pt-4">
                   {/* Filters Section Refined */}
                   <div className="mb-10 p-6 bg-gray-50/50 rounded-[30px] border border-gray-100">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6 gap-6">
+                      {/* Main Category Filter */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                          Main Category
+                        </label>
+                        <Select value={groupFilter} onValueChange={handleGroupFilterChange}>
+                          <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
+                            <SelectValue placeholder="All Types" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-white shadow-xl">
+                            <SelectItem value="all">All Types</SelectItem>
+                            {navGroups.map((group) => (
+                              <SelectItem key={group.slug} value={group.slug}>
+                                {group.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Subcategory Filter */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                          Subcategory
+                        </label>
+                        <Select value={categoryFilter} onValueChange={handleCategoryFilterChange}>
+                          <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
+                            <SelectValue placeholder="All Subcategories" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-white shadow-xl max-h-72">
+                            <SelectItem value="all">All Subcategories</SelectItem>
+                            {filterCategoryOptions.map((category) => (
+                              <SelectItem key={category.value} value={category.value}>
+                                {category.label}{category.isFuture ? ' (Future)' : ''}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Mini Category Filter */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                          Mini Category
+                        </label>
+                        <Select value={miniFilter} onValueChange={setMiniFilter}>
+                          <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
+                            <SelectValue placeholder="All Mini Categories" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-white shadow-xl max-h-72">
+                            <SelectItem value="all">All Mini Categories</SelectItem>
+                            {filterMiniOptions.map((mini) => (
+                              <SelectItem key={mini.slug} value={mini.value}>
+                                {mini.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
                       {/* Search */}
-                      <div className="lg:col-span-1">
+                      <div className="space-y-2 lg:col-span-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                          Search
+                        </label>
                         <div className="relative group">
                           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-hover:text-[#bd9245] h-4 w-4 transition-colors" />
                           <Input
@@ -1630,46 +1773,31 @@ export default function DashboardPage() {
                         </div>
                       </div>
 
-                      {/* Experience Page Filter */}
-                      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                        <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
-                          <SelectValue placeholder="Experience Page" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-white shadow-xl max-h-72">
-                          <SelectItem value="all">All Experience Pages</SelectItem>
-                          {PACKAGE_NAV_GROUPS.map((group) => (
-                            <div key={group.slug}>
-                              <p className="px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-gray-500">{group.label}</p>
-                              {group.items.map((category) => (
-                                <SelectItem key={category.value} value={category.value}>
-                                  {category.label}{category.isFuture ? ' (Future)' : ''}
-                                </SelectItem>
-                              ))}
-                            </div>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
                       {/* Place Filter */}
-                      <Select value={placeFilter} onValueChange={setPlaceFilter}>
-                        <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
-                          <SelectValue placeholder="Region" />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-2xl border-white shadow-xl">
-                          <SelectItem value="all">All Regions</SelectItem>
-                          <SelectItem value="cape-town">Cape Town</SelectItem>
-                          <SelectItem value="kruger">Kruger</SelectItem>
-                          <SelectItem value="garden-route">Garden Route</SelectItem>
-                          <SelectItem value="dubai">Dubai</SelectItem>
-                          <SelectItem value="mauritius">Mauritius</SelectItem>
-                          <SelectItem value="vietnam">Vietnam</SelectItem>
-                          <SelectItem value="namibia">Namibia</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
+                          Region
+                        </label>
+                        <Select value={placeFilter} onValueChange={setPlaceFilter}>
+                          <SelectTrigger className="h-14 rounded-2xl border-white shadow-sm bg-white">
+                            <SelectValue placeholder="All Regions" />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-white shadow-xl">
+                            <SelectItem value="all">All Regions</SelectItem>
+                            <SelectItem value="cape-town">Cape Town</SelectItem>
+                            <SelectItem value="kruger">Kruger</SelectItem>
+                            <SelectItem value="garden-route">Garden Route</SelectItem>
+                            <SelectItem value="dubai">Dubai</SelectItem>
+                            <SelectItem value="mauritius">Mauritius</SelectItem>
+                            <SelectItem value="vietnam">Vietnam</SelectItem>
+                            <SelectItem value="namibia">Namibia</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
                     {/* Clear Filters Button */}
-                    {(searchTerm || placeFilter !== "all" || categoryFilter !== "all") && (
+                    {(searchTerm || placeFilter !== "all" || groupFilter !== "all" || categoryFilter !== "all" || miniFilter !== "all") && (
                       <div className="mt-4">
                         <Button
                           variant="outline"
@@ -1677,7 +1805,9 @@ export default function DashboardPage() {
                           onClick={() => {
                             setSearchTerm("");
                             setPlaceFilter("all");
+                            setGroupFilter("all");
                             setCategoryFilter("all");
+                            setMiniFilter("all");
                           }}
                         >
                           Clear Filters
@@ -1691,7 +1821,8 @@ export default function DashboardPage() {
                       <thead>
                         <tr className="border-b">
                           <th className="text-left p-3">Package Title</th>
-                          <th className="text-left p-3">Experience Page</th>
+                          <th className="text-left p-3">Subcategory</th>
+                          <th className="text-left p-3">Mini Category</th>
                           <th className="text-left p-3">Place</th>
                           <th className="text-left p-3">Duration</th>
                           <th className="text-left p-3">Price</th>
@@ -1726,8 +1857,17 @@ export default function DashboardPage() {
                               </td>
                               <td className="p-4">
                                 <span className="text-[11px] font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-tight">
-                                  {getCategoryByValue(pkg.packageCategory)?.label || pkg.packageCategory || 'Yachts & Sailing Cruises'}
+                                  {resolveCategoryByValue(pkg.packageCategory)?.label || pkg.packageCategory || 'Yachts & Sailing Cruises'}
                                 </span>
+                              </td>
+                              <td className="p-4">
+                                {pkg.packageMiniCategory ? (
+                                  <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-full uppercase tracking-tight">
+                                    {resolveMiniLabel(pkg.packageMiniCategory)}
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-medium text-gray-300">—</span>
+                                )}
                               </td>
                               <td className="p-4">
                                 <div className="flex flex-col">
@@ -1787,7 +1927,7 @@ export default function DashboardPage() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={7} className="p-8 text-center text-gray-500">
+                            <td colSpan={8} className="p-8 text-center text-gray-500">
                               <div className="flex flex-col items-center space-y-2">
                                 <Package className="h-12 w-12 text-gray-300" />
                                 {packages.length === 0 ? (
@@ -1828,6 +1968,12 @@ export default function DashboardPage() {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          )}
+
+          {activeView === 'categories' && (
+            <div className="container mx-auto px-8 py-10">
+              <DashboardCategoriesPanel />
             </div>
           )}
 

@@ -1,3 +1,12 @@
+export interface PackageMiniCategory {
+  slug: string;
+  label: string;
+  value: string;
+  href: string;
+  subcategorySlug: string;
+  groupSlug: string;
+}
+
 export interface PackageExperienceCategory {
   value: string;
   label: string;
@@ -11,6 +20,7 @@ export interface PackageExperienceCategory {
   group: string;
   isFuture?: boolean;
   legacyValues?: string[];
+  miniItems?: PackageMiniCategory[];
 }
 
 export interface PackageNavGroup {

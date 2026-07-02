@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 import { PACKAGE_NAV_GROUPS } from "@/lib/packageExperienceCategories";
+import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 
 type NavSubItem = { name: string; href: string; isFuture?: boolean };
 type NavItem = {
@@ -27,6 +28,7 @@ const groupHoverStyles: Record<string, string> = {
 };
 
 const NavbarTravel = () => {
+  const { navGroups } = useCategoryLabels();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -34,6 +36,7 @@ const NavbarTravel = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
   const [hoveredPackageGroup, setHoveredPackageGroup] = useState<string | null>(null);
+  const [hoveredPackageSub, setHoveredPackageSub] = useState<string | null>(null);
   const [contactHovered, setContactHovered] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -56,7 +59,7 @@ const NavbarTravel = () => {
     {
       name: 'Package',
       href: '/packages',
-      packageGroups: PACKAGE_NAV_GROUPS,
+      packageGroups: navGroups,
     },
     { name: 'Blogs', href: '/blogs' },
     { name: 'Gallery', href: '/gallery' },
@@ -65,7 +68,12 @@ const NavbarTravel = () => {
   const isActive = (href: string, submenu?: NavSubItem[], packageGroups?: typeof PACKAGE_NAV_GROUPS) => {
     if (href === '/') return pathname === '/';
     if (packageGroups?.length) {
-      const groupHrefs = packageGroups.flatMap((group) => group.items.map((item) => item.href));
+      const groupHrefs = packageGroups.flatMap((group) =>
+        group.items.flatMap((item) => [
+          item.href,
+          ...(item.miniItems?.map((mini) => mini.href) ?? []),
+        ])
+      );
       return (
         pathname === href ||
         pathname?.startsWith(`${href}/`) ||
@@ -165,12 +173,15 @@ const NavbarTravel = () => {
                       onMouseEnter={() => {
                         setHoveredIndex(index);
                         setOpenDropdownIndex(index);
-                        setHoveredPackageGroup(item.packageGroups![0].slug);
+                        const firstGroup = item.packageGroups![0];
+                        setHoveredPackageGroup(firstGroup.slug);
+                        setHoveredPackageSub(firstGroup.items[0]?.slug ?? null);
                       }}
                       onMouseLeave={() => {
                         setHoveredIndex(null);
                         setOpenDropdownIndex(null);
                         setHoveredPackageGroup(null);
+                        setHoveredPackageSub(null);
                       }}
                     >
                       <Link
@@ -221,34 +232,89 @@ const NavbarTravel = () => {
                             </Link>
                           </div>
                           {hoveredPackageGroup && (
-                            <div className="min-w-[320px] max-w-[360px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">
+                            <div className="min-w-[280px] max-w-[300px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">
                               {item.packageGroups
                                 .find((g) => g.slug === hoveredPackageGroup)
                                 ?.items.map((sub) => (
+                                  <div
+                                    key={sub.slug}
+                                    className={`flex items-center justify-between gap-2 px-4 py-2.5 text-sm transition-colors cursor-default ${
+                                      hoveredPackageSub === sub.slug
+                                        ? 'bg-gray-50 text-[#bd9245] font-semibold'
+                                        : 'text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                    onMouseEnter={() => setHoveredPackageSub(sub.slug)}
+                                  >
+                                    {sub.miniItems?.length ? (
+                                      <>
+                                        <span>{sub.label}</span>
+                                        <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
+                                      </>
+                                    ) : (
+                                      <Link
+                                        href={sub.href}
+                                        onClick={() => {
+                                          setOpenDropdownIndex(null);
+                                          setHoveredIndex(null);
+                                          setHoveredPackageGroup(null);
+                                          setHoveredPackageSub(null);
+                                        }}
+                                        className="flex items-center justify-between gap-2 w-full"
+                                      >
+                                        <span>{sub.label}</span>
+                                        {sub.isFuture && (
+                                          <span className="text-[9px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full shrink-0">
+                                            Future
+                                          </span>
+                                        )}
+                                      </Link>
+                                    )}
+                                  </div>
+                                ))}
+                            </div>
+                          )}
+                          {hoveredPackageGroup && hoveredPackageSub && (() => {
+                            const activeSub = item.packageGroups
+                              ?.find((g) => g.slug === hoveredPackageGroup)
+                              ?.items.find((s) => s.slug === hoveredPackageSub);
+                            const minis = activeSub?.miniItems ?? [];
+                            if (!minis.length) return null;
+                            return (
+                              <div className="min-w-[240px] max-w-[280px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">
+                                <Link
+                                  href={activeSub!.href}
+                                  onClick={() => {
+                                    setOpenDropdownIndex(null);
+                                    setHoveredIndex(null);
+                                    setHoveredPackageGroup(null);
+                                    setHoveredPackageSub(null);
+                                  }}
+                                  className="block px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#bd9245] hover:bg-[#bd9245]/5 border-b border-gray-100"
+                                >
+                                  All {activeSub!.label}
+                                </Link>
+                                {minis.map((mini) => (
                                   <Link
-                                    key={sub.href}
-                                    href={sub.href}
+                                    key={mini.href}
+                                    href={mini.href}
                                     onClick={() => {
                                       setOpenDropdownIndex(null);
                                       setHoveredIndex(null);
                                       setHoveredPackageGroup(null);
+                                      setHoveredPackageSub(null);
                                     }}
-                                    className={`flex items-center justify-between gap-2 px-4 py-2.5 text-sm transition-colors ${
-                                      pathname === sub.href
+                                    className={`block px-4 py-2.5 text-sm transition-colors ${
+                                      pathname === mini.href
                                         ? 'bg-[#bd9245]/10 text-[#bd9245] font-semibold'
                                         : 'text-gray-700 hover:bg-gray-50 hover:text-[#bd9245]'
                                     }`}
                                   >
-                                    <span>{sub.label}</span>
-                                    {sub.isFuture && (
-                                      <span className="text-[9px] font-black uppercase tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full shrink-0">
-                                        Future
-                                      </span>
-                                    )}
+                                    {mini.label}
                                   </Link>
                                 ))}
-                            </div>
-                          )}
+                              </div>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>
@@ -424,19 +490,34 @@ const NavbarTravel = () => {
                       {group.label}
                     </p>
                     {group.items.map((sub) => (
-                      <Link
-                        key={sub.href}
-                        href={sub.href}
-                        className={`block pl-10 pr-4 py-2 text-sm rounded-lg transition-colors ${
-                          pathname === sub.href
-                            ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
-                            : 'text-gray-600 hover:bg-gray-100'
-                        }`}
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {sub.label}
-                        {sub.isFuture ? ' (Future)' : ''}
-                      </Link>
+                      <div key={sub.href}>
+                        <Link
+                          href={sub.href}
+                          className={`block pl-10 pr-4 py-2 text-sm rounded-lg transition-colors ${
+                            pathname === sub.href
+                              ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
+                              : 'text-gray-600 hover:bg-gray-100'
+                          }`}
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {sub.label}
+                          {sub.isFuture ? ' (Future)' : ''}
+                        </Link>
+                        {sub.miniItems?.map((mini) => (
+                          <Link
+                            key={mini.href}
+                            href={mini.href}
+                            className={`block pl-14 pr-4 py-1.5 text-xs rounded-lg transition-colors ${
+                              pathname === mini.href
+                                ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
+                                : 'text-gray-500 hover:bg-gray-100'
+                            }`}
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {mini.label}
+                          </Link>
+                        ))}
+                      </div>
                     ))}
                   </div>
                 ))}

@@ -8,6 +8,7 @@ import Navbar from "../components/Navbar"
 import Footer from "../components/Footer"
 import FloatingButtons from "../components/FloatingButtons"
 import { InquiryFormProvider } from "../contexts/InquiryFormContext"
+import { CategoryLabelsProvider } from "../contexts/CategoryLabelsContext"
 import ConditionalLayout from "../components/ConditionalLayout"
 import { SITE_NAME, SITE_DESCRIPTION, LOGO_SRC } from "../lib/branding"
 
@@ -37,13 +38,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-white`} suppressHydrationWarning>
         <TooltipProvider>
-          <InquiryFormProvider>
-            <ConditionalLayout>
-              {children}
-            </ConditionalLayout>
-            <Toaster />
-            <Sonner />
-          </InquiryFormProvider>
+          <CategoryLabelsProvider>
+            <InquiryFormProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+              <Toaster />
+              <Sonner />
+            </InquiryFormProvider>
+          </CategoryLabelsProvider>
         </TooltipProvider>
       </body>
     </html>

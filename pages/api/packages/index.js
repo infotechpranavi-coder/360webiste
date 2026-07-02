@@ -1,10 +1,13 @@
 import connectDB from '../../../lib/mongodb';
 import Package from '../../../models/Package';
+import Settings from '../../../models/Settings';
 import { isConnected } from '../../../lib/mongodb';
 import {
-  buildCategoryFilter,
-  buildGroupFilter,
-} from '../../../lib/packageExperienceCategories';
+  buildCategoryFilterForSlug,
+  buildGroupFilterForSlug,
+  buildMiniFilterForSlug,
+  getCategoryCatalogFromSettings,
+} from '../../../lib/categoryCatalog';
 
 // Demo data for when database is unavailable
 const getDemoPackages = () => {
@@ -149,16 +152,24 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, data: [], demo: false, error: 'Database connection failed' });
       }
 
-      const { search, popular, featured, category, group } = req.query;
+      const { search, popular, featured, featuredTrip, category, group, mini } = req.query;
       let query = {};
 
-      if (category) {
-        const categoryFilter = buildCategoryFilter(String(category));
+      const settings = await Settings.findOne().lean();
+      const catalog = getCategoryCatalogFromSettings(settings);
+
+      if (mini) {
+        const miniFilter = buildMiniFilterForSlug(String(mini), catalog);
+        if (miniFilter) {
+          query = { ...query, ...miniFilter };
+        }
+      } else if (category) {
+        const categoryFilter = buildCategoryFilterForSlug(String(category), catalog);
         if (categoryFilter) {
           query = { ...query, ...categoryFilter };
         }
       } else if (group) {
-        const groupFilter = buildGroupFilter(String(group));
+        const groupFilter = buildGroupFilterForSlug(String(group), catalog);
         if (groupFilter) {
           query = { ...query, ...groupFilter };
         }
@@ -188,6 +199,11 @@ export default async function handler(req, res) {
       // Add featured filter if requested
       if (featured === 'true') {
         query.isFeaturedDestination = true;
+      }
+
+      // Featured Water Trips carousel on homepage
+      if (featuredTrip === 'true') {
+        query.isFeaturedTrip = true;
       }
 
       const packages = await Package.find(query).sort({ createdAt: -1 });

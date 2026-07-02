@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import {
   getCategoryBySlug,
-  packageMatchesNavGroup,
 } from '@/lib/packageExperienceCategories';
 
 const FEATURED_CATEGORY = getCategoryBySlug('yachts-sailing-cruises')!;
@@ -31,14 +30,10 @@ const UpcomingTrips = () => {
   useEffect(() => {
     const fetchUpcomingRides = async () => {
       try {
-        const response = await fetch('/api/packages', { cache: 'no-store' });
+        const response = await fetch('/api/packages?featuredTrip=true', { cache: 'no-store' });
         const result = await response.json();
         if (result.success && result.data?.length) {
-          const matched = result.data
-            .filter((pkg: { packageCategory?: string }) =>
-              packageMatchesNavGroup(pkg.packageCategory, 'water')
-            )
-            .map((pkg: {
+          const matched = result.data.map((pkg: {
               _id: string;
               title: string;
               location?: string;
@@ -106,7 +101,7 @@ const UpcomingTrips = () => {
         </div>
       ) : trips.length === 0 ? (
         <div className="container mx-auto px-4 text-center py-12">
-          <p className="text-gray-500 mb-6">No water trips published yet.</p>
+          <p className="text-gray-500 mb-6">No featured water trips yet. Mark packages as featured in the dashboard.</p>
           <Button
             onClick={() => router.push(FEATURED_CATEGORY.href)}
             className="bg-[#bd9245] hover:bg-[#a07835] text-white rounded-full px-8"
