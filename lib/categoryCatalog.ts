@@ -6,7 +6,6 @@ import {
   PackageNavGroup,
   getCategoryMatchValues,
 } from './packageExperienceCategories';
-import { CategoryLabelOverrides } from './resolveCategoryLabels';
 
 export interface CustomGroupEntry {
   slug: string;
@@ -27,6 +26,11 @@ export interface CustomMiniCategoryEntry {
   subcategorySlug: string;
   groupSlug: string;
 }
+
+export type CategoryLabelOverrides = {
+  groupLabels?: Record<string, string>;
+  categoryLabels?: Record<string, string>;
+};
 
 export interface CategoryCatalogSettings extends CategoryLabelOverrides {
   customGroups?: CustomGroupEntry[];

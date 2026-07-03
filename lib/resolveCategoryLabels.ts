@@ -1,5 +1,6 @@
 import {
   CategoryCatalogSettings,
+  CategoryLabelOverrides,
   buildNavGroupsFromCatalog,
   getResolvedCategoryBySlugFromCatalog,
   getResolvedCategoryByValueFromCatalog,
@@ -7,17 +8,14 @@ import {
   formatCategoryOptionLabel,
 } from './categoryCatalog';
 
-export type CategoryLabelOverrides = Pick<
-  CategoryCatalogSettings,
-  'groupLabels' | 'categoryLabels'
->;
-
 export function getCategoryLabelOverridesFromSettings(
   settings?: {
     groupLabelOverrides?: Record<string, string>;
     categoryLabelOverrides?: Record<string, string>;
     customGroups?: CategoryCatalogSettings['customGroups'];
     customSubcategories?: CategoryCatalogSettings['customSubcategories'];
+    customMiniCategories?: CategoryCatalogSettings['customMiniCategories'];
+    miniCategoryLabelOverrides?: Record<string, string>;
   } | null
 ): CategoryCatalogSettings {
   return {
@@ -26,6 +24,7 @@ export function getCategoryLabelOverridesFromSettings(
     customGroups: settings?.customGroups ?? [],
     customSubcategories: settings?.customSubcategories ?? [],
     customMiniCategories: settings?.customMiniCategories ?? [],
+    miniCategoryLabels: settings?.miniCategoryLabelOverrides ?? {},
   };
 }
 
@@ -43,4 +42,4 @@ export function applyCategoryLabelOverrides(
 export const getResolvedCategoryBySlug = getResolvedCategoryBySlugFromCatalog;
 export const getResolvedCategoryByValue = getResolvedCategoryByValueFromCatalog;
 export const getResolvedNavGroupLabel = getResolvedNavGroupLabelFromCatalog;
-export { formatCategoryOptionLabel, buildNavGroupsFromCatalog, type CategoryCatalogSettings };
+export { formatCategoryOptionLabel, buildNavGroupsFromCatalog, type CategoryCatalogSettings, type CategoryLabelOverrides };
