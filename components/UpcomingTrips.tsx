@@ -10,7 +10,7 @@ import {
   getCategoryBySlug,
 } from '@/lib/packageExperienceCategories';
 
-const FEATURED_CATEGORY = getCategoryBySlug('yachts-sailing-cruises')!;
+const UPCOMING_TOURS_CATEGORY = getCategoryBySlug('upcoming-tours')!;
 
 interface TripCard {
   id: string;
@@ -43,7 +43,7 @@ const UpcomingTrips = () => {
               id: pkg._id,
               title: pkg.title,
               location: pkg.location || pkg.place || 'Explore 360',
-              image: pkg.images?.[0]?.url || FEATURED_CATEGORY.heroImage,
+              image: pkg.images?.[0]?.url || UPCOMING_TOURS_CATEGORY.heroImage,
             }));
           setTrips(matched);
         } else {
@@ -69,23 +69,22 @@ const UpcomingTrips = () => {
         <div className="grid lg:grid-cols-4 gap-8 items-end">
           <div className="lg:col-span-3">
             <p className="text-[#bd9245] font-bold text-sm uppercase tracking-[0.2em] mb-3">
-              Water Adventures
+              Upcoming Tours
             </p>
             <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-gray-900 mb-6">
-              FEATURED WATER TRIPS
+              UPCOMING TOURS
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl">
-              Yacht cruises, kayaking, rafting, and more — curated water experiences from our
-              Explore 360 collection.
+              Featured and upcoming experiences — curated adventures from our Explore 360 collection.
             </p>
           </div>
           <div className="lg:col-span-1 lg:text-right">
             <Button
               variant="outline"
               className="border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white px-8 py-6 rounded-full font-bold"
-              onClick={() => router.push(FEATURED_CATEGORY.href)}
+              onClick={() => router.push(UPCOMING_TOURS_CATEGORY?.href ?? '/packages/upcoming-tours')}
             >
-              View All Water Trips
+              View All Upcoming Tours
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -96,17 +95,17 @@ const UpcomingTrips = () => {
         <div className="flex flex-col items-center justify-center py-16">
           <Loader2 className="w-10 h-10 text-[#bd9245] animate-spin mb-4" />
           <p className="text-gray-500 font-semibold uppercase tracking-widest text-xs">
-            Loading water trips...
+            Loading upcoming tours...
           </p>
         </div>
       ) : trips.length === 0 ? (
         <div className="container mx-auto px-4 text-center py-12">
-          <p className="text-gray-500 mb-6">No featured water trips yet. Mark packages as featured in the dashboard.</p>
+          <p className="text-gray-500 mb-6">No upcoming tours yet. Mark packages as featured in the dashboard or assign them to Upcoming Tours.</p>
           <Button
-            onClick={() => router.push(FEATURED_CATEGORY.href)}
+            onClick={() => router.push(UPCOMING_TOURS_CATEGORY?.href ?? '/packages/upcoming-tours')}
             className="bg-[#bd9245] hover:bg-[#a07835] text-white rounded-full px-8"
           >
-            Browse Water Experiences
+            Browse Upcoming Tours
           </Button>
         </div>
       ) : (

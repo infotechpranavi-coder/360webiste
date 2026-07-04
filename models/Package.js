@@ -212,6 +212,26 @@ const PackageSchema = new mongoose.Schema({
     question: String,
     answer: String,
   }],
+  fixedDepartures: [{
+    month: { type: String, default: '' },
+    dates: { type: String, default: '' },
+  }],
+  shortItinerary: [{
+    day: { type: Number, required: true },
+    title: { type: String, required: true },
+  }],
+  packageNotes: [{
+    type: String,
+  }],
+  cancellationPolicy: [{
+    type: String,
+  }],
+  reschedulingPolicy: [{
+    type: String,
+  }],
+  bookingPolicy: [{
+    type: String,
+  }],
   bookings: {
     type: Number,
     default: 0,

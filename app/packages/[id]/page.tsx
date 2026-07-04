@@ -46,6 +46,8 @@ import { cn } from "@/lib/utils";
 import { SITE_NAME, brandedText } from "@/lib/branding";
 import { getCategoryByValue } from "@/lib/packageExperienceCategories";
 import { useInquiryForm } from "@/contexts/InquiryFormContext";
+import TourPackageSections from "@/components/TourPackageSections";
+import type { PackageData } from "@/lib/types";
 
 // Utility function to render text with bold formatting
 const renderBoldText = (text: string) => {
@@ -2471,6 +2473,9 @@ Key Highlights`,
 
   // All packages use the same standard layout regardless of category
   const isAttractionPackage = false;
+  const isUpcomingTourPackage = Boolean(
+    (packageData as Package & { fixedDepartures?: Array<{ month: string; dates: string }> }).fixedDepartures?.length
+  );
 
   if (error || !packageData) {
     return (
@@ -3212,7 +3217,16 @@ Key Highlights`,
               </div>
             )}
 
-            {!isAttractionPackage && (
+            {!isAttractionPackage && isUpcomingTourPackage && (
+              <TourPackageSections
+                packageData={packageData as unknown as PackageData}
+                showHero={false}
+                showEnquiry={false}
+                embedded
+              />
+            )}
+
+            {!isAttractionPackage && !isUpcomingTourPackage && (
               <div className="space-y-10">
                 {/* Overview Section */}
                 <section id="overview" className="space-y-8">

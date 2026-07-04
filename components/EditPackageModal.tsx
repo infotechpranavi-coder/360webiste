@@ -11,6 +11,10 @@ import { Plus, Minus, X, Upload, Star } from "lucide-react";
 import { compressImage } from "@/lib/utils";
 import { PACKAGE_EXPERIENCE_CATEGORIES, getNavGroupForCategory } from "@/lib/packageExperienceCategories";
 import ExperienceCategoryNameFields from "@/components/ExperienceCategoryNameFields";
+import PackageTourExtrasFields, {
+  type FixedDepartureRow,
+  type ShortItineraryRow,
+} from "@/components/PackageTourExtrasFields";
 import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 import { SITE_NAME } from "@/lib/branding";
 
@@ -93,6 +97,16 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
   const [inclusions, setInclusions] = useState<InclusionExclusionCategory[]>([]);
   const [exclusions, setExclusions] = useState<InclusionExclusionCategory[]>([]);
   const [faqs, setFaqs] = useState<Array<{ id: string; question: string; answer: string }>>([]);
+  const [fixedDepartures, setFixedDepartures] = useState<FixedDepartureRow[]>([
+    { id: "fd1", month: "", dates: "" },
+  ]);
+  const [shortItinerary, setShortItinerary] = useState<ShortItineraryRow[]>([
+    { id: "si1", day: 1, title: "" },
+  ]);
+  const [packageNotes, setPackageNotes] = useState<string[]>([""]);
+  const [cancellationPolicy, setCancellationPolicy] = useState<string[]>([""]);
+  const [reschedulingPolicy, setReschedulingPolicy] = useState<string[]>([""]);
+  const [bookingPolicy, setBookingPolicy] = useState<string[]>([""]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [existingImages, setExistingImages] = useState<Array<{ public_id?: string; url: string; alt: string }>>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
@@ -225,6 +239,31 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
           answer: faq.answer || "",
         })) || [{ id: "1", question: "", answer: "" }]
       );
+
+      setFixedDepartures(
+        packageData.fixedDepartures?.length
+          ? packageData.fixedDepartures.map((row, index) => ({
+              id: `fd_${index}`,
+              month: row.month || "",
+              dates: row.dates || "",
+            }))
+          : [{ id: "fd1", month: "", dates: "" }]
+      );
+
+      setShortItinerary(
+        packageData.shortItinerary?.length
+          ? packageData.shortItinerary.map((row, index) => ({
+              id: `si_${index}`,
+              day: row.day,
+              title: row.title || "",
+            }))
+          : [{ id: "si1", day: 1, title: "" }]
+      );
+
+      setPackageNotes(packageData.packageNotes?.length ? packageData.packageNotes : [""]);
+      setCancellationPolicy(packageData.cancellationPolicy?.length ? packageData.cancellationPolicy : [""]);
+      setReschedulingPolicy(packageData.reschedulingPolicy?.length ? packageData.reschedulingPolicy : [""]);
+      setBookingPolicy(packageData.bookingPolicy?.length ? packageData.bookingPolicy : [""]);
 
       setReviews(packageData.reviews || []);
 
@@ -606,6 +645,16 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
             items: item.items.filter(i => i.trim() !== "")
           })),
         faqs: faqs.filter(f => f.question.trim() !== "").map(f => ({ question: f.question, answer: f.answer })),
+        fixedDepartures: fixedDepartures
+          .filter((row) => row.month.trim() || row.dates.trim())
+          .map(({ month, dates }) => ({ month, dates })),
+        shortItinerary: shortItinerary
+          .filter((row) => row.title.trim())
+          .map(({ day, title }) => ({ day, title })),
+        packageNotes: packageNotes.filter((note) => note.trim()),
+        cancellationPolicy: cancellationPolicy.filter((note) => note.trim()),
+        reschedulingPolicy: reschedulingPolicy.filter((note) => note.trim()),
+        bookingPolicy: bookingPolicy.filter((note) => note.trim()),
         reviews: reviews.filter(review => review.name.trim() !== "" && review.comment.trim() !== ""),
         images: [...existingImages, ...uploadedNewImages, ...externalImageUrls.map(url => ({ url, alt: formData.title }))],
         isFeaturedDestination: formData.isFeaturedDestination,
@@ -967,6 +1016,21 @@ const EditPackageModal = ({ isOpen, onClose, packageData, onPackageUpdated }: Ed
               </Card>
             ))}
           </div>
+
+          <PackageTourExtrasFields
+            fixedDepartures={fixedDepartures}
+            setFixedDepartures={setFixedDepartures}
+            shortItinerary={shortItinerary}
+            setShortItinerary={setShortItinerary}
+            packageNotes={packageNotes}
+            setPackageNotes={setPackageNotes}
+            cancellationPolicy={cancellationPolicy}
+            setCancellationPolicy={setCancellationPolicy}
+            reschedulingPolicy={reschedulingPolicy}
+            setReschedulingPolicy={setReschedulingPolicy}
+            bookingPolicy={bookingPolicy}
+            setBookingPolicy={setBookingPolicy}
+          />
 
           {/* Images */}
           <div className="space-y-4">

@@ -12,6 +12,7 @@ import {
   GROUP_HERO_IMAGES,
   accentStyles,
 } from '@/lib/packageExperienceCategories';
+import { upcomingToursPackageSeedData } from '@/lib/umlingLaPackageData';
 import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
 import { useInquiryForm } from '@/contexts/InquiryFormContext';
 import PackagePageEnquiryForm from '@/components/PackagePageEnquiryForm';
@@ -36,6 +37,7 @@ const groupAccent: Record<string, keyof typeof accentStyles> = {
   'land-motor': 'orange',
   'land-physical': 'green',
   sky: 'violet',
+  'upcoming-tours': 'amber',
 };
 
 interface PackageGroupPageProps {
@@ -78,7 +80,22 @@ export default function PackageGroupPage({ group: baseGroup }: PackageGroupPageP
     try {
       const response = await fetch(`/api/packages?group=${encodeURIComponent(group.slug)}`);
       const result = await response.json();
-      setPackages(result.success && result.data ? result.data : []);
+      let data = result.success && result.data ? result.data : [];
+
+      if (group.slug === 'upcoming-tours' && data.length < upcomingToursPackageSeedData.length) {
+        try {
+          await fetch('/api/packages/seed-upcoming-tours', { method: 'POST' });
+          const retry = await fetch(`/api/packages?group=${encodeURIComponent(group.slug)}`);
+          const retryResult = await retry.json();
+          if (retryResult.success && retryResult.data?.length) {
+            data = retryResult.data;
+          }
+        } catch {
+          // keep empty if seed fails
+        }
+      }
+
+      setPackages(data);
     } catch (error) {
       console.error('Error fetching group packages:', error);
       setPackages([]);

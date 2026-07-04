@@ -12,6 +12,10 @@ import { Plus, Minus, X, Upload, Star } from "lucide-react";
 import { compressImage } from "@/lib/utils";
 import { SITE_NAME, DEFAULT_ABOUT_TEXT, DEFAULT_SERVICES_TEXT } from "@/lib/branding";
 import ExperienceCategoryNameFields from "@/components/ExperienceCategoryNameFields";
+import PackageTourExtrasFields, {
+  type FixedDepartureRow,
+  type ShortItineraryRow,
+} from "@/components/PackageTourExtrasFields";
 import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 
 interface ItineraryDay {
@@ -83,6 +87,16 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
   const [faqs, setFaqs] = useState<Array<{ id: string; question: string; answer: string }>>([
     { id: "1", question: "Is this tour suitable for families with children?", answer: "Yes, all experiences are family-friendly and can be tailored to suit the needs of families with children." }
   ]);
+  const [fixedDepartures, setFixedDepartures] = useState<FixedDepartureRow[]>([
+    { id: "fd1", month: "", dates: "" },
+  ]);
+  const [shortItinerary, setShortItinerary] = useState<ShortItineraryRow[]>([
+    { id: "si1", day: 1, title: "" },
+  ]);
+  const [packageNotes, setPackageNotes] = useState<string[]>([""]);
+  const [cancellationPolicy, setCancellationPolicy] = useState<string[]>([""]);
+  const [reschedulingPolicy, setReschedulingPolicy] = useState<string[]>([""]);
+  const [bookingPolicy, setBookingPolicy] = useState<string[]>([""]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [externalImageUrls, setExternalImageUrls] = useState<string[]>([]);
@@ -183,6 +197,16 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
         inclusions: inclusions.map(inc => ({ category: inc.category, items: inc.items.filter(i => i.trim()) })),
         exclusions: exclusions.map(exc => ({ category: exc.category, items: exc.items.filter(i => i.trim()) })),
         faqs: faqs.filter(f => f.question.trim() !== "").map(f => ({ question: f.question, answer: f.answer })),
+        fixedDepartures: fixedDepartures
+          .filter((row) => row.month.trim() || row.dates.trim())
+          .map(({ month, dates }) => ({ month, dates })),
+        shortItinerary: shortItinerary
+          .filter((row) => row.title.trim())
+          .map(({ day, title }) => ({ day, title })),
+        packageNotes: packageNotes.filter((note) => note.trim()),
+        cancellationPolicy: cancellationPolicy.filter((note) => note.trim()),
+        reschedulingPolicy: reschedulingPolicy.filter((note) => note.trim()),
+        bookingPolicy: bookingPolicy.filter((note) => note.trim()),
         reviews,
         images: uploadedImages,
         transportation: formData.transportation,
@@ -236,6 +260,12 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
     setInclusions([{ id: "1", category: "General", items: ["Airport transfers", "Daily breakfast"] }]);
     setExclusions([{ id: "1", category: "General", items: ["International airfare", "Visa fees"] }]);
     setFaqs([{ id: "1", question: "Is this tour suitable for families with children?", answer: "Yes, all experiences are family-friendly." }]);
+    setFixedDepartures([{ id: "fd1", month: "", dates: "" }]);
+    setShortItinerary([{ id: "si1", day: 1, title: "" }]);
+    setPackageNotes([""]);
+    setCancellationPolicy([""]);
+    setReschedulingPolicy([""]);
+    setBookingPolicy([""]);
     setFormData(prev => ({ ...prev, transportation: [], accommodation: [] }));
     setReviews([]);
     setImages([]);
@@ -559,6 +589,21 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
               </Card>
             ))}
           </div>
+
+          <PackageTourExtrasFields
+            fixedDepartures={fixedDepartures}
+            setFixedDepartures={setFixedDepartures}
+            shortItinerary={shortItinerary}
+            setShortItinerary={setShortItinerary}
+            packageNotes={packageNotes}
+            setPackageNotes={setPackageNotes}
+            cancellationPolicy={cancellationPolicy}
+            setCancellationPolicy={setCancellationPolicy}
+            reschedulingPolicy={reschedulingPolicy}
+            setReschedulingPolicy={setReschedulingPolicy}
+            bookingPolicy={bookingPolicy}
+            setBookingPolicy={setBookingPolicy}
+          />
 
           {/* Images */}
           <div className="space-y-4">

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { SITE_NAME, SITE_TAGLINE, SITE_DESCRIPTION, LOGO_SRC } from '@/lib/branding';
 import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
+import { getGroupPageHref } from '@/lib/packageExperienceCategories';
 
 const FOOTER_BG =
   'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
@@ -157,7 +158,7 @@ const Footer = () => {
               <h4 className="text-base font-bold text-gray-900">Experience Categories</h4>
               <ul className="space-y-3">
                 {navGroups.map((group) => (
-                  <FooterLink key={group.slug} href={`/packages/${group.slug}`}>
+                  <FooterLink key={group.slug} href={getGroupPageHref(group.slug)}>
                     {group.label}
                   </FooterLink>
                 ))}

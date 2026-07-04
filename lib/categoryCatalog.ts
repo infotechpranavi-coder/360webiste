@@ -44,6 +44,7 @@ const GROUP_ACCENTS: Record<string, PackageExperienceCategory['accent']> = {
   'land-motor': 'orange',
   'land-physical': 'green',
   sky: 'violet',
+  'upcoming-tours': 'amber',
 };
 
 export function slugifyCategoryName(label: string): string {

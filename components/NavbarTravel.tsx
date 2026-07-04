@@ -9,7 +9,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
-import { PACKAGE_NAV_GROUPS } from "@/lib/packageExperienceCategories";
+import { PACKAGE_NAV_GROUPS, getGroupPageHref } from "@/lib/packageExperienceCategories";
 import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 
 type NavSubItem = { name: string; href: string; isFuture?: boolean };
@@ -25,6 +25,7 @@ const groupHoverStyles: Record<string, string> = {
   'land-motor': 'bg-orange-50 text-orange-800',
   'land-physical': 'bg-green-50 text-green-800',
   sky: 'bg-violet-50 text-violet-800',
+  'upcoming-tours': 'bg-amber-50 text-amber-800',
 };
 
 const NavbarTravel = () => {
@@ -68,12 +69,13 @@ const NavbarTravel = () => {
   const isActive = (href: string, submenu?: NavSubItem[], packageGroups?: typeof PACKAGE_NAV_GROUPS) => {
     if (href === '/') return pathname === '/';
     if (packageGroups?.length) {
-      const groupHrefs = packageGroups.flatMap((group) =>
-        group.items.flatMap((item) => [
+      const groupHrefs = packageGroups.flatMap((group) => [
+        getGroupPageHref(group.slug),
+        ...group.items.flatMap((item) => [
           item.href,
           ...(item.miniItems?.map((mini) => mini.href) ?? []),
-        ])
-      );
+        ]),
+      ]);
       return (
         pathname === href ||
         pathname?.startsWith(`${href}/`) ||
@@ -207,18 +209,25 @@ const NavbarTravel = () => {
                         <div className="flex rounded-xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
                           <div className="min-w-[200px] py-2">
                             {item.packageGroups.map((group) => (
-                              <div
+                              <Link
                                 key={group.slug}
-                                className={`flex items-center justify-between px-4 py-2.5 text-sm font-semibold cursor-default transition-colors ${
+                                href={getGroupPageHref(group.slug)}
+                                className={`flex items-center justify-between px-4 py-2.5 text-sm font-semibold transition-colors ${
                                   hoveredPackageGroup === group.slug
                                     ? groupHoverStyles[group.slug] ?? 'bg-gray-50 text-gray-800'
                                     : 'text-gray-800 hover:bg-gray-50'
                                 }`}
                                 onMouseEnter={() => setHoveredPackageGroup(group.slug)}
+                                onClick={() => {
+                                  setOpenDropdownIndex(null);
+                                  setHoveredIndex(null);
+                                  setHoveredPackageGroup(null);
+                                  setHoveredPackageSub(null);
+                                }}
                               >
                                 <span>{group.label}</span>
                                 <ChevronRight className="h-4 w-4 text-gray-400" />
-                              </div>
+                              </Link>
                             ))}
                             <Link
                               href="/packages"
@@ -486,9 +495,13 @@ const NavbarTravel = () => {
                 </Link>
                 {item.packageGroups?.map((group) => (
                   <div key={group.slug}>
-                    <p className="pl-6 pr-4 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                    <Link
+                      href={getGroupPageHref(group.slug)}
+                      className="block pl-6 pr-4 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-[#bd9245] hover:text-[#a07835]"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
                       {group.label}
-                    </p>
+                    </Link>
                     {group.items.map((sub) => (
                       <div key={sub.href}>
                         <Link

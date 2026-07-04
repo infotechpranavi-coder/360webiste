@@ -68,6 +68,12 @@ export interface PackageData {
         question: string;
         answer: string;
     }>;
+    fixedDepartures?: Array<{ month: string; dates: string }>;
+    shortItinerary?: Array<{ day: number; title: string }>;
+    packageNotes?: string[];
+    cancellationPolicy?: string[];
+    reschedulingPolicy?: string[];
+    bookingPolicy?: string[];
     bookings: number;
     rating: number;
     isFeaturedDestination?: boolean;

@@ -49,6 +49,7 @@ export const CATEGORY_IMAGES = {
   'helicopter-rides': local('/photo-1573398643956-2b9e6ade3456.webp'),
   'small-aircraft': local('/360_F_573305992_F4MJgvIVzPZbMywNb3zcBNTw8jkjNbKo.webp'),
   paragliding: local('/1400__1502124997_Kathmandu6.webp'),
+  'upcoming-tours': local('/yaht/photo-1569263979104-865ab7cd8d13.avif'),
 } as const;
 
 export const GROUP_HERO_IMAGES: Record<string, string> = {
@@ -56,6 +57,7 @@ export const GROUP_HERO_IMAGES: Record<string, string> = {
   'land-motor': CATEGORY_IMAGES['bike-expeditions-by-destination'],
   'land-physical': CATEGORY_IMAGES['bungee-jumping'],
   sky: CATEGORY_IMAGES['helicopter-rides'],
+  'upcoming-tours': CATEGORY_IMAGES['upcoming-tours'],
 };
 
 const img = (slug: keyof typeof CATEGORY_IMAGES) => CATEGORY_IMAGES[slug];
@@ -76,7 +78,7 @@ export const PACKAGE_NAV_GROUPS: PackageNavGroup[] = [
         emptyMessage: 'No yacht or sailing packages yet',
         accent: 'teal',
         group: 'water',
-        legacyValues: ['Sailing Experiences', 'Upcoming Rides'],
+        legacyValues: ['Sailing Experiences'],
       },
       {
         value: 'Kayaking Boat Rides',
@@ -287,6 +289,25 @@ export const PACKAGE_NAV_GROUPS: PackageNavGroup[] = [
       },
     ],
   },
+  {
+    label: 'Upcoming Tours',
+    slug: 'upcoming-tours',
+    items: [
+      {
+        value: 'Upcoming Tours',
+        label: 'Upcoming Tours',
+        slug: 'upcoming-tours',
+        href: '/packages/upcoming-tours',
+        heroTitle: 'Upcoming Tours',
+        heroSubtitle: 'Featured and upcoming experiences — book your next adventure with Explore 360',
+        heroImage: img('upcoming-tours'),
+        emptyMessage: 'No upcoming tours yet',
+        accent: 'amber',
+        group: 'upcoming-tours',
+        legacyValues: ['Upcoming Rides'],
+      },
+    ],
+  },
 ];
 
 export const PACKAGE_EXPERIENCE_CATEGORIES: PackageExperienceCategory[] =
@@ -295,6 +316,20 @@ export const PACKAGE_EXPERIENCE_CATEGORIES: PackageExperienceCategory[] =
 export const PACKAGE_EXPERIENCE_CATEGORY_VALUES = PACKAGE_EXPERIENCE_CATEGORIES.map(
   (category) => category.value
 );
+
+export const BUILTIN_GROUP_PAGE_SLUGS = new Set([
+  'water',
+  'land-motor',
+  'land-physical',
+  'sky',
+  'upcoming-tours',
+]);
+
+export function getGroupPageHref(groupSlug: string): string {
+  return BUILTIN_GROUP_PAGE_SLUGS.has(groupSlug)
+    ? `/packages/${groupSlug}`
+    : `/packages/group/${groupSlug}`;
+}
 
 export function getNavGroupLabel(groupSlug: string) {
   return PACKAGE_NAV_GROUPS.find((group) => group.slug === groupSlug)?.label ?? 'Experiences';
