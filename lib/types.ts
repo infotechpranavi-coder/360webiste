@@ -201,3 +201,30 @@ export interface BlogData {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface SiteSettings {
+    popularSection?: boolean;
+    upcomingSection?: boolean;
+    destinationsSection?: boolean;
+    exploreSection?: boolean;
+    testimonialsSection?: boolean;
+    facebookUrl?: string;
+    facebookEnabled?: boolean;
+    instagramUrl?: string;
+    instagramEnabled?: boolean;
+    twitterUrl?: string;
+    twitterEnabled?: boolean;
+    linkedinUrl?: string;
+    linkedinEnabled?: boolean;
+    youtubeUrl?: string;
+    youtubeEnabled?: boolean;
+    whatsappUrl?: string;
+    whatsappEnabled?: boolean;
+    offerPopupEnabled?: boolean;
+    offerPopupTitle?: string;
+    offerPopupSubtitle?: string;
+    offerPopupImageUrl?: string;
+    offerPopupImagePublicId?: string;
+    offerPopupInitialDelaySeconds?: number;
+    offerPopupRepeatIntervalSeconds?: number;
+}

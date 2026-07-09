@@ -5,6 +5,7 @@ import NavbarTravel from "./NavbarTravel"
 import Footer from "./Footer"
 import FloatingButtons from "./FloatingButtons"
 import HomeInquiryWrapper from "./HomeInquiryWrapper"
+import OfferPopup from "./OfferPopup"
 
 export default function ConditionalLayout({
   children,
@@ -27,6 +28,7 @@ export default function ConditionalLayout({
       <Footer />
       <FloatingButtons />
       <HomeInquiryWrapper />
+      <OfferPopup />
     </>
   )
 }

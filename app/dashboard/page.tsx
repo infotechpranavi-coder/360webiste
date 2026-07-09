@@ -28,6 +28,7 @@ import CreateTestimonialModal from "../../components/CreateTestimonialModal";
 import EditTestimonialModal from "../../components/EditTestimonialModal";
 import ReplyEnquiryModal from "../../components/ReplyEnquiryModal";
 import DashboardCategoriesPanel from "../../components/DashboardCategoriesPanel";
+import OfferPopupSettingsPanel from "../../components/OfferPopupSettingsPanel";
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, HeadingLevel, ImageRun } from 'docx';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
@@ -67,7 +68,8 @@ import {
   Save,
   Check,
   ExternalLink,
-  FolderTree
+  FolderTree,
+  Megaphone
 } from "lucide-react";
 import { Input } from "../../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
@@ -80,7 +82,7 @@ import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 import { getBannerPreviewImage, getBannerMediaLabel } from "@/lib/bannerMedia";
 import { PackageData, TourData, TicketData, BannerData, BlogData, GalleryData } from "@/lib/types";
 
-type DashboardView = 'packages' | 'categories' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials';
+type DashboardView = 'packages' | 'categories' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials' | 'offer-popup';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -1457,6 +1459,11 @@ export default function DashboardPage() {
       icon: MessageSquare,
     },
     {
+      id: 'offer-popup' as DashboardView,
+      label: 'Offer Pop Up',
+      icon: Megaphone,
+    },
+    {
       id: 'settings' as DashboardView,
       label: 'Home Settings',
       icon: SettingsIcon,
@@ -1604,6 +1611,7 @@ export default function DashboardPage() {
                     {activeView === 'testimonials' && 'Guest Feedback'}
                     {activeView === 'blogs' && 'Content Studio'}
                     {activeView === 'settings' && 'Home Configuration'}
+                    {activeView === 'offer-popup' && 'Offer Pop Up'}
                     {activeView === 'socials' && 'Social Presence'}
                   </h1>
                   <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1">
@@ -1616,6 +1624,7 @@ export default function DashboardPage() {
                     {activeView === 'testimonials' && 'Monitoring guest satisfaction and reviews'}
                     {activeView === 'blogs' && 'Managing luxury travel narratives'}
                     {activeView === 'settings' && 'Customize homepage section visibility and features'}
+                    {activeView === 'offer-popup' && 'Manage promotional popup image, title, badge, and display timing'}
                     {activeView === 'socials' && 'Centralized control for all brand digital touchpoints'}
                   </p>
                 </div>
@@ -2941,6 +2950,10 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             </div>
+          )}
+
+          {activeView === 'offer-popup' && (
+            <OfferPopupSettingsPanel />
           )}
 
           {activeView === 'socials' && (

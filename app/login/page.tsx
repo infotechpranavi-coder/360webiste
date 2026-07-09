@@ -24,21 +24,25 @@ const LoginPage = () => {
     setIsLoading(true);
     setError("");
 
-    // Credentials: admin@skygo.com / skygo@admin2025
-    if (email === "admin@skygo.com" && password === "skygo@admin2025") {
-      // Set session cookie for 24 hours
-      const expires = new Date();
-      expires.setHours(expires.getHours() + 24);
-      document.cookie = `admin_session=authenticated; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
-      
-      // Successful login - redirect to dashboard
-      router.push("/dashboard");
-    } else {
-      // Wrong credentials
-      setError("Invalid email or password. Please try again.");
-    }
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+      const data = await res.json();
 
-    setIsLoading(false);
+      if (res.ok && data.success) {
+        router.push('/dashboard');
+        return;
+      }
+
+      setError(data.error || 'Invalid email or password. Please try again.');
+    } catch {
+      setError('Unable to sign in right now. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -83,7 +87,7 @@ const LoginPage = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="admin@skygo.com"
+                    placeholder="admin@explore360.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-10 h-11 border-slate-200 focus:border-primary focus:ring-primary/10 bg-slate-50/30"

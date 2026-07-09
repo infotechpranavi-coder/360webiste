@@ -11,6 +11,10 @@ import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 import { PACKAGE_NAV_GROUPS, getGroupPageHref } from "@/lib/packageExperienceCategories";
 import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
+import {
+  filterUpcomingTourPackages,
+  type UpcomingTourNavPackage,
+} from "@/lib/upcomingTourNav";
 
 type NavSubItem = { name: string; href: string; isFuture?: boolean };
 type NavItem = {
@@ -38,6 +42,7 @@ const NavbarTravel = () => {
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
   const [hoveredPackageGroup, setHoveredPackageGroup] = useState<string | null>(null);
   const [hoveredPackageSub, setHoveredPackageSub] = useState<string | null>(null);
+  const [upcomingTourPackages, setUpcomingTourPackages] = useState<UpcomingTourNavPackage[]>([]);
   const [contactHovered, setContactHovered] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -53,6 +58,31 @@ const NavbarTravel = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (hoveredPackageGroup !== 'upcoming-tours') return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/packages', { cache: 'no-store' });
+        const data = await res.json();
+        if (cancelled || !data.success) return;
+
+        const tours = (data.data ?? []).filter(
+          (pkg: { packageCategory?: string }) =>
+            String(pkg.packageCategory ?? '').toLowerCase() === 'upcoming tours'
+        );
+        setUpcomingTourPackages(tours);
+      } catch (error) {
+        console.error('Failed to load upcoming tours for navigation:', error);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [hoveredPackageGroup]);
 
   const navigation: NavItem[] = [
     { name: 'Home', href: '/' },
@@ -217,7 +247,10 @@ const NavbarTravel = () => {
                                     ? groupHoverStyles[group.slug] ?? 'bg-gray-50 text-gray-800'
                                     : 'text-gray-800 hover:bg-gray-50'
                                 }`}
-                                onMouseEnter={() => setHoveredPackageGroup(group.slug)}
+                                onMouseEnter={() => {
+                                  setHoveredPackageGroup(group.slug);
+                                  setHoveredPackageSub(group.items[0]?.slug ?? null);
+                                }}
                                 onClick={() => {
                                   setOpenDropdownIndex(null);
                                   setHoveredIndex(null);
@@ -254,7 +287,7 @@ const NavbarTravel = () => {
                                     }`}
                                     onMouseEnter={() => setHoveredPackageSub(sub.slug)}
                                   >
-                                    {sub.miniItems?.length ? (
+                                    {sub.miniItems?.length || hoveredPackageGroup === 'upcoming-tours' ? (
                                       <>
                                         <span>{sub.label}</span>
                                         <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
@@ -287,6 +320,56 @@ const NavbarTravel = () => {
                               ?.find((g) => g.slug === hoveredPackageGroup)
                               ?.items.find((s) => s.slug === hoveredPackageSub);
                             const minis = activeSub?.miniItems ?? [];
+
+                            if (hoveredPackageGroup === 'upcoming-tours' && activeSub) {
+                              const filteredTours = filterUpcomingTourPackages(
+                                upcomingTourPackages,
+                                activeSub.slug
+                              );
+
+                              return (
+                                <div className="min-w-[280px] max-w-[320px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">
+                                  <Link
+                                    href={activeSub.href}
+                                    onClick={() => {
+                                      setOpenDropdownIndex(null);
+                                      setHoveredIndex(null);
+                                      setHoveredPackageGroup(null);
+                                      setHoveredPackageSub(null);
+                                    }}
+                                    className="block px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#bd9245] hover:bg-[#bd9245]/5 border-b border-gray-100"
+                                  >
+                                    All {activeSub.label}
+                                  </Link>
+                                  {filteredTours.length > 0 ? (
+                                    filteredTours.map((pkg) => (
+                                      <Link
+                                        key={pkg._id}
+                                        href={`/packages/${pkg._id}`}
+                                        onClick={() => {
+                                          setOpenDropdownIndex(null);
+                                          setHoveredIndex(null);
+                                          setHoveredPackageGroup(null);
+                                          setHoveredPackageSub(null);
+                                        }}
+                                        className={`block px-4 py-2.5 text-sm transition-colors ${
+                                          pathname === `/packages/${pkg._id}`
+                                            ? 'bg-[#bd9245]/10 text-[#bd9245] font-semibold'
+                                            : 'text-gray-700 hover:bg-gray-50 hover:text-[#bd9245]'
+                                        }`}
+                                      >
+                                        {pkg.title}
+                                      </Link>
+                                    ))
+                                  ) : (
+                                    <p className="px-4 py-3 text-xs text-gray-400 font-medium">
+                                      No tours in this category yet
+                                    </p>
+                                  )}
+                                </div>
+                              );
+                            }
+
                             if (!minis.length) return null;
                             return (
                               <div className="min-w-[240px] max-w-[280px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">

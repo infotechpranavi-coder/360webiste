@@ -30,6 +30,15 @@ const SettingsSchema = new mongoose.Schema({
   customSubcategories: { type: mongoose.Schema.Types.Mixed, default: [] },
   customMiniCategories: { type: mongoose.Schema.Types.Mixed, default: [] },
   miniCategoryLabelOverrides: { type: mongoose.Schema.Types.Mixed, default: {} },
+
+  // Offer popup (site-wide)
+  offerPopupEnabled: { type: Boolean, default: false },
+  offerPopupTitle: { type: String, default: '' },
+  offerPopupSubtitle: { type: String, default: '' },
+  offerPopupImageUrl: { type: String, default: '' },
+  offerPopupImagePublicId: { type: String, default: '' },
+  offerPopupInitialDelaySeconds: { type: Number, default: 3, min: 0 },
+  offerPopupRepeatIntervalSeconds: { type: Number, default: 320, min: 10 },
 }, { timestamps: true });
 
 if (mongoose.models.Settings) {
