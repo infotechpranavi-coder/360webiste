@@ -11,6 +11,7 @@ import {
   PackageExperienceCategory,
   accentStyles,
 } from '@/lib/packageExperienceCategories';
+import { yachtPackageSeedData } from '@/lib/yachtPackageData';
 import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
 import { getResolvedCategoryBySlugFromCatalog } from '@/lib/categoryCatalog';
 import { useInquiryForm } from '@/contexts/InquiryFormContext';
@@ -80,11 +81,22 @@ export default function PackageExperiencePage({ category: baseCategory, miniCate
         : `category=${encodeURIComponent(category.slug)}`;
       const response = await fetch(`/api/packages?${query}`);
       const result = await response.json();
-      if (result.success && result.data) {
-        setPackages(result.data);
-      } else {
-        setPackages([]);
+      let data = result.success && result.data ? result.data : [];
+
+      if (miniCategorySlug === 'yacht' && data.length < yachtPackageSeedData.length) {
+        try {
+          await fetch('/api/packages/seed-yacht-packages', { method: 'POST' });
+          const retry = await fetch(`/api/packages?${query}`);
+          const retryResult = await retry.json();
+          if (retryResult.success && retryResult.data?.length) {
+            data = retryResult.data;
+          }
+        } catch {
+          // keep empty if seed fails
+        }
       }
+
+      setPackages(data);
     } catch (error) {
       console.error('Error fetching packages:', error);
       setPackages([]);

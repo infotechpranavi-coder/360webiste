@@ -30,6 +30,8 @@ const SettingsSchema = new mongoose.Schema({
   customSubcategories: { type: mongoose.Schema.Types.Mixed, default: [] },
   customMiniCategories: { type: mongoose.Schema.Types.Mixed, default: [] },
   miniCategoryLabelOverrides: { type: mongoose.Schema.Types.Mixed, default: {} },
+  hiddenBuiltinMiniCategories: { type: [String], default: [] },
+  hiddenBuiltinSubcategories: { type: [String], default: [] },
 
   // Offer popup (site-wide)
   offerPopupEnabled: { type: Boolean, default: false },

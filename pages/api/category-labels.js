@@ -12,6 +12,8 @@ import {
   getAllCategorySlugs,
   getAllMiniSlugs,
   getMiniCategoryBySlugFromCatalog,
+  isBuiltinMiniCategory,
+  isBuiltinSubcategory,
 } from '../../lib/categoryCatalog';
 import { applyCategoryLabelOverrides, getCategoryLabelOverridesFromSettings } from '../../lib/resolveCategoryLabels';
 
@@ -26,6 +28,8 @@ async function getOrCreateSettings() {
   if (!settings.customSubcategories) settings.customSubcategories = [];
   if (!settings.customMiniCategories) settings.customMiniCategories = [];
   if (!settings.miniCategoryLabelOverrides) settings.miniCategoryLabelOverrides = {};
+  if (!settings.hiddenBuiltinMiniCategories) settings.hiddenBuiltinMiniCategories = [];
+  if (!settings.hiddenBuiltinSubcategories) settings.hiddenBuiltinSubcategories = [];
   return settings;
 }
 
@@ -339,31 +343,41 @@ export default async function handler(req, res) {
         });
       } else if (action === 'deleteSubcategory') {
         const slug = String(req.body.slug || '').trim();
-        if (!isCustomSubcategory(slug, catalog)) {
-          return res.status(400).json({ success: false, error: 'Only custom experience pages can be deleted' });
+        if (!slug) {
+          return res.status(400).json({ success: false, error: 'slug is required' });
         }
 
-        const sub = (settings.customSubcategories || []).find((item) => item.slug === slug);
-        if (sub) {
-          const count = await Package.countDocuments({
-            packageCategory: { $regex: new RegExp(`^${sub.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
-          });
-          if (count > 0) {
-            return res.status(400).json({
-              success: false,
-              error: `Cannot delete — ${count} package(s) still use this category`,
+        if (isCustomSubcategory(slug, catalog)) {
+          const sub = (settings.customSubcategories || []).find((item) => item.slug === slug);
+          if (sub) {
+            const count = await Package.countDocuments({
+              packageCategory: { $regex: new RegExp(`^${sub.label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
             });
+            if (count > 0) {
+              return res.status(400).json({
+                success: false,
+                error: `Cannot delete — ${count} package(s) still use this category`,
+              });
+            }
           }
-        }
 
-        refreshed = await updateSettingsById(settings._id, {
-          customSubcategories: (settings.customSubcategories || []).filter(
-            (sub) => sub.slug !== slug
-          ),
-          customMiniCategories: (settings.customMiniCategories || []).filter(
-            (mini) => mini.subcategorySlug !== slug
-          ),
-        });
+          refreshed = await updateSettingsById(settings._id, {
+            customSubcategories: (settings.customSubcategories || []).filter(
+              (sub) => sub.slug !== slug
+            ),
+            customMiniCategories: (settings.customMiniCategories || []).filter(
+              (mini) => mini.subcategorySlug !== slug
+            ),
+          });
+        } else if (isBuiltinSubcategory(slug, catalog)) {
+          const hidden = new Set(settings.hiddenBuiltinSubcategories || []);
+          hidden.add(slug);
+          refreshed = await updateSettingsById(settings._id, {
+            hiddenBuiltinSubcategories: Array.from(hidden),
+          });
+        } else {
+          return res.status(404).json({ success: false, error: 'Subcategory not found' });
+        }
       } else if (action === 'addMiniCategory') {
         const label = String(req.body.label || '').trim();
         const subcategorySlug = String(req.body.subcategorySlug || '').trim();
@@ -422,28 +436,38 @@ export default async function handler(req, res) {
         }
       } else if (action === 'deleteMiniCategory') {
         const slug = String(req.body.slug || '').trim();
-        if (!isCustomMiniCategory(slug, catalog)) {
-          return res.status(400).json({ success: false, error: 'Mini category not found' });
+        if (!slug) {
+          return res.status(400).json({ success: false, error: 'slug is required' });
         }
 
-        const mini = getMiniCategoryBySlugFromCatalog(slug, catalog);
-        if (mini) {
-          const count = await Package.countDocuments({
-            packageMiniCategory: { $regex: new RegExp(`^${mini.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
-          });
-          if (count > 0) {
-            return res.status(400).json({
-              success: false,
-              error: `Cannot delete — ${count} package(s) still use this mini category`,
+        if (isCustomMiniCategory(slug, catalog)) {
+          const mini = getMiniCategoryBySlugFromCatalog(slug, catalog);
+          if (mini) {
+            const count = await Package.countDocuments({
+              packageMiniCategory: { $regex: new RegExp(`^${mini.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') },
             });
+            if (count > 0) {
+              return res.status(400).json({
+                success: false,
+                error: `Cannot delete — ${count} package(s) still use this mini category`,
+              });
+            }
           }
-        }
 
-        refreshed = await updateSettingsById(settings._id, {
-          customMiniCategories: (settings.customMiniCategories || []).filter(
-            (mini) => mini.slug !== slug
-          ),
-        });
+          refreshed = await updateSettingsById(settings._id, {
+            customMiniCategories: (settings.customMiniCategories || []).filter(
+              (mini) => mini.slug !== slug
+            ),
+          });
+        } else if (isBuiltinMiniCategory(slug)) {
+          const hidden = new Set(settings.hiddenBuiltinMiniCategories || []);
+          hidden.add(slug);
+          refreshed = await updateSettingsById(settings._id, {
+            hiddenBuiltinMiniCategories: Array.from(hidden),
+          });
+        } else {
+          return res.status(404).json({ success: false, error: 'Mini category not found' });
+        }
       } else {
         return res.status(400).json({ success: false, error: 'Invalid action' });
       }

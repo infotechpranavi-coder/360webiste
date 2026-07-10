@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Pencil, Trash2, Check, X, FolderTree } from 'lucide-react';
 import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
-import { isCustomGroup, isCustomMiniCategory, isCustomSubcategory } from '@/lib/categoryCatalog';
+import { isCustomGroup, isCustomMiniCategory } from '@/lib/categoryCatalog';
 import { formatCategoryOptionLabel } from '@/lib/resolveCategoryLabels';
 
 export default function DashboardCategoriesPanel() {
@@ -241,9 +241,19 @@ export default function DashboardCategoriesPanel() {
                         </button>
                         <div className="flex shrink-0">
                           <Button type="button" size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setEditingSubSlug(sub.slug); setSubDraft({ label: sub.label, heroSubtitle: sub.heroSubtitle, isFuture: !!sub.isFuture }); }}><Pencil className="h-3.5 w-3.5" /></Button>
-                          {isCustomSubcategory(sub.slug, catalog) && (
-                            <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-red-500" onClick={() => { if (confirm(`Delete "${sub.label}"?`)) deleteSubcategory(sub.slug); }}><Trash2 className="h-3.5 w-3.5" /></Button>
-                          )}
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-red-500"
+                            onClick={() => {
+                              if (confirm(`Delete "${sub.label}" from the navigation menu?`)) {
+                                deleteSubcategory(sub.slug);
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -287,9 +297,19 @@ export default function DashboardCategoriesPanel() {
                         </div>
                         <div className="flex shrink-0">
                           <Button type="button" size="icon" variant="ghost" className="h-8 w-8" onClick={() => { setEditingMiniSlug(mini.slug); setMiniDraft(mini.label); }}><Pencil className="h-3.5 w-3.5" /></Button>
-                          {isCustomMiniCategory(mini.slug, catalog) && (
-                            <Button type="button" size="icon" variant="ghost" className="h-8 w-8 text-red-500" onClick={() => { if (confirm(`Delete "${mini.label}"?`)) deleteMiniCategory(mini.slug); }}><Trash2 className="h-3.5 w-3.5" /></Button>
-                          )}
+                          <Button
+                            type="button"
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-red-500"
+                            onClick={() => {
+                              if (confirm(`Delete "${mini.label}" from the navigation menu?`)) {
+                                deleteMiniCategory(mini.slug);
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
                         </div>
                       </div>
                     )}

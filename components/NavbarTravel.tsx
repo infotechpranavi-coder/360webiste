@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, Menu, X, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,10 +11,6 @@ import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 import { PACKAGE_NAV_GROUPS, getGroupPageHref } from "@/lib/packageExperienceCategories";
 import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
-import {
-  filterUpcomingTourPackages,
-  type UpcomingTourNavPackage,
-} from "@/lib/upcomingTourNav";
 
 type NavSubItem = { name: string; href: string; isFuture?: boolean };
 type NavItem = {
@@ -42,8 +38,8 @@ const NavbarTravel = () => {
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
   const [hoveredPackageGroup, setHoveredPackageGroup] = useState<string | null>(null);
   const [hoveredPackageSub, setHoveredPackageSub] = useState<string | null>(null);
-  const [upcomingTourPackages, setUpcomingTourPackages] = useState<UpcomingTourNavPackage[]>([]);
   const [contactHovered, setContactHovered] = useState(false);
+  const openDropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
   const { openForm } = useInquiryForm();
@@ -59,30 +55,44 @@ const NavbarTravel = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const closeDropdown = useCallback(() => {
+    setOpenDropdownIndex(null);
+    setHoveredIndex(null);
+    setHoveredPackageGroup(null);
+    setHoveredPackageSub(null);
+  }, []);
+
+  const openPackageDropdown = useCallback((index: number, packageGroups: typeof PACKAGE_NAV_GROUPS) => {
+    setOpenDropdownIndex(index);
+    setHoveredIndex(index);
+    const firstGroup = packageGroups[0];
+    setHoveredPackageGroup(firstGroup?.slug ?? null);
+    setHoveredPackageSub(firstGroup?.items[0]?.slug ?? null);
+  }, []);
+
   useEffect(() => {
-    if (hoveredPackageGroup !== 'upcoming-tours') return;
+    closeDropdown();
+  }, [pathname, closeDropdown]);
 
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch('/api/packages', { cache: 'no-store' });
-        const data = await res.json();
-        if (cancelled || !data.success) return;
+  useEffect(() => {
+    if (openDropdownIndex === null) return;
 
-        const tours = (data.data ?? []).filter(
-          (pkg: { packageCategory?: string }) =>
-            String(pkg.packageCategory ?? '').toLowerCase() === 'upcoming tours'
-        );
-        setUpcomingTourPackages(tours);
-      } catch (error) {
-        console.error('Failed to load upcoming tours for navigation:', error);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
+    const handlePointerDown = (event: MouseEvent) => {
+      if (openDropdownRef.current?.contains(event.target as Node)) return;
+      closeDropdown();
     };
-  }, [hoveredPackageGroup]);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeDropdown();
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [openDropdownIndex, closeDropdown]);
 
   const navigation: NavItem[] = [
     { name: 'Home', href: '/' },
@@ -127,8 +137,7 @@ const NavbarTravel = () => {
   const isHighlighted = (index: number, active: boolean) =>
     active || hoveredIndex === index || openDropdownIndex === index;
 
-  const isDropdownOpen = (index: number) =>
-    hoveredIndex === index || openDropdownIndex === index;
+  const isDropdownOpen = (index: number) => openDropdownIndex === index;
 
   const navItemClass = (highlighted: boolean) =>
     useSolidNav
@@ -197,24 +206,20 @@ const NavbarTravel = () => {
 
                 if (item.packageGroups?.length) {
                   const dropdownOpen = isDropdownOpen(index);
+                  const activeGroup = hoveredPackageGroup
+                    ? item.packageGroups.find((g) => g.slug === hoveredPackageGroup)
+                    : undefined;
+                  const activeSub = activeGroup?.items.find((s) => s.slug === hoveredPackageSub);
+                  const activeMinis = activeSub?.miniItems ?? [];
+                  const showSubColumn = Boolean(activeGroup?.items?.length);
+                  const showMiniColumn = Boolean(activeSub && activeMinis.length);
 
                   return (
                     <div
                       key={item.name}
+                      ref={dropdownOpen ? openDropdownRef : null}
                       className="relative"
-                      onMouseEnter={() => {
-                        setHoveredIndex(index);
-                        setOpenDropdownIndex(index);
-                        const firstGroup = item.packageGroups![0];
-                        setHoveredPackageGroup(firstGroup.slug);
-                        setHoveredPackageSub(firstGroup.items[0]?.slug ?? null);
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredIndex(null);
-                        setOpenDropdownIndex(null);
-                        setHoveredPackageGroup(null);
-                        setHoveredPackageSub(null);
-                      }}
+                      onMouseEnter={() => openPackageDropdown(index, item.packageGroups!)}
                     >
                       <Link
                         href={item.href}
@@ -232,11 +237,14 @@ const NavbarTravel = () => {
                       <div
                         className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 z-[60] transition-all duration-200 ${
                           dropdownOpen
-                            ? 'opacity-100 visible translate-y-0'
+                            ? 'opacity-100 visible translate-y-0 pointer-events-auto'
                             : 'opacity-0 invisible translate-y-1 pointer-events-none'
                         }`}
                       >
-                        <div className="flex rounded-xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
+                        <div
+                          className="flex rounded-xl bg-white shadow-2xl border border-gray-100 overflow-hidden"
+                          onMouseDown={(e) => e.stopPropagation()}
+                        >
                           <div className="min-w-[200px] py-2">
                             {item.packageGroups.map((group) => (
                               <Link
@@ -251,12 +259,7 @@ const NavbarTravel = () => {
                                   setHoveredPackageGroup(group.slug);
                                   setHoveredPackageSub(group.items[0]?.slug ?? null);
                                 }}
-                                onClick={() => {
-                                  setOpenDropdownIndex(null);
-                                  setHoveredIndex(null);
-                                  setHoveredPackageGroup(null);
-                                  setHoveredPackageSub(null);
-                                }}
+                                onClick={() => closeDropdown()}
                               >
                                 <span>{group.label}</span>
                                 <ChevronRight className="h-4 w-4 text-gray-400" />
@@ -264,20 +267,15 @@ const NavbarTravel = () => {
                             ))}
                             <Link
                               href="/packages"
-                              onClick={() => {
-                                setOpenDropdownIndex(null);
-                                setHoveredIndex(null);
-                              }}
+                              onClick={() => closeDropdown()}
                               className="block px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-[#bd9245] hover:bg-[#bd9245]/5 border-t border-gray-100 mt-1"
                             >
                               View All Packages
                             </Link>
                           </div>
-                          {hoveredPackageGroup && (
+                          {showSubColumn && (
                             <div className="min-w-[280px] max-w-[300px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">
-                              {item.packageGroups
-                                .find((g) => g.slug === hoveredPackageGroup)
-                                ?.items.map((sub) => (
+                              {activeGroup!.items.map((sub) => (
                                   <div
                                     key={sub.slug}
                                     className={`flex items-center justify-between gap-2 px-4 py-2.5 text-sm transition-colors cursor-default ${
@@ -287,7 +285,7 @@ const NavbarTravel = () => {
                                     }`}
                                     onMouseEnter={() => setHoveredPackageSub(sub.slug)}
                                   >
-                                    {sub.miniItems?.length || hoveredPackageGroup === 'upcoming-tours' ? (
+                                    {sub.miniItems?.length ? (
                                       <>
                                         <span>{sub.label}</span>
                                         <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
@@ -295,12 +293,7 @@ const NavbarTravel = () => {
                                     ) : (
                                       <Link
                                         href={sub.href}
-                                        onClick={() => {
-                                          setOpenDropdownIndex(null);
-                                          setHoveredIndex(null);
-                                          setHoveredPackageGroup(null);
-                                          setHoveredPackageSub(null);
-                                        }}
+                                        onClick={() => closeDropdown()}
                                         className="flex items-center justify-between gap-2 w-full"
                                       >
                                         <span>{sub.label}</span>
@@ -315,86 +308,13 @@ const NavbarTravel = () => {
                                 ))}
                             </div>
                           )}
-                          {hoveredPackageGroup && hoveredPackageSub && (() => {
-                            const activeSub = item.packageGroups
-                              ?.find((g) => g.slug === hoveredPackageGroup)
-                              ?.items.find((s) => s.slug === hoveredPackageSub);
-                            const minis = activeSub?.miniItems ?? [];
-
-                            if (hoveredPackageGroup === 'upcoming-tours' && activeSub) {
-                              const filteredTours = filterUpcomingTourPackages(
-                                upcomingTourPackages,
-                                activeSub.slug
-                              );
-
-                              return (
-                                <div className="min-w-[280px] max-w-[320px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">
-                                  <Link
-                                    href={activeSub.href}
-                                    onClick={() => {
-                                      setOpenDropdownIndex(null);
-                                      setHoveredIndex(null);
-                                      setHoveredPackageGroup(null);
-                                      setHoveredPackageSub(null);
-                                    }}
-                                    className="block px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#bd9245] hover:bg-[#bd9245]/5 border-b border-gray-100"
-                                  >
-                                    All {activeSub.label}
-                                  </Link>
-                                  {filteredTours.length > 0 ? (
-                                    filteredTours.map((pkg) => (
-                                      <Link
-                                        key={pkg._id}
-                                        href={`/packages/${pkg._id}`}
-                                        onClick={() => {
-                                          setOpenDropdownIndex(null);
-                                          setHoveredIndex(null);
-                                          setHoveredPackageGroup(null);
-                                          setHoveredPackageSub(null);
-                                        }}
-                                        className={`block px-4 py-2.5 text-sm transition-colors ${
-                                          pathname === `/packages/${pkg._id}`
-                                            ? 'bg-[#bd9245]/10 text-[#bd9245] font-semibold'
-                                            : 'text-gray-700 hover:bg-gray-50 hover:text-[#bd9245]'
-                                        }`}
-                                      >
-                                        {pkg.title}
-                                      </Link>
-                                    ))
-                                  ) : (
-                                    <p className="px-4 py-3 text-xs text-gray-400 font-medium">
-                                      No tours in this category yet
-                                    </p>
-                                  )}
-                                </div>
-                              );
-                            }
-
-                            if (!minis.length) return null;
-                            return (
+                          {showMiniColumn && (
                               <div className="min-w-[240px] max-w-[280px] border-l border-gray-100 py-2 bg-white max-h-[420px] overflow-y-auto">
-                                <Link
-                                  href={activeSub!.href}
-                                  onClick={() => {
-                                    setOpenDropdownIndex(null);
-                                    setHoveredIndex(null);
-                                    setHoveredPackageGroup(null);
-                                    setHoveredPackageSub(null);
-                                  }}
-                                  className="block px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#bd9245] hover:bg-[#bd9245]/5 border-b border-gray-100"
-                                >
-                                  All {activeSub!.label}
-                                </Link>
-                                {minis.map((mini) => (
+                                {activeMinis.map((mini) => (
                                   <Link
                                     key={mini.href}
                                     href={mini.href}
-                                    onClick={() => {
-                                      setOpenDropdownIndex(null);
-                                      setHoveredIndex(null);
-                                      setHoveredPackageGroup(null);
-                                      setHoveredPackageSub(null);
-                                    }}
+                                    onClick={() => closeDropdown()}
                                     className={`block px-4 py-2.5 text-sm transition-colors ${
                                       pathname === mini.href
                                         ? 'bg-[#bd9245]/10 text-[#bd9245] font-semibold'
@@ -405,8 +325,7 @@ const NavbarTravel = () => {
                                   </Link>
                                 ))}
                               </div>
-                            );
-                          })()}
+                          )}
                         </div>
                       </div>
                     </div>
@@ -419,14 +338,11 @@ const NavbarTravel = () => {
                   return (
                     <div
                       key={item.name}
+                      ref={dropdownOpen ? openDropdownRef : null}
                       className="relative"
                       onMouseEnter={() => {
-                        setHoveredIndex(index);
                         setOpenDropdownIndex(index);
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredIndex(null);
-                        setOpenDropdownIndex(null);
+                        setHoveredIndex(index);
                       }}
                     >
                       <Link
@@ -445,19 +361,19 @@ const NavbarTravel = () => {
                       <div
                         className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 z-[60] transition-all duration-200 ${
                           dropdownOpen
-                            ? 'opacity-100 visible translate-y-0'
+                            ? 'opacity-100 visible translate-y-0 pointer-events-auto'
                             : 'opacity-0 invisible translate-y-1 pointer-events-none'
                         }`}
                       >
-                        <div className="min-w-[260px] rounded-xl bg-white shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
+                        <div
+                          className="min-w-[260px] rounded-xl bg-white shadow-2xl border border-gray-100 py-1.5 overflow-hidden"
+                          onMouseDown={(e) => e.stopPropagation()}
+                        >
                           {item.submenu.map((subItem) => (
                             <Link
                               key={subItem.href}
                               href={subItem.href}
-                              onClick={() => {
-                                setOpenDropdownIndex(null);
-                                setHoveredIndex(null);
-                              }}
+                              onClick={() => closeDropdown()}
                               className={`block px-4 py-2.5 text-sm font-medium transition-colors ${
                                 pathname === subItem.href || pathname?.startsWith(`${subItem.href}/`)
                                   ? 'bg-[#bd9245]/10 text-[#bd9245] font-semibold'

@@ -37,6 +37,8 @@ export interface CategoryCatalogSettings extends CategoryLabelOverrides {
   customSubcategories?: CustomSubcategoryEntry[];
   customMiniCategories?: CustomMiniCategoryEntry[];
   miniCategoryLabels?: Record<string, string>;
+  hiddenBuiltinMiniCategories?: string[];
+  hiddenBuiltinSubcategories?: string[];
 }
 
 const GROUP_ACCENTS: Record<string, PackageExperienceCategory['accent']> = {
@@ -63,6 +65,8 @@ export function getCategoryCatalogFromSettings(
     customSubcategories?: CustomSubcategoryEntry[];
     customMiniCategories?: CustomMiniCategoryEntry[];
     miniCategoryLabelOverrides?: Record<string, string>;
+    hiddenBuiltinMiniCategories?: string[];
+    hiddenBuiltinSubcategories?: string[];
   } | null
 ): CategoryCatalogSettings {
   return {
@@ -72,7 +76,43 @@ export function getCategoryCatalogFromSettings(
     customSubcategories: settings?.customSubcategories ?? [],
     customMiniCategories: settings?.customMiniCategories ?? [],
     miniCategoryLabels: settings?.miniCategoryLabelOverrides ?? {},
+    hiddenBuiltinMiniCategories: settings?.hiddenBuiltinMiniCategories ?? [],
+    hiddenBuiltinSubcategories: settings?.hiddenBuiltinSubcategories ?? [],
   };
+}
+
+export function getAllBuiltinSubcategorySlugs(): Set<string> {
+  const slugs = new Set<string>();
+  for (const group of PACKAGE_NAV_GROUPS) {
+    for (const item of group.items) {
+      slugs.add(item.slug);
+    }
+  }
+  return slugs;
+}
+
+export function isBuiltinSubcategory(
+  slug: string,
+  catalog?: CategoryCatalogSettings | null
+): boolean {
+  if (isCustomSubcategory(slug, catalog)) return false;
+  return getAllBuiltinSubcategorySlugs().has(slug);
+}
+
+export function getAllBuiltinMiniSlugs(): Set<string> {
+  const slugs = new Set<string>();
+  for (const group of PACKAGE_NAV_GROUPS) {
+    for (const item of group.items) {
+      for (const mini of item.miniItems ?? []) {
+        slugs.add(mini.slug);
+      }
+    }
+  }
+  return slugs;
+}
+
+export function isBuiltinMiniCategory(slug: string): boolean {
+  return getAllBuiltinMiniSlugs().has(slug);
 }
 
 function applyLabelOverrides(catalog: CategoryCatalogSettings): PackageNavGroup[] {
@@ -120,15 +160,45 @@ function attachMiniCategories(
 ): PackageNavGroup[] {
   const miniLabels = catalog.miniCategoryLabels ?? {};
   const minis = catalog.customMiniCategories ?? [];
+  const hiddenBuiltin = new Set(catalog.hiddenBuiltinMiniCategories ?? []);
 
   return groups.map((group) => ({
     ...group,
-    items: group.items.map((item) => ({
-      ...item,
-      miniItems: minis
+    items: group.items.map((item) => {
+      const builtInMinis = (item.miniItems ?? []).filter((mini) => !hiddenBuiltin.has(mini.slug));
+      const customMinis = minis
         .filter((mini) => mini.subcategorySlug === item.slug && mini.groupSlug === group.slug)
-        .map((mini) => buildMiniCategory(mini, miniLabels[mini.slug])),
-    })),
+        .map((mini) => buildMiniCategory(mini, miniLabels[mini.slug]));
+
+      const merged = [...builtInMinis];
+      for (const custom of customMinis) {
+        if (!merged.some((mini) => mini.slug === custom.slug)) {
+          merged.push(custom);
+        }
+      }
+
+      return {
+        ...item,
+        miniItems: merged.length ? merged : undefined,
+      };
+    }),
+  }));
+}
+
+function filterHiddenBuiltinSubcategories(
+  groups: PackageNavGroup[],
+  catalog: CategoryCatalogSettings
+): PackageNavGroup[] {
+  const hidden = new Set(catalog.hiddenBuiltinSubcategories ?? []);
+  if (!hidden.size) return groups;
+
+  const builtinSlugs = getAllBuiltinSubcategorySlugs();
+  return groups.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => {
+      if (!builtinSlugs.has(item.slug)) return true;
+      return !hidden.has(item.slug);
+    }),
   }));
 }
 
@@ -202,7 +272,10 @@ export function buildNavGroupsFromCatalog(
     }
   }
 
-  return attachMiniCategories(result, catalog ?? {});
+  return filterHiddenBuiltinSubcategories(
+    attachMiniCategories(result, catalog ?? {}),
+    catalog ?? {}
+  );
 }
 
 export function getAllMiniSlugs(catalog?: CategoryCatalogSettings | null): Set<string> {
