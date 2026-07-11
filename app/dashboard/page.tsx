@@ -1865,18 +1865,14 @@ export default function DashboardPage() {
                                 </div>
                               </td>
                               <td className="p-4">
-                                <span className="text-[11px] font-bold text-gray-600 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-tight">
-                                  {resolveCategoryByValue(pkg.packageCategory)?.label || pkg.packageCategory || 'Yachts & Sailing Cruises'}
+                                <span className="text-xs text-gray-600">
+                                  {resolveCategoryByValue(pkg.packageCategory)?.label || pkg.packageCategory || '—'}
                                 </span>
                               </td>
                               <td className="p-4">
-                                {pkg.packageMiniCategory ? (
-                                  <span className="text-[11px] font-bold text-teal-700 bg-teal-50 px-3 py-1 rounded-full uppercase tracking-tight">
-                                    {resolveMiniLabel(pkg.packageMiniCategory)}
-                                  </span>
-                                ) : (
-                                  <span className="text-[10px] font-medium text-gray-300">—</span>
-                                )}
+                                <span className="text-xs text-gray-600">
+                                  {pkg.packageMiniCategory ? resolveMiniLabel(pkg.packageMiniCategory) : '—'}
+                                </span>
                               </td>
                               <td className="p-4">
                                 <div className="flex flex-col">
@@ -1894,7 +1890,6 @@ export default function DashboardPage() {
                                 <div className="text-sm font-black text-[#111827] tracking-tight">
                                   R {pkg.price?.toLocaleString()}
                                 </div>
-                                <div className="text-[9px] font-bold text-[#bd9245] uppercase tracking-widest">Premium Tier</div>
                               </td>
                               <td className="p-4">
                                 <div className="flex items-center gap-1.5 bg-orange-50 px-3 py-1.5 rounded-xl w-fit">

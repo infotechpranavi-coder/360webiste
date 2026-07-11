@@ -162,16 +162,22 @@ export default async function handler(req, res) {
         const miniFilter = buildMiniFilterForSlug(String(mini), catalog);
         if (miniFilter) {
           query = { ...query, ...miniFilter };
+        } else {
+          return res.status(200).json({ success: true, data: [] });
         }
       } else if (category) {
         const categoryFilter = buildCategoryFilterForSlug(String(category), catalog);
         if (categoryFilter) {
           query = { ...query, ...categoryFilter };
+        } else {
+          return res.status(200).json({ success: true, data: [] });
         }
       } else if (group) {
         const groupFilter = buildGroupFilterForSlug(String(group), catalog);
         if (groupFilter) {
           query = { ...query, ...groupFilter };
+        } else {
+          return res.status(200).json({ success: true, data: [] });
         }
       }
 
