@@ -458,15 +458,9 @@ export default function DashboardPage() {
     let filtered = packages;
 
     if (groupFilter !== "all") {
-      const group = navGroups.find((item) => item.slug === groupFilter);
-      filtered = filtered.filter((pkg) => {
-        if (!group) return packageMatchesNavGroup(pkg.packageCategory, groupFilter);
-        return group.items.some(
-          (cat) =>
-            cat.value.toLowerCase() === String(pkg.packageCategory || '').toLowerCase() ||
-            packageMatchesExperienceCategory(pkg.packageCategory, cat)
-        );
-      });
+      filtered = filtered.filter((pkg) =>
+        packageMatchesNavGroup(pkg.packageCategory, groupFilter)
+      );
     }
 
     if (categoryFilter !== "all") {
