@@ -282,7 +282,7 @@ function buildYachtPackage(def: YachtDef) {
     place: PLACE,
     packageCategory: YACHT_PACKAGE_CATEGORY,
     packageMiniCategory: YACHT_MINI_CATEGORY,
-    isFeaturedDestination: true,
+    isFeaturedDestination: false,
     isPopularPackage: def.isPopularPackage ?? false,
     isFeaturedTrip: def.isFeaturedTrip ?? false,
     bookings: 0,
@@ -340,8 +340,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '1/2/3 Hours',
     inclusions: ['Captain', 'Safety Equipment', 'Fuel', 'Music System', 'Drinking Water'],
     exclusions: ['Decoration', 'Cake', 'Photography', 'Snacks', 'Soft Drinks'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'XS 63 Sailboat',
@@ -364,8 +364,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2/3 Hours',
     inclusions: ['Professional Skipper', 'Bluetooth Music', 'Life Jackets', 'Fuel'],
     exclusions: ['Decoration', 'Photography', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isFeaturedTrip: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Fareast 26',
@@ -388,8 +388,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–4 Hours',
     inclusions: ['Crew', 'Safety Gear', 'Music System', 'Fuel'],
     exclusions: ['Food & Beverages', 'Decoration', 'Photography'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Macgregor 26S',
@@ -412,8 +412,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–3 Hours',
     inclusions: ['Captain', 'Fuel', 'Safety Kit', 'Water'],
     exclusions: ['Decoration', 'Food', 'Photography'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Maxi 7.7',
@@ -436,8 +436,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2 Hours',
     inclusions: ['Captain', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'Photography service', 'Food'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Melbac 29',
@@ -460,8 +460,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–3 Hours',
     inclusions: ['Cushioned Seating', 'Music', 'Professional Captain', 'Fuel'],
     exclusions: ['Decoration', 'Cake', 'Photography'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'XS 26',
@@ -479,8 +479,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–3 Hours',
     inclusions: ['Captain', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'Food', 'Photography'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Feeling Nauti (Mac 30)',
@@ -498,8 +498,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–3 Hours',
     inclusions: ['Captain', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'Cake', 'Food'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Flo (Sun Odyssey 29)',
@@ -517,8 +517,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–3 Hours',
     inclusions: ['Captain', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'Food', 'Photography'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Fantasea',
@@ -540,8 +540,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–4 Hours',
     inclusions: ['Captain', 'Crew', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'DJ', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Blood Vessel',
@@ -563,8 +563,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–4 Hours',
     inclusions: ['Captain', 'Crew', 'Fuel', 'Sound System'],
     exclusions: ['Decoration', 'DJ', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Nemo',
@@ -586,8 +586,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–4 Hours',
     inclusions: ['Captain', 'Crew', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'Cake', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Cunning Plan',
@@ -605,8 +605,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–4 Hours',
     inclusions: ['Bluetooth Music', 'Spacious Deck', 'Professional Crew', 'Fuel'],
     exclusions: ['Decoration', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Nauti By Nature',
@@ -624,8 +624,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–4 Hours',
     inclusions: ['Captain', 'Crew', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'DJ', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Tengi',
@@ -643,8 +643,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–4 Hours',
     inclusions: ['Captain', 'Crew', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'Photography service', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Sun Odyssey 45 (Nava)',
@@ -668,8 +668,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['AC Cabin', 'Bedroom', 'Washroom', 'Kitchen', 'Music System', 'Sun Deck'],
     exclusions: ['Food & Beverages', 'Decoration', 'Photography'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Grand Soleil 45',
@@ -687,8 +687,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '3–4 Hours',
     inclusions: ['Spacious Deck', 'Luxury Interior', 'Professional Crew', 'Fuel'],
     exclusions: ['Food & Beverages', 'Decoration'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isFeaturedTrip: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Sun Odyssey 54',
@@ -707,8 +707,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['AC Cabin', 'Bedroom', 'Washroom', 'Kitchen', 'Lounge', 'Music', 'Flybridge'],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Tara (Island Spirit)',
@@ -727,8 +727,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['Huge Deck', 'Bedroom', 'Kitchen', 'AC Cabin', 'Party Space'],
     exclusions: ['Food & Beverages', 'Decoration', 'DJ'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Lagoon 560',
@@ -760,8 +760,8 @@ const yachtDefs: YachtDef[] = [
     ],
     exclusions: ['Food & Beverages (can be arranged)', 'Decoration', 'DJ Setup'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Princessa',
@@ -780,8 +780,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['AC Cabin', 'Bedroom', 'Music', 'Lounge'],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Gulfcraft',
@@ -803,8 +803,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '3–4 Hours',
     inclusions: ['Captain', 'Crew', 'Fuel', 'Safety Equipment'],
     exclusions: ['Food & Beverages', 'Decoration'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isFeaturedTrip: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Genesis',
@@ -823,8 +823,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['Premium Seating', 'Flybridge', 'Bedroom', 'Kitchen'],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Loco Veinto',
@@ -843,8 +843,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['AC Cabin', 'Sun Deck', 'Music', 'Lounge'],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Majesty 44',
@@ -863,8 +863,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['2 Bedrooms', 'AC', 'Kitchen', 'Washroom', 'Flybridge'],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Princess 54',
@@ -883,8 +883,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['3 Bedrooms', 'Luxury Lounge', 'Flybridge', 'Kitchen', 'Premium Sound'],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Princess 61',
@@ -903,8 +903,8 @@ const yachtDefs: YachtDef[] = [
     inclusions: ['3 Luxury Cabins', 'Dining Area', 'Flybridge', 'Kitchen', 'Entertainment System'],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Ferry',
@@ -926,8 +926,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '3–4 Hours',
     inclusions: ['Crew', 'Fuel', 'Safety Equipment', 'Sound System'],
     exclusions: ['Food & Beverages', 'Decoration', 'DJ Setup'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isFeaturedTrip: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Ferretti 80',
@@ -960,8 +960,8 @@ const yachtDefs: YachtDef[] = [
     ],
     exclusions: ['Food & Beverages', 'Decoration', 'Photography'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
   {
     title: 'Tantaloon',
@@ -983,8 +983,8 @@ const yachtDefs: YachtDef[] = [
     durationLabel: '2–3 Hours',
     inclusions: ['Captain', 'Fuel', 'Safety Equipment'],
     exclusions: ['Decoration', 'Food & Beverages'],
-    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
-    isPopularPackage: true,
+    accommodationNote: 'Not applicable — this is a day/harbour cruise package with no overnight stay.',
+    isPopularPackage: false,
   },
   {
     title: 'Royal Lady',
@@ -1011,8 +1011,8 @@ const yachtDefs: YachtDef[] = [
     ],
     exclusions: ['Food & Beverages', 'Decoration'],
     accommodationNote:
-      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
-    isFeaturedTrip: true,
+      'Onboard cabin(s) as listed in Key Highlights — this is a day-cruise package, no overnight stay included unless arranged separately.',
+    isFeaturedTrip: false,
   },
 ];
 

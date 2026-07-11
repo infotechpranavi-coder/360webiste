@@ -1,7 +1,4 @@
-import connectDB from '../../../lib/mongodb';
-import Package from '../../../models/Package';
-import Settings from '../../../models/Settings';
-import { isConnected } from '../../../lib/mongodb';
+import connectDB, { ensureConnected, getDbUnavailableReason, isConnected } from '../../../lib/mongodb';
 import {
   buildCategoryFilterForSlug,
   buildGroupFilterForSlug,
@@ -221,13 +218,11 @@ export default async function handler(req, res) {
       res.status(500).json({ success: false, data: [], error: error.message });
     }
   } else if (req.method === 'POST') {
-    if (useDemoData) {
-      const reason = !process.env.MONGODB_URI?.trim()
-        ? 'MONGODB_URI is missing. Add it to .env.local (local) or Vercel Environment Variables (production), then restart the server.'
-        : 'MongoDB connection failed. Check Atlas Network Access allows 0.0.0.0/0 and verify your connection string credentials.';
+    const dbReady = await ensureConnected(5);
+    if (!dbReady) {
       return res.status(503).json({
         success: false,
-        error: `Database not available. Cannot save package in demo mode. ${reason}`,
+        error: `Database not available. Cannot save package. ${getDbUnavailableReason()}`,
       });
     }
 
