@@ -1,6 +1,9 @@
 {
   "functions": {
     "pages/api/upload.js": {
+      "maxDuration": 60
+    },
+    "pages/api/upload/sign.js": {
       "maxDuration": 30
     }
   }

@@ -111,7 +111,9 @@ const BannerMediaForm = ({
                   <Upload className="h-6 w-6 text-gray-300 group-hover:text-[#bd9245] transition-colors" />
                 </div>
                 <p className="text-xs font-black text-[#111827] uppercase tracking-widest">Upload Image</p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mt-1">PNG, JPG or WEBP</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mt-1">
+                  Best: 1920×1080 (16:9) · up to 5 MB · JPG/PNG/WEBP
+                </p>
                 <input type="file" hidden ref={imageInputRef} onChange={handleImageInput} accept="image/*" />
               </div>
               <Input
@@ -157,7 +159,7 @@ const BannerMediaForm = ({
                   <Film className="h-6 w-6 text-gray-300 group-hover:text-[#bd9245] transition-colors" />
                 </div>
                 <p className="text-xs font-black text-[#111827] uppercase tracking-widest">Upload Video</p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mt-1">MP4, WEBM or MOV up to 100MB</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter mt-1">MP4, WEBM or MOV · up to 5 MB</p>
                 <input type="file" hidden ref={videoInputRef} onChange={handleVideoInput} accept="video/*" />
               </div>
               <Input

@@ -70,13 +70,14 @@ export function readFileAsDataUrl(file: File): Promise<string> {
 }
 
 /**
- * Prepares a banner for upload: upscales small images so full-screen cover
- * does not stretch a tiny bitmap, and caps very large files at 3840px wide.
+ * Prepares a banner for upload at 16:9-friendly size.
+ * Caps width at 1920px and uses JPEG so the payload stays under Vercel's ~4.5MB body limit.
  */
 export function prepareBannerImageForUpload(
   file: File,
   targetMinWidth = 1920,
-  maxWidth = 3840
+  maxWidth = 1920,
+  quality = 0.85
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -110,9 +111,8 @@ export function prepareBannerImageForUpload(
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
 
-        const usePng = file.type === 'image/png';
-        const mime = usePng ? 'image/png' : 'image/jpeg';
-        resolve(canvas.toDataURL(mime, usePng ? undefined : 0.95));
+        // Always JPEG — PNG banners are too large for serverless upload limits
+        resolve(canvas.toDataURL('image/jpeg', quality));
       };
       img.onerror = reject;
       img.src = event.target?.result as string;
