@@ -198,6 +198,8 @@ export interface BlogData {
     isFeatured: boolean;
     status: 'draft' | 'published';
     tags?: string[];
+    sourceType?: 'manual' | 'link';
+    externalUrl?: string;
     createdAt: string;
     updatedAt: string;
 }

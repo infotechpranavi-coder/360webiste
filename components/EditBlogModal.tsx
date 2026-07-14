@@ -33,6 +33,8 @@ const EditBlogModal = ({ isOpen, onClose, onBlogUpdated, blog }: EditBlogModalPr
     const [image, setImage] = useState<File | null>(null);
     const [externalImageUrl, setExternalImageUrl] = useState("");
     const [currentImageUrl, setCurrentImageUrl] = useState("");
+    const [externalUrl, setExternalUrl] = useState("");
+    const [sourceType, setSourceType] = useState<'manual' | 'link'>('manual');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState("");
@@ -52,6 +54,8 @@ const EditBlogModal = ({ isOpen, onClose, onBlogUpdated, blog }: EditBlogModalPr
             setTags(blog.tags || []);
             setCurrentImageUrl(blog.image?.url || "");
             setExternalImageUrl(blog.image?.url || "");
+            setExternalUrl(blog.externalUrl || "");
+            setSourceType(blog.sourceType === 'link' ? 'link' : 'manual');
         }
     }, [blog]);
 
@@ -121,6 +125,8 @@ const EditBlogModal = ({ isOpen, onClose, onBlogUpdated, blog }: EditBlogModalPr
                 ...formData,
                 image: uploadedImage,
                 tags: tags,
+                sourceType,
+                externalUrl: sourceType === 'link' ? externalUrl.trim() : '',
             };
 
             const res = await fetch(`/api/blogs/${blog._id}`, {
@@ -153,6 +159,24 @@ const EditBlogModal = ({ isOpen, onClose, onBlogUpdated, blog }: EditBlogModalPr
                 </DialogHeader>
 
                 <div className="p-8 space-y-8 max-h-[60vh] overflow-y-auto">
+                    {sourceType === 'link' && (
+                        <Card className="rounded-3xl border-gray-100 shadow-sm overflow-hidden">
+                            <CardHeader className="bg-gray-50/50 p-6 border-b border-gray-100">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest text-[#111827]">
+                                    External Link
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Link URL</label>
+                                <Input
+                                    value={externalUrl}
+                                    onChange={(e) => setExternalUrl(e.target.value)}
+                                    className="h-12 rounded-xl"
+                                    placeholder="https://example.com/..."
+                                />
+                            </CardContent>
+                        </Card>
+                    )}
                     {/* Basic Info */}
                     <Card className="rounded-3xl border-gray-100 shadow-sm overflow-hidden">
                         <CardHeader className="bg-gray-50/50 p-6 border-b border-gray-100">

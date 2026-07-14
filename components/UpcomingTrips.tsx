@@ -126,13 +126,13 @@ const UpcomingTrips = () => {
         <div className="grid lg:grid-cols-4 gap-8 items-end">
           <div className="lg:col-span-3">
             <p className="text-[#bd9245] font-bold text-sm uppercase tracking-[0.2em] mb-3">
-              Featured Water Trips
+              Featured Adventures
             </p>
             <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-gray-900 mb-6">
-              FEATURED WATER TRIPS
+              FEATURED ADVENTURES
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl">
-              Premium yacht charters and curated water experiences from Gateway of India and beyond.
+              Curated adventures and premium experiences from Gateway of India and beyond.
             </p>
           </div>
           <div className="lg:col-span-1 lg:text-right">
@@ -152,12 +152,12 @@ const UpcomingTrips = () => {
         <div className="flex flex-col items-center justify-center py-16">
           <Loader2 className="w-10 h-10 text-[#bd9245] animate-spin mb-4" />
           <p className="text-gray-500 font-semibold uppercase tracking-widest text-xs">
-            Loading featured water trips...
+            Loading featured adventures...
           </p>
         </div>
       ) : trips.length === 0 ? (
         <div className="container mx-auto px-4 text-center py-12">
-          <p className="text-gray-500 mb-6">No featured water trips yet. Mark packages as &quot;Featured Water Trips&quot; in the dashboard.</p>
+          <p className="text-gray-500 mb-6">No featured adventures yet. Mark packages as &quot;Featured Adventures&quot; in the dashboard.</p>
           <Button
             onClick={() => router.push(WATER_GROUP_HREF)}
             className="bg-[#bd9245] hover:bg-[#a07835] text-white rounded-full px-8"

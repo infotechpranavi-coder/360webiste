@@ -106,7 +106,12 @@ const BlogsPage = () => {
           <div className={`${large ? "md:w-1/2 p-8" : "p-5"} flex flex-col flex-1`}>
             <div className="flex items-center flex-wrap gap-3 mb-3">
               <Badge className="bg-primary text-white">{blog.category}</Badge>
-              <span className="text-sm text-gray-600">{getReadTime(blog.content)}</span>
+              {blog.sourceType === 'link' && (
+                <Badge className="bg-gray-800 text-white">Linked Page</Badge>
+              )}
+              {blog.sourceType !== 'link' && (
+                <span className="text-sm text-gray-600">{getReadTime(blog.content)}</span>
+              )}
             </div>
             <h3 className={`font-bold text-[#1e1f44] mb-3 ${large ? "text-2xl" : "text-lg line-clamp-2"}`}>
               {blog.title}

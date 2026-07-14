@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Phone, Mail, MapPin, Calendar, Users, Plane } from "lucide-react";
+import { X, Phone, Mail, MapPin, Plane } from "lucide-react";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import FormFeedbackModal from "@/components/FormFeedbackModal";
 
 import { ProductInfo } from "../contexts/InquiryFormContext";
 
@@ -26,6 +27,11 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
 
   const [availablePackages, setAvailablePackages] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    type: 'success' | 'error';
+    title: string;
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -121,7 +127,11 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
         throw new Error(data.error || 'Failed to submit inquiry');
       }
 
-      alert("Thank you for your inquiry! Our experts will get in touch with you shortly.");
+      setFeedback({
+        type: 'success',
+        title: 'Thank You!',
+        message: 'Thank you for your inquiry! Our experts will get in touch with you shortly.',
+      });
 
       // Reset form
       setFormData({
@@ -134,19 +144,37 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
         budget: "",
         message: ""
       });
-
-      onClose();
     } catch (error) {
       console.error("Error sending inquiry:", error);
-      alert("There was an error sending your inquiry. Please try again or contact us directly.");
+      setFeedback({
+        type: 'error',
+        title: 'Submission Failed',
+        message: 'There was an error sending your inquiry. Please try again or contact us directly.',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!isOpen) return null;
+  const handleFeedbackClose = () => {
+    const wasSuccess = feedback?.type === 'success';
+    setFeedback(null);
+    if (wasSuccess) onClose();
+  };
+
+  if (!isOpen && !feedback) return null;
 
   return (
+    <>
+      <FormFeedbackModal
+        open={Boolean(feedback)}
+        type={feedback?.type || 'success'}
+        title={feedback?.title || ''}
+        message={feedback?.message || ''}
+        onClose={handleFeedbackClose}
+      />
+
+      {isOpen && !feedback ? (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto">
         {/* Header */}
@@ -384,6 +412,8 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
         </div>
       </div>
     </div>
+      ) : null}
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import connectDB, { ensureConnected, getDbUnavailableReason, isConnected } from '../../../lib/mongodb';
+import { ensureConnected, getDbUnavailableReason } from '../../../lib/mongodb';
 import Package from '../../../models/Package';
 import Settings from '../../../models/Settings';
 import {
@@ -129,26 +129,20 @@ const getDemoPackages = () => {
 };
 
 export default async function handler(req, res) {
-  // Force connection attempt and wait a bit longer
-  const dbConnection = await connectDB();
-  const connected = isConnected();
-  const useDemoData = !dbConnection || !connected;
-
-  // Log connection status for debugging
-  if (req.method === 'POST') {
-    console.log('POST Request - Connection Status:', {
-      hasConnection: !!dbConnection,
-      isConnected: connected,
-      useDemoData: useDemoData,
-      hasEnvVar: !!process.env.MONGODB_URI
-    });
-  }
+  // Share one connection attempt across concurrent dashboard requests
+  const dbReady = await ensureConnected(2);
+  const useDemoData = !dbReady;
 
   if (req.method === 'GET') {
     try {
       if (useDemoData) {
         console.warn('Database not connected. Returning empty packages list.');
-        return res.status(200).json({ success: true, data: [], demo: false, error: 'Database connection failed' });
+        return res.status(200).json({
+          success: true,
+          data: [],
+          demo: false,
+          error: 'Database connection failed',
+        });
       }
 
       const { search, popular, featured, featuredTrip, category, group, mini } = req.query;
@@ -206,7 +200,7 @@ export default async function handler(req, res) {
         query.isFeaturedDestination = true;
       }
 
-      // Featured Water Trips carousel on homepage
+      // Featured Adventures carousel on homepage
       if (featuredTrip === 'true') {
         query.isFeaturedTrip = true;
       }
@@ -220,8 +214,7 @@ export default async function handler(req, res) {
       res.status(500).json({ success: false, data: [], error: error.message });
     }
   } else if (req.method === 'POST') {
-    const dbReady = await ensureConnected(5);
-    if (!dbReady) {
+    if (useDemoData) {
       return res.status(503).json({
         success: false,
         error: `Database not available. Cannot save package. ${getDbUnavailableReason()}`,

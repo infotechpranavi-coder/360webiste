@@ -387,6 +387,7 @@ export default function DashboardPage() {
   };
 
   useEffect(() => {
+    // Load once on mount — shared Mongo connection handles parallel requests
     fetchPackages();
     fetchTours();
     fetchTickets();
@@ -404,11 +405,12 @@ export default function DashboardPage() {
     }
   }, [activeView]);
 
+  // Category label updates only affect client-side filters — no need to re-hit the API
   useEffect(() => {
-    if (activeView === 'packages') {
+    if (activeView === 'packages' && packages.length === 0) {
       fetchPackages();
     }
-  }, [catalog.groupLabels, catalog.categoryLabels, catalog.customGroups, catalog.customSubcategories, catalog.customMiniCategories, activeView]);
+  }, [activeView]);
 
   const filterCategoryOptions = useMemo(() => {
     if (groupFilter === "all") {
@@ -2440,7 +2442,14 @@ export default function DashboardPage() {
                                 )}
                                 <div>
                                   <div className="font-bold text-sm text-[#111827] line-clamp-1">{blog.title}</div>
-                                  <div className="text-[10px] text-gray-400 font-medium">/{blog.slug}</div>
+                                  <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                                    <div className="text-[10px] text-gray-400 font-medium">/{blog.slug}</div>
+                                    {blog.sourceType === 'link' && (
+                                      <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                                        Link
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </td>
@@ -2797,8 +2806,8 @@ export default function DashboardPage() {
                         />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-[#1e1f44] uppercase tracking-tight mb-2">Featured Water Trips</h3>
-                        <p className="text-sm font-medium text-gray-500 mb-6">Showcase yacht cruises, kayaking, rafting, and other water experiences on the homepage.</p>
+                        <h3 className="text-xl font-black text-[#1e1f44] uppercase tracking-tight mb-2">Featured Adventures</h3>
+                        <p className="text-sm font-medium text-gray-500 mb-6">Showcase curated adventures and experiences on the homepage.</p>
                         
                         <div className="flex items-center gap-2">
                           {siteSettings.upcomingSection ? (

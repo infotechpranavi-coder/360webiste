@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { SITE_NAME } from "@/lib/branding";
+import FormFeedbackModal from "@/components/FormFeedbackModal";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -60,6 +61,11 @@ const ContactForm = () => {
   }, [prepopulatePackageName, prepopulatePackageType]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{
+    type: 'success' | 'error';
+    title: string;
+    message: string;
+  } | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -120,7 +126,11 @@ const ContactForm = () => {
         throw new Error(data.error || 'Failed to submit inquiry');
       }
 
-      alert("Thank you for your inquiry! Our experts will get in touch with you shortly.");
+      setFeedback({
+        type: 'success',
+        title: 'Thank You!',
+        message: 'Thank you for your inquiry! Our experts will get in touch with you shortly.',
+      });
 
       setFormData({
         name: "",
@@ -137,7 +147,11 @@ const ContactForm = () => {
       });
     } catch (error) {
       console.error('Error submitting enquiry:', error);
-      alert("There was an error sending your inquiry. Please try again or contact us directly.");
+      setFeedback({
+        type: 'error',
+        title: 'Submission Failed',
+        message: 'There was an error sending your inquiry. Please try again or contact us directly.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -187,6 +201,13 @@ const ContactForm = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <FormFeedbackModal
+        open={Boolean(feedback)}
+        type={feedback?.type || 'success'}
+        title={feedback?.title || ''}
+        message={feedback?.message || ''}
+        onClose={() => setFeedback(null)}
+      />
       {/* Hero Section */}
       <section className="relative text-white py-28 md:py-40 overflow-hidden">
         {/* Background Image */}

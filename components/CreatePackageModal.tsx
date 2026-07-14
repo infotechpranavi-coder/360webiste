@@ -382,10 +382,10 @@ const CreatePackageModal = ({ isOpen, onClose, onPackageCreated }: CreatePackage
                 htmlFor="isFeaturedTrip"
                 className="text-sm font-bold uppercase tracking-widest leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Show in Homepage Featured Water Trips Section
+                Show in Homepage Featured Adventures Section
               </label>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
-                If checked, this package appears in the Featured Water Trips carousel on the home page.
+                If checked, this package appears in the Featured Adventures section on the home page.
               </p>
             </div>
           </div>
