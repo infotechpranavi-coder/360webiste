@@ -12,6 +12,7 @@ import {
 
 const WATER_GROUP_HREF = '/packages/water';
 const WATER_HERO = getCategoryBySlug('yachts-sailing-cruises')?.heroImage ?? '/yaht/1629138.jpg';
+const CAROUSEL_THRESHOLD = 4;
 
 interface TripCard {
   id: string;
@@ -22,6 +23,57 @@ interface TripCard {
 
 const generateSlug = (title: string, id: string) =>
   `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+
+const TripCardItem = ({
+  trip,
+  onOpen,
+  className = '',
+}: {
+  trip: TripCard;
+  onOpen: () => void;
+  className?: string;
+}) => (
+  <motion.div
+    className={`relative h-[500px] rounded-2xl overflow-hidden cursor-pointer group shadow-lg ${className}`}
+    onClick={onOpen}
+    whileHover={{
+      y: -10,
+      transition: { duration: 0.3 },
+    }}
+  >
+    <div className="absolute inset-0">
+      <Image
+        src={trip.image}
+        alt={trip.title}
+        fill
+        className="object-cover transform group-hover:scale-110 transition-transform duration-700"
+        sizes="380px"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+    </div>
+
+    <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col">
+      <div className="mb-4">
+        <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#bd9245] transition-colors">
+          {trip.title}
+        </h3>
+        <p className="text-white/80 text-sm">{trip.location}</p>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="flex items-center text-[#bd9245] font-bold text-sm uppercase tracking-widest">
+          View Detailed Page
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </div>
+        <div className="bg-[#bd9245]/20 backdrop-blur-sm px-3 py-1 rounded-full border border-[#bd9245]/30">
+          <span className="text-[#bd9245] text-xs font-black uppercase tracking-tighter">
+            Inquire Now
+          </span>
+        </div>
+      </div>
+    </div>
+  </motion.div>
+);
 
 const UpcomingTrips = () => {
   const router = useRouter();
@@ -61,8 +113,12 @@ const UpcomingTrips = () => {
     fetchUpcomingRides();
   }, []);
 
-  const duplicatedTrips =
-    trips.length > 0 ? [...trips, ...trips, ...trips] : [];
+  const useCarousel = trips.length > CAROUSEL_THRESHOLD;
+  const duplicatedTrips = useCarousel ? [...trips, ...trips, ...trips] : [];
+
+  const openTrip = (trip: TripCard) => {
+    router.push(`/packages/${generateSlug(trip.title, trip.id)}`);
+  };
 
   return (
     <section id="trips" className="py-24 bg-white overflow-hidden">
@@ -109,52 +165,17 @@ const UpcomingTrips = () => {
             Browse Water Experiences
           </Button>
         </div>
-      ) : (
+      ) : useCarousel ? (
         <div className="relative w-full overflow-hidden">
           <div className="flex marquee-container">
             <div className="flex animate-marquee hover:pause-marquee py-4">
               {duplicatedTrips.map((trip, index) => (
-                <motion.div
+                <TripCardItem
                   key={`${trip.id}-${index}`}
-                  className="relative flex-shrink-0 w-[300px] sm:w-[380px] h-[500px] mx-4 rounded-2xl overflow-hidden cursor-pointer group shadow-lg"
-                  onClick={() => router.push(`/packages/${generateSlug(trip.title, trip.id)}`)}
-                  whileHover={{
-                    y: -10,
-                    transition: { duration: 0.3 },
-                  }}
-                >
-                  <div className="absolute inset-0">
-                    <Image
-                      src={trip.image}
-                      alt={trip.title}
-                      fill
-                      className="object-cover transform group-hover:scale-110 transition-transform duration-700"
-                      sizes="380px"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                  </div>
-
-                  <div className="absolute bottom-0 left-0 right-0 p-6 flex flex-col">
-                    <div className="mb-4">
-                      <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#bd9245] transition-colors">
-                        {trip.title}
-                      </h3>
-                      <p className="text-white/80 text-sm">{trip.location}</p>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-[#bd9245] font-bold text-sm uppercase tracking-widest">
-                        View Detailed Page
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </div>
-                      <div className="bg-[#bd9245]/20 backdrop-blur-sm px-3 py-1 rounded-full border border-[#bd9245]/30">
-                        <span className="text-[#bd9245] text-xs font-black uppercase tracking-tighter">
-                          Inquire Now
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
+                  trip={trip}
+                  onOpen={() => openTrip(trip)}
+                  className="flex-shrink-0 w-[300px] sm:w-[380px] mx-4"
+                />
               ))}
             </div>
           </div>
@@ -197,6 +218,29 @@ const UpcomingTrips = () => {
               z-index: 2;
             }
           `}</style>
+        </div>
+      ) : (
+        <div className="container mx-auto px-4">
+          <div
+            className={`grid gap-6 py-4 ${
+              trips.length === 1
+                ? 'grid-cols-1 max-w-md mx-auto'
+                : trips.length === 2
+                  ? 'grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto'
+                  : trips.length === 3
+                    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                    : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'
+            }`}
+          >
+            {trips.map((trip) => (
+              <TripCardItem
+                key={trip.id}
+                trip={trip}
+                onOpen={() => openTrip(trip)}
+                className="w-full"
+              />
+            ))}
+          </div>
         </div>
       )}
     </section>
