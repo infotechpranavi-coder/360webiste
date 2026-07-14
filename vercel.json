@@ -3,6 +3,9 @@
     "pages/api/upload.js": {
       "maxDuration": 60
     },
+    "pages/api/upload/banner.js": {
+      "maxDuration": 60
+    },
     "pages/api/upload/sign.js": {
       "maxDuration": 30
     }

@@ -1,90 +1,89 @@
+import { prepareBannerImageForUpload } from '@/lib/utils';
 import { getYoutubeVideoId } from '@/lib/bannerMedia';
 import type { BannerMediaType } from '@/lib/bannerMedia';
 
 type MediaAsset = { public_id: string; url: string; alt: string };
 
-/** Max banner media file size allowed for direct Cloudinary upload */
+/** Max source banner media file size */
 export const MAX_BANNER_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB
 
-async function getCloudinarySignature(folder: string, resourceType: 'image' | 'video') {
-  const res = await fetch('/api/upload/sign', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ folder, resourceType }),
-  });
+function dataUrlToFile(dataUrl: string, filename: string): File {
+  const [header, base64] = dataUrl.split(',');
+  const mime = header.match(/:(.*?);/)?.[1] || 'image/jpeg';
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new File([bytes], filename, { type: mime });
+}
 
-  const raw = await res.text();
-  let data: {
+async function parseUploadResponse(uploadRes: Response) {
+  const raw = await uploadRes.text();
+  let uploadData: {
     success?: boolean;
     error?: string;
-    cloudName?: string;
-    apiKey?: string;
-    timestamp?: number;
-    signature?: string;
-    folder?: string;
-    resourceType?: string;
+    public_id?: string;
+    url?: string;
   } = {};
 
   try {
-    data = JSON.parse(raw);
+    uploadData = JSON.parse(raw);
   } catch {
-    throw new Error('Could not prepare upload. Please try again.');
+    if (uploadRes.status === 413 || /request entity too large/i.test(raw)) {
+      throw new Error('File is too large. Use an image up to 5 MB and try again.');
+    }
+    throw new Error(
+      uploadRes.ok
+        ? 'Upload failed with an unexpected server response.'
+        : `Upload failed (${uploadRes.status}). Please try again.`
+    );
   }
 
-  if (!res.ok || !data.success || !data.cloudName || !data.apiKey || !data.signature || !data.timestamp) {
-    throw new Error(data.error || 'Could not prepare upload.');
+  if (!uploadRes.ok || !uploadData.success) {
+    throw new Error(uploadData.error || 'Upload failed.');
   }
 
-  return data as Required<
-    Pick<typeof data, 'cloudName' | 'apiKey' | 'timestamp' | 'signature' | 'folder' | 'resourceType'>
-  >;
+  return uploadData;
 }
 
-/**
- * Uploads the file straight to Cloudinary (bypasses Vercel request body limits).
- */
-async function uploadDirectToCloudinary(
+async function uploadBannerFile(
   file: File,
-  folder: string,
-  resourceType: 'image' | 'video'
+  folder: string
 ): Promise<MediaAsset> {
   if (file.size > MAX_BANNER_UPLOAD_BYTES) {
     throw new Error('File must be 5 MB or smaller.');
   }
 
-  const signed = await getCloudinarySignature(folder, resourceType);
   const form = new FormData();
   form.append('file', file);
-  form.append('api_key', signed.apiKey);
-  form.append('timestamp', String(signed.timestamp));
-  form.append('signature', signed.signature);
-  form.append('folder', signed.folder || folder);
+  form.append('folder', folder);
 
-  const endpoint = `https://api.cloudinary.com/v1_1/${signed.cloudName}/${resourceType}/upload`;
-  const uploadRes = await fetch(endpoint, {
+  const uploadRes = await fetch('/api/upload/banner', {
     method: 'POST',
     body: form,
   });
 
-  const uploadData = await uploadRes.json();
-  if (!uploadRes.ok || !uploadData.secure_url) {
-    throw new Error(uploadData?.error?.message || `Failed to upload ${resourceType}.`);
-  }
-
+  const uploadData = await parseUploadResponse(uploadRes);
   return {
     public_id: uploadData.public_id || '',
-    url: uploadData.secure_url,
+    url: uploadData.url || '',
     alt: '',
   };
 }
 
 async function uploadImageAsset(file: File, title: string): Promise<MediaAsset> {
-  const asset = await uploadDirectToCloudinary(file, 'skygo/banners', 'image');
+  const compressedDataUrl = await prepareBannerImageForUpload(file);
+  const compressedFile = dataUrlToFile(
+    compressedDataUrl,
+    file.name.replace(/\.[^.]+$/, '') + '.jpg'
+  );
+  const asset = await uploadBannerFile(compressedFile, 'skygo/banners');
   return { ...asset, alt: title };
 }
 
 async function uploadVideoAsset(file: File, title: string): Promise<MediaAsset> {
-  const asset = await uploadDirectToCloudinary(file, 'skygo/banners/videos', 'video');
+  const asset = await uploadBannerFile(file, 'skygo/banners/videos');
   return { ...asset, alt: title };
 }
 

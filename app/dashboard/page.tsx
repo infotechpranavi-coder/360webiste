@@ -79,7 +79,7 @@ import { SITE_NAME, LOGO_SRC } from "@/lib/branding";
 import { packageMatchesExperienceCategory, packageMatchesNavGroup } from "@/lib/packageExperienceCategories";
 import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 
-import { getBannerPreviewImage, getBannerMediaLabel } from "@/lib/bannerMedia";
+import { getBannerPreviewImage, getBannerMediaLabel, sortBannersByOrder } from "@/lib/bannerMedia";
 import { PackageData, TourData, TicketData, BannerData, BlogData, GalleryData } from "@/lib/types";
 
 type DashboardView = 'packages' | 'categories' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials' | 'offer-popup';
@@ -197,7 +197,7 @@ export default function DashboardPage() {
     try {
       const response = await fetch('/api/banners', { cache: 'no-store' });
       const data = await response.json();
-      if (data.success) setBanners(data.data);
+      if (data.success) setBanners(sortBannersByOrder(data.data));
     } catch (error) {
       console.error('Error fetching banners:', error);
     }
@@ -515,7 +515,7 @@ export default function DashboardPage() {
   };
 
   const handleBannerCreated = (newBanner: BannerData) => {
-    setBanners(prev => [newBanner, ...prev]);
+    setBanners((prev) => sortBannersByOrder([...prev, newBanner]));
     setIsCreateBannerModalOpen(false);
   };
 
@@ -700,7 +700,11 @@ export default function DashboardPage() {
   };
 
   const handleBannerUpdated = (updatedBanner: BannerData) => {
-    setBanners(prev => prev.map(b => b._id === updatedBanner._id ? updatedBanner : b));
+    setBanners((prev) =>
+      sortBannersByOrder(
+        prev.map((b) => (b._id === updatedBanner._id ? updatedBanner : b))
+      )
+    );
     setSelectedBanner(null);
     setIsEditBannerModalOpen(false);
   };

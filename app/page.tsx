@@ -30,7 +30,7 @@ export default async function Home() {
     
     // Fetch banners with a timeout or limited fields to keep it fast
     const bannerDocs = await Banner.find({ isActive: true })
-      .sort({ order: 1, createdAt: -1 })
+      .sort({ order: 1, createdAt: 1 })
       .lean();
     
     // Fetch popular packages limited to top 5

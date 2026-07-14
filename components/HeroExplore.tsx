@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BannerData } from "@/lib/types";
 import { SITE_NAME } from "@/lib/branding";
 import { getHeroBannerSrcSet, getHeroBannerUrl } from "@/lib/utils";
-import { getYoutubeThumbnail } from "@/lib/bannerMedia";
+import { getYoutubeThumbnail, sortBannersByOrder } from "@/lib/bannerMedia";
 import HeroYoutubePlayer from "@/components/HeroYoutubePlayer";
 
 interface HeroExploreProps {
@@ -74,7 +74,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
     updatedAt: new Date().toISOString(),
   };
 
-  const [banners, setBanners] = useState<BannerData[]>(initialBanners || []);
+  const [banners, setBanners] = useState<BannerData[]>(sortBannersByOrder(initialBanners || []));
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const advanceBanner = useCallback(() => {
@@ -88,6 +88,8 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
 
   useEffect(() => {
     if (initialBanners && initialBanners.length > 0) {
+      setBanners(sortBannersByOrder(initialBanners));
+      setCurrentIndex(0);
       return;
     }
 
@@ -96,13 +98,16 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
         const res = await fetch('/api/banners?activeOnly=true');
         const data = await res.json();
         if (data.success && data.data && data.data.length > 0) {
-          setBanners(data.data);
+          setBanners(sortBannersByOrder(data.data));
+          setCurrentIndex(0);
         } else {
           setBanners([defaultBanner]);
+          setCurrentIndex(0);
         }
       } catch (err) {
         console.error("Failed to fetch banners", err);
         setBanners([defaultBanner]);
+        setCurrentIndex(0);
       }
     };
     fetchBanners();
