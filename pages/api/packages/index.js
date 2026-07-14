@@ -1,4 +1,6 @@
 import connectDB, { ensureConnected, getDbUnavailableReason, isConnected } from '../../../lib/mongodb';
+import Package from '../../../models/Package';
+import Settings from '../../../models/Settings';
 import {
   buildCategoryFilterForSlug,
   buildGroupFilterForSlug,

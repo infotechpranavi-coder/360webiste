@@ -1,4 +1,5 @@
 import connectDB, { ensureConnected, getDbUnavailableReason, isConnected } from '../../../lib/mongodb';
+import Package from '../../../models/Package';
 
 // Demo data helper
 const getDemoPackage = (id) => {
