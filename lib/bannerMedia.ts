@@ -6,7 +6,9 @@ type BannerOrderItem = {
 };
 
 /** Keep homepage slider and dashboard list in the same display-order sequence. */
-export function sortBannersByOrder<T extends BannerOrderItem>(banners: T[]): T[] {
+export function sortBannersByOrder<T extends BannerOrderItem>(banners: T[] | null | undefined): T[] {
+  if (!Array.isArray(banners)) return [];
+
   return [...banners].sort((a, b) => {
     const orderDiff = (a.order ?? 0) - (b.order ?? 0);
     if (orderDiff !== 0) return orderDiff;

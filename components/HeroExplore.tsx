@@ -208,9 +208,18 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
       className="relative min-h-screen overflow-hidden bg-[#0b1f2d]"
     >
       <div className="absolute inset-0 z-0">
-        {banners.map((banner, index) =>
-          renderBannerBackground(banner, index, index === currentIndex)
-        )}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentBanner._id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0"
+          >
+            {renderBannerBackground(currentBanner, currentIndex, true)}
+          </motion.div>
+        </AnimatePresence>
 
         <div className="absolute inset-0 z-[2] bg-gradient-to-r from-[#0a2233]/85 via-[#0a2233]/45 to-transparent pointer-events-none" />
         <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#0a2233]/35 via-transparent to-[#0a2233]/15 pointer-events-none" />
