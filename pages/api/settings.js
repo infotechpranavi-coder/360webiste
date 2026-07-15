@@ -27,6 +27,7 @@ const SETTINGS_DEFAULTS = {
   offerPopupImagePublicId: '',
   offerPopupInitialDelaySeconds: 3,
   offerPopupRepeatIntervalSeconds: 320,
+  offerPopupAspectRatio: 'landscape',
   exploreEyebrow: EXPLORE_SECTION_DEFAULTS.exploreEyebrow,
   exploreHeadingLine1: EXPLORE_SECTION_DEFAULTS.exploreHeadingLine1,
   exploreHeadingLine2: EXPLORE_SECTION_DEFAULTS.exploreHeadingLine2,

@@ -229,6 +229,8 @@ export interface SiteSettings {
     offerPopupImagePublicId?: string;
     offerPopupInitialDelaySeconds?: number;
     offerPopupRepeatIntervalSeconds?: number;
+    /** 'landscape' = 16:9, 'square' = 1:1 */
+    offerPopupAspectRatio?: 'landscape' | 'square';
     exploreEyebrow?: string;
     exploreHeadingLine1?: string;
     exploreHeadingLine2?: string;

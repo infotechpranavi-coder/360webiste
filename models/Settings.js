@@ -41,6 +41,8 @@ const SettingsSchema = new mongoose.Schema({
   offerPopupImagePublicId: { type: String, default: '' },
   offerPopupInitialDelaySeconds: { type: Number, default: 3, min: 0 },
   offerPopupRepeatIntervalSeconds: { type: Number, default: 320, min: 10 },
+  // 'landscape' = 16:9, 'square' = 1:1
+  offerPopupAspectRatio: { type: String, enum: ['landscape', 'square'], default: 'landscape' },
 
   // Explore With Us homepage section content
   exploreEyebrow: { type: String, default: 'TIME TO TRAVEL' },
