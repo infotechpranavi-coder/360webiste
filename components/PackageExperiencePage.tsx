@@ -15,7 +15,6 @@ import { yachtPackageSeedData } from '@/lib/yachtPackageData';
 import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
 import { getResolvedCategoryBySlugFromCatalog } from '@/lib/categoryCatalog';
 import { useInquiryForm } from '@/contexts/InquiryFormContext';
-import PackagePageEnquiryForm from '@/components/PackagePageEnquiryForm';
 import CategoryHeroBackground from '@/components/CategoryHeroBackground';
 
 interface PackageItem {
@@ -266,15 +265,6 @@ export default function PackageExperiencePage({ category: baseCategory, miniCate
               </div>
             )}
           </div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-16 bg-white border-t border-gray-100">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <PackagePageEnquiryForm
-            categoryLabel={category.label}
-            categorySlug={category.slug}
-          />
         </div>
       </section>
     </div>

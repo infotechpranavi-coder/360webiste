@@ -3304,7 +3304,6 @@ Key Highlights`,
               <TourPackageSections
                 packageData={packageData as unknown as PackageData}
                 showHero={false}
-                showEnquiry={false}
                 embedded
               />
             )}

@@ -15,7 +15,6 @@ import {
 import { upcomingToursPackageSeedData } from '@/lib/umlingLaPackageData';
 import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
 import { useInquiryForm } from '@/contexts/InquiryFormContext';
-import PackagePageEnquiryForm from '@/components/PackagePageEnquiryForm';
 import CategoryHeroBackground from '@/components/CategoryHeroBackground';
 
 interface PackageItem {
@@ -276,12 +275,6 @@ export default function PackageGroupPage({ group: baseGroup }: PackageGroupPageP
               </div>
             )}
           </div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-16 bg-[#faf8f3] border-t border-gray-100">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <PackagePageEnquiryForm categoryLabel={group.label} categorySlug={group.slug} />
         </div>
       </section>
     </div>

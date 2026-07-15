@@ -39,6 +39,9 @@ const NavbarTravel = () => {
   const [hoveredPackageGroup, setHoveredPackageGroup] = useState<string | null>(null);
   const [hoveredPackageSub, setHoveredPackageSub] = useState<string | null>(null);
   const [contactHovered, setContactHovered] = useState(false);
+  const [mobilePackagesOpen, setMobilePackagesOpen] = useState(false);
+  const [mobileOpenGroups, setMobileOpenGroups] = useState<string[]>([]);
+  const [mobileOpenSubs, setMobileOpenSubs] = useState<string[]>([]);
   const openDropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -54,11 +57,26 @@ const NavbarTravel = () => {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
+      setMobilePackagesOpen(false);
+      setMobileOpenGroups([]);
+      setMobileOpenSubs([]);
     }
     return () => {
       document.body.style.overflow = '';
     };
   }, [isMenuOpen]);
+
+  const toggleMobileGroup = (slug: string) => {
+    setMobileOpenGroups((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
+    );
+  };
+
+  const toggleMobileSub = (slug: string) => {
+    setMobileOpenSubs((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
+    );
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -493,59 +511,142 @@ const NavbarTravel = () => {
           <div className="container mx-auto px-4 py-4 space-y-2">
             {navigation.map((item) => (
               <div key={item.name}>
-                <Link
-                  href={item.href}
-                  aria-current={isActive(item.href, item.submenu, item.packageGroups) ? 'page' : undefined}
-                  className={`block px-4 py-2 rounded-lg transition-colors ${
-                    isActive(item.href, item.submenu, item.packageGroups)
-                      ? 'bg-primary text-white font-bold'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-                {item.packageGroups?.map((group) => (
-                  <div key={group.slug}>
+                {item.packageGroups?.length ? (
+                  <div className="flex items-center rounded-lg overflow-hidden">
                     <Link
-                      href={getGroupPageHref(group.slug)}
-                      className="block pl-6 pr-4 pt-3 pb-1 text-[10px] font-black uppercase tracking-widest text-[#bd9245] hover:text-[#a07835]"
+                      href={item.href}
+                      aria-current={isActive(item.href, item.submenu, item.packageGroups) ? 'page' : undefined}
+                      className={`flex-1 px-4 py-2 transition-colors ${
+                        isActive(item.href, item.submenu, item.packageGroups)
+                          ? 'bg-primary text-white font-bold rounded-l-lg'
+                          : 'text-gray-700 hover:bg-gray-100 rounded-l-lg'
+                      }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {group.label}
+                      {item.name}
                     </Link>
-                    {group.items.map((sub) => (
-                      <div key={sub.href}>
-                        <Link
-                          href={sub.href}
-                          className={`block pl-10 pr-4 py-2 text-sm rounded-lg transition-colors ${
-                            pathname === sub.href
-                              ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
-                              : 'text-gray-600 hover:bg-gray-100'
-                          }`}
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {sub.label}
-                          {sub.isFuture ? ' (Future)' : ''}
-                        </Link>
-                        {sub.miniItems?.map((mini) => (
-                          <Link
-                            key={mini.href}
-                            href={mini.href}
-                            className={`block pl-14 pr-4 py-1.5 text-xs rounded-lg transition-colors ${
-                              pathname === mini.href
-                                ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
-                                : 'text-gray-500 hover:bg-gray-100'
-                            }`}
-                            onClick={() => setIsMenuOpen(false)}
-                          >
-                            {mini.label}
-                          </Link>
-                        ))}
-                      </div>
-                    ))}
+                    <button
+                      type="button"
+                      aria-label={mobilePackagesOpen ? 'Collapse packages' : 'Expand packages'}
+                      aria-expanded={mobilePackagesOpen}
+                      onClick={() => setMobilePackagesOpen((prev) => !prev)}
+                      className={`px-3 py-2 rounded-r-lg transition-colors ${
+                        isActive(item.href, item.submenu, item.packageGroups)
+                          ? 'bg-primary text-white'
+                          : 'text-gray-500 hover:bg-gray-100'
+                      }`}
+                    >
+                      <ChevronDown
+                        className={`h-5 w-5 transition-transform duration-200 ${
+                          mobilePackagesOpen ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
                   </div>
-                ))}
+                ) : (
+                  <Link
+                    href={item.href}
+                    aria-current={isActive(item.href, item.submenu, item.packageGroups) ? 'page' : undefined}
+                    className={`block px-4 py-2 rounded-lg transition-colors ${
+                      isActive(item.href, item.submenu, item.packageGroups)
+                        ? 'bg-primary text-white font-bold'
+                        : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )}
+
+                {item.packageGroups?.length && mobilePackagesOpen ? (
+                  <div className="mt-1 space-y-1">
+                    {item.packageGroups.map((group) => {
+                      const groupOpen = mobileOpenGroups.includes(group.slug);
+                      return (
+                        <div key={group.slug}>
+                          <div className="flex items-center">
+                            <Link
+                              href={getGroupPageHref(group.slug)}
+                              className="flex-1 pl-6 pr-2 py-2 text-[11px] font-black uppercase tracking-widest text-[#bd9245] hover:text-[#a07835]"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              {group.label}
+                            </Link>
+                            <button
+                              type="button"
+                              aria-label={groupOpen ? `Collapse ${group.label}` : `Expand ${group.label}`}
+                              aria-expanded={groupOpen}
+                              onClick={() => toggleMobileGroup(group.slug)}
+                              className="px-3 py-2 text-[#bd9245] hover:bg-[#bd9245]/10 rounded-lg transition-colors"
+                            >
+                              <ChevronDown
+                                className={`h-4 w-4 transition-transform duration-200 ${
+                                  groupOpen ? 'rotate-180' : ''
+                                }`}
+                              />
+                            </button>
+                          </div>
+
+                          {groupOpen &&
+                            group.items.map((sub) => {
+                              const hasMinis = Boolean(sub.miniItems?.length);
+                              const subOpen = mobileOpenSubs.includes(sub.slug);
+                              return (
+                                <div key={sub.href}>
+                                  <div className="flex items-center">
+                                    <Link
+                                      href={sub.href}
+                                      className={`flex-1 pl-10 pr-2 py-2 text-sm rounded-lg transition-colors ${
+                                        pathname === sub.href
+                                          ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
+                                          : 'text-gray-600 hover:bg-gray-100'
+                                      }`}
+                                      onClick={() => setIsMenuOpen(false)}
+                                    >
+                                      {sub.label}
+                                      {sub.isFuture ? ' (Future)' : ''}
+                                    </Link>
+                                    {hasMinis && (
+                                      <button
+                                        type="button"
+                                        aria-label={subOpen ? `Collapse ${sub.label}` : `Expand ${sub.label}`}
+                                        aria-expanded={subOpen}
+                                        onClick={() => toggleMobileSub(sub.slug)}
+                                        className="px-3 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                                      >
+                                        <ChevronDown
+                                          className={`h-4 w-4 transition-transform duration-200 ${
+                                            subOpen ? 'rotate-180' : ''
+                                          }`}
+                                        />
+                                      </button>
+                                    )}
+                                  </div>
+                                  {hasMinis &&
+                                    subOpen &&
+                                    sub.miniItems!.map((mini) => (
+                                      <Link
+                                        key={mini.href}
+                                        href={mini.href}
+                                        className={`block pl-14 pr-4 py-1.5 text-xs rounded-lg transition-colors ${
+                                          pathname === mini.href
+                                            ? 'text-[#bd9245] font-semibold bg-[#bd9245]/5'
+                                            : 'text-gray-500 hover:bg-gray-100'
+                                        }`}
+                                        onClick={() => setIsMenuOpen(false)}
+                                      >
+                                        {mini.label}
+                                      </Link>
+                                    ))}
+                                </div>
+                              );
+                            })}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : null}
+
                 {!item.packageGroups?.length &&
                   item.submenu?.map((subItem) => (
                   <Link
@@ -565,7 +666,12 @@ const NavbarTravel = () => {
             ))}
             <Link
               href="/contact"
-              className="block px-4 py-2 rounded-lg bg-gray-900 text-white font-bold hover:bg-gray-800 transition-colors"
+              aria-current={isContactActive ? 'page' : undefined}
+              className={`block px-4 py-2 rounded-lg transition-colors ${
+                isContactActive
+                  ? 'bg-primary text-white font-bold'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
               onClick={() => setIsMenuOpen(false)}
             >
               Contact Us
