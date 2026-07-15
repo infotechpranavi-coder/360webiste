@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Award, Shield, CheckCircle, Star, Sparkles, Users, Clock, Car, UserCheck, TrendingUp, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { SITE_NAME } from "@/lib/branding";
+import { SITE_NAME, SITE_DESCRIPTION, HERO_SUBHEADING } from "@/lib/branding";
 
 const AboutPage = () => {
   const whatSetsUsApart = [
@@ -30,8 +30,8 @@ const AboutPage = () => {
     },
     {
       icon: Sparkles,
-      title: "Personalized Tours",
-      description: "Customized International Tours tailored to your preferences and needs",
+      title: "Personalized Adventures",
+      description: "Customized sailing, motorcycle, and land experiences tailored to your pace and preferences",
       image: "https://tse3.mm.bing.net/th/id/OIP.mVmw5OWyuDbYW0aV-NMQZAHaF0?pid=ImgDet&w=184&h=144&c=7&dpr=1.3&o=7&rm=3"
     },
     {
@@ -61,11 +61,11 @@ const AboutPage = () => {
   ];
 
   const valueDifferences = [
-    "Better vehicles",
-    "Professional guides",
-    "Improved seating and timing",
-    "Less crowd and more comfort",
-    "Best Service throughout the trip"
+    "Expert local guides",
+    "Vetted adventure partners",
+    "Thoughtful itineraries and timing",
+    "Smaller groups, more comfort",
+    "End-to-end support on every trip"
   ];
 
   const whyChooseUs = [
@@ -114,7 +114,7 @@ const AboutPage = () => {
               About Us
             </h1>
             <p className="text-xl md:text-2xl mb-10 text-white/80 max-w-4xl mx-auto font-medium leading-relaxed">
-              {SITE_NAME} is a premium-focused global travel brand dedicated to delivering well-crafted travel experiences defined by comfort, clarity, and service quality.
+              {HERO_SUBHEADING}
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-white/60 text-sm font-bold uppercase tracking-widest">
               <div className="flex items-center space-x-2">
@@ -161,13 +161,13 @@ const AboutPage = () => {
                 </h2>
                 <div className="space-y-5 text-gray-700 leading-relaxed text-lg">
                   <p>
-                    {SITE_NAME} is a premier travel firm dedicated to seamless global mobility. We specialize in expertly curated tours and precision ticketing services, blending local expertise with world-class standards.
+                    {SITE_NAME} is a specialized adventure travel company dedicated to curated experiences across India and beyond. From sailing cruises and yacht charters to motorcycle expeditions and immersive land journeys, we design trips that bring you closer to remarkable destinations.
                   </p>
                   <p>
-                    Whether you are exploring new horizons or securing your next flight, {SITE_NAME} delivers sophisticated, reliable, and personalized travel solutions designed to get you where you need to be.
+                    {SITE_DESCRIPTION} Whether you are planning a coastal escape, a high-altitude ride, or a multi-day expedition, {SITE_NAME} delivers thoughtful planning, trusted partners, and personalized support at every step.
                   </p>
                   <p className="font-semibold text-[#1e1f44]">
-                    We are a specialized travel company dedicated to delivering quality, transparency, and genuine comfort to our guests from around the world.
+                    We are committed to quality, transparency, and genuine comfort — so you can focus on the adventure while we handle the details.
                   </p>
                 </div>
               </div>
@@ -194,13 +194,13 @@ const AboutPage = () => {
             <div className="grid lg:grid-cols-2 gap-12 mb-16 items-center">
               <div className="space-y-6 text-gray-700 leading-relaxed text-lg order-2 lg:order-1">
                 <p>
-                  In a travel market often cluttered with hidden costs and inconsistent service, {SITE_NAME} stands for absolute clarity. We believe that booking a flight or a tour should never be a guessing game of "what's included."
+                  In a travel market often cluttered with hidden costs and inconsistent service, {SITE_NAME} stands for absolute clarity. We believe booking an adventure should never be a guessing game of what&apos;s included or who you&apos;re traveling with.
                 </p>
                 <p>
-                  We bridge the gap between price and value. We don't simply chase the lowest fare; we pursue the highest standard. Our commitment is to ensure you understand exactly what you are paying for—eliminating uncertainty through transparent pricing, expert vetting, and premium service.
+                  We bridge the gap between price and value. We don&apos;t simply chase the lowest quote — we pursue the highest standard. Our commitment is to transparent pricing, expert vetting of guides and operators, and premium service from enquiry to return.
                 </p>
                 <p className="font-semibold text-[#1e1f44]">
-                  At {SITE_NAME}, we don’t just sell tickets; we deliver peace of mind.
+                  At {SITE_NAME}, we don&apos;t just sell trips — we craft experiences you&apos;ll remember.
                 </p>
               </div>
               <div className="relative group order-1 lg:order-2">
@@ -311,7 +311,7 @@ const AboutPage = () => {
             <div className="mt-12 text-center max-w-4xl mx-auto">
               <div className="bg-gradient-to-r from-primary/10 via-secondary/10 to-primary/10 rounded-2xl p-8 border border-primary/20">
                 <p className="text-lg md:text-xl text-gray-700 leading-relaxed font-medium">
-                  Whether travelers are seeking luxury international tours, private experiences, or premium-managed sightseeing across the globe, we focus on delivering travel services with care and consistency.
+                  Whether you are seeking sailing adventures on the coast, motorcycle expeditions through the mountains, or curated land experiences across India and beyond, we focus on delivering journeys with care, consistency, and a personal touch.
                 </p>
               </div>
             </div>
@@ -335,7 +335,7 @@ const AboutPage = () => {
               Ready to Start Your Journey?
             </h2>
             <p className="text-lg md:text-xl mb-10 text-white/90 leading-relaxed">
-              If you are looking for premium international tours or seamless ticketing services delivered with professionalism and care, we invite you to explore the world with us
+              Ready for sailing adventures, motorcycle expeditions, or curated experiences across India & beyond? We invite you to explore with {SITE_NAME}.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact">

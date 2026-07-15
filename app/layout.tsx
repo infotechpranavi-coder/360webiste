@@ -15,7 +15,7 @@ import { SITE_NAME, SITE_DESCRIPTION, LOGO_SRC } from "../lib/branding"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: `${SITE_NAME} | Seamless Flight Bookings & Curated Global Travel Experiences`,
+  title: `${SITE_NAME} | Curated Adventure Experiences Across India & Beyond`,
   description: SITE_DESCRIPTION,
   icons: {
     icon: LOGO_SRC,

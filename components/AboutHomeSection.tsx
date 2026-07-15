@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, Compass, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { SITE_NAME } from '@/lib/branding';
+import { SITE_NAME, SITE_TAGLINE, BRAND_POSITIONING } from '@/lib/branding';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 const customerAvatars = [
@@ -94,15 +94,11 @@ const AboutHomeSection = () => {
             </p>
 
             <h2 className="text-3xl sm:text-4xl md:text-[2.75rem] font-black leading-[1.15] tracking-tight text-gray-900">
-              We created a unique escape where nature, comfort and adventure come together to redefine the way you
-              experience travel
+              {SITE_NAME} is {SITE_TAGLINE}
             </h2>
 
             <p className="text-base md:text-lg leading-relaxed text-gray-600 max-w-xl">
-              Our story begins with a love for discovery and a desire to share it in a way that feels extraordinary.
-              {` ${SITE_NAME}`} carefully designs every experience to bring you closer to remarkable destinations while
-              surrounding you with beauty, comfort, and thoughtful details. We create journeys that inspire, relax, and
-              connect people to the world.
+              {BRAND_POSITIONING}
             </p>
 
             <div className="grid sm:grid-cols-2 gap-6 pt-2">

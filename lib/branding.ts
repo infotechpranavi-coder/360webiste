@@ -2,9 +2,15 @@ export const SITE_NAME = 'Explore 360';
 export const SITE_TAGLINE = 'The Experience Company';
 export const LOGO_SRC = '/explore360-logo.png';
 export const SITE_DESCRIPTION =
-  'Explore 360 specializes in comprehensive tours, travel, and ticketing services. We provide well-curated travel experiences and seamless flight bookings with professional, personalized solutions for journeys within the region and beyond.';
+  'Sailing Adventures, Motorcycle Expeditions & Curated Experiences Across India & Beyond.';
 
-export const DEFAULT_ABOUT_TEXT = `${SITE_NAME} is a specialized travel management company dedicated to crafting exceptional journeys across dynamic destinations.`;
+export const HERO_SUBHEADING =
+  'From sailing adventures and motorcycle expeditions to handpicked outdoor experiences, we curate journeys that create stories, inspire exploration and become memories for a lifetime.';
+
+export const BRAND_POSITIONING =
+  'Explore360 is The Experience Company, curating premium adventure expeditions and extraordinary experiences across India and beyond. From sailing adventures and motorcycle expeditions to handpicked outdoor escapes, every journey is thoughtfully crafted to inspire, challenge and create stories that stay with you long after the adventure ends.';
+
+export const DEFAULT_ABOUT_TEXT = BRAND_POSITIONING;
 
 export const DEFAULT_SERVICES_TEXT =
   'Customized travel planning, Guided tours & local experiences, Group & family vacations, Luxury & adventure travel';

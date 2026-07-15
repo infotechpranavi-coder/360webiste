@@ -5,7 +5,7 @@ import { useInquiryForm } from "../contexts/InquiryFormContext";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BannerData } from "@/lib/types";
-import { SITE_NAME } from "@/lib/branding";
+import { SITE_NAME, HERO_SUBHEADING } from "@/lib/branding";
 import { getHeroBannerSrcSet, getHeroBannerUrl } from "@/lib/utils";
 import { getYoutubeThumbnail, sortBannersByOrder } from "@/lib/bannerMedia";
 import HeroYoutubePlayer from "@/components/HeroYoutubePlayer";
@@ -60,8 +60,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   const defaultBanner: BannerData = {
     _id: 'default',
     title: SITE_NAME.toUpperCase(),
-    subtitle:
-      'Start your exciting travel adventure with Explore 360, where safety and memorable experiences come first.',
+    subtitle: HERO_SUBHEADING,
     image: {
       url: '/safeimagekit-kayak2__1_.webp',
       public_id: 'default-kayak',
@@ -126,8 +125,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
   const currentBanner = banners[currentIndex] || defaultBanner;
   const heroTitle = getHeroTitle(currentBanner.title);
   const description =
-    currentBanner.subtitle?.trim() ||
-    'Start your exciting travel adventure with Explore 360, where safety and memorable experiences come first.';
+    currentBanner.subtitle?.trim() || HERO_SUBHEADING;
 
   const handlePrimaryAction = () => {
     if (currentBanner.link) {
