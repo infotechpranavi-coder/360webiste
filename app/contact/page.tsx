@@ -225,7 +225,7 @@ const ContactForm = () => {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-[#bd9245] font-bold uppercase tracking-[0.3em] text-sm mb-6">Get In Touch</p>
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-[1000] mb-6 leading-none tracking-tighter uppercase">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-[1000] mb-6 leading-none tracking-tighter uppercase">
               Contact Us
             </h1>
             <p className="text-xl md:text-2xl mb-10 text-white/80 max-w-2xl mx-auto font-medium">

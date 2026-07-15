@@ -156,6 +156,7 @@ All colors MUST be HSL.
 
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -174,6 +175,8 @@ All colors MUST be HSL.
 
   body {
     @apply bg-white text-foreground;
+    overflow-x: clip;
+    max-width: 100%;
   }
 
   /* Ensure sections use white background */
@@ -189,6 +192,14 @@ All colors MUST be HSL.
 
 /* Animation utilities */
 @layer utilities {
+  .page-hero-title {
+    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-none tracking-tighter uppercase;
+  }
+
+  .section-hero-title {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight tracking-tighter uppercase;
+  }
+
   .fade-in {
     animation: fade-in 0.6s ease-out forwards;
   }

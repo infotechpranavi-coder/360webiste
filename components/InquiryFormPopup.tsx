@@ -176,7 +176,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
 
       {isOpen && !feedback ? (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-[min(100%,28rem)] sm:max-w-md md:max-w-lg lg:max-w-2xl w-full max-h-[85vh] sm:max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-secondary to-primary text-white p-3 sm:p-6 rounded-t-2xl relative">
           <button
@@ -209,7 +209,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
+                  className="w-full px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -224,7 +224,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
+                  className="w-full px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
                   placeholder="Enter your email"
                 />
               </div>
@@ -282,7 +282,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                     value={formData.destination}
                     onChange={handleInputChange}
                     required
-                    className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
+                    className="w-full px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
                     placeholder="Enter or select destination"
                   />
                   <datalist id="package-destinations">
@@ -305,7 +305,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                   value={formData.travelDate}
                   onChange={handleInputChange}
                   required
-                  className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
+                  className="w-full px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
                 />
               </div>
 
@@ -318,7 +318,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                   value={formData.travelers}
                   onChange={handleInputChange}
                   required
-                  className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
+                  className="w-full px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
                 >
                   <option value="">Select travelers</option>
                   <option value="1">1 Person</option>
@@ -339,7 +339,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                 name="budget"
                 value={formData.budget}
                 onChange={handleInputChange}
-                className="w-full max-w-xs sm:max-w-none px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
+                className="w-full px-2 sm:px-4 py-1.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-xs sm:text-base"
                 placeholder="Enter your budget range "
               />
             </div>
@@ -353,7 +353,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                 value={formData.message}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full max-w-xs sm:max-w-none px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-sm sm:text-base"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-sm sm:text-base"
                 placeholder="Tell us about your travel preferences, special requirements, or any questions you have..."
               />
             </div>

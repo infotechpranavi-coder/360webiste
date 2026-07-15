@@ -142,7 +142,7 @@ export default function PackageGroupPage({ group: baseGroup }: PackageGroupPageP
                 Explore 360
               </span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black mb-5 tracking-tight uppercase">{group.label}</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-5 tracking-tight uppercase">{group.label}</h1>
             <p className="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-medium leading-relaxed">
               All {group.label.toLowerCase()} experiences — browse packages from the database below
             </p>

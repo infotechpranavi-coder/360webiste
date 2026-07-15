@@ -1,5 +1,6 @@
 import dbConnect from '../../lib/mongodb';
 import Settings from '../../models/Settings';
+import { EXPLORE_SECTION_DEFAULTS } from '../../lib/exploreSectionDefaults';
 
 const SETTINGS_DEFAULTS = {
   popularSection: true,
@@ -26,6 +27,14 @@ const SETTINGS_DEFAULTS = {
   offerPopupImagePublicId: '',
   offerPopupInitialDelaySeconds: 3,
   offerPopupRepeatIntervalSeconds: 320,
+  exploreEyebrow: EXPLORE_SECTION_DEFAULTS.exploreEyebrow,
+  exploreHeadingLine1: EXPLORE_SECTION_DEFAULTS.exploreHeadingLine1,
+  exploreHeadingLine2: EXPLORE_SECTION_DEFAULTS.exploreHeadingLine2,
+  exploreSubtitle: EXPLORE_SECTION_DEFAULTS.exploreSubtitle,
+  exploreInclusions: [...EXPLORE_SECTION_DEFAULTS.exploreInclusions],
+  exploreCtaLabel: EXPLORE_SECTION_DEFAULTS.exploreCtaLabel,
+  explorePhone: EXPLORE_SECTION_DEFAULTS.explorePhone,
+  explorePhoneLabel: EXPLORE_SECTION_DEFAULTS.explorePhoneLabel,
 };
 
 function applySettingsDefaults(settings) {

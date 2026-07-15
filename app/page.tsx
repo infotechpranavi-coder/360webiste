@@ -11,13 +11,14 @@ import Banner from "@/models/Banner";
 import Package from "@/models/Package";
 import Settings from "@/models/Settings";
 import { getHeroBannerUrl } from "@/lib/utils";
-import { BannerData, PackageData } from "@/lib/types";
+import { BannerData, PackageData, SiteSettings } from "@/lib/types";
+import { resolveExploreSectionContent } from "@/lib/exploreSectionDefaults";
 
 export default async function Home() {
   // Use try/catch for database operations
   let initialBanners: BannerData[] = [];
   let initialPackages: PackageData[] = [];
-  let settings = { 
+  let settings: SiteSettings = { 
     popularSection: true, 
     upcomingSection: true,
     destinationsSection: true,
@@ -68,7 +69,9 @@ export default async function Home() {
       )}
       <HeroExplore initialBanners={initialBanners} />
       <AboutHomeSection />
-      {settings.exploreSection !== false && <ExploreWithUs />}
+      {settings.exploreSection !== false && (
+        <ExploreWithUs initialContent={resolveExploreSectionContent(settings)} />
+      )}
       {settings.destinationsSection !== false && <DestinationsGrid />}
       {settings.upcomingSection !== false && <UpcomingTrips />}
       {settings.popularSection !== false && <PopularPackages initialPackages={initialPackages} />}

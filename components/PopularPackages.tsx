@@ -84,7 +84,7 @@ const PopularPackages = ({ initialPackages }: PopularPackagesProps) => {
           {/* Left Column: Title + 2 Cards */}
           <div className="space-y-8 2xl:pr-4">
             <div className="mb-6 md:mb-10 lg:overflow-hidden">
-              <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-[1000] text-[#1e1f44] leading-[0.9] tracking-tighter uppercase break-words">
+              <h2 className="section-hero-title text-[#1e1f44] leading-[0.95] break-words">
                 POPULAR<br />PACKAGES
               </h2>
             </div>
@@ -147,7 +147,7 @@ const PackageCard = ({ pkg, index, router, openForm }: any) => {
 
     return (
       <motion.div
-        className="group bg-white rounded-[40px] overflow-hidden p-3 shadow-[0_10px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_70px_rgba(0,0,0,0.1)] transition-all duration-700 cursor-pointer flex flex-col sm:flex-row h-full sm:h-[320px] border border-white"
+        className="group bg-white rounded-[40px] overflow-hidden p-3 shadow-[0_10px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_70px_rgba(0,0,0,0.1)] transition-all duration-700 cursor-pointer flex flex-col sm:flex-row h-full min-h-[280px] sm:min-h-0 sm:h-[300px] md:h-[320px] border border-white"
         onClick={() => router.push(route)}
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}

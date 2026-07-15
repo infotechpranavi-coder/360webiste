@@ -41,6 +41,27 @@ const SettingsSchema = new mongoose.Schema({
   offerPopupImagePublicId: { type: String, default: '' },
   offerPopupInitialDelaySeconds: { type: Number, default: 3, min: 0 },
   offerPopupRepeatIntervalSeconds: { type: Number, default: 320, min: 10 },
+
+  // Explore With Us homepage section content
+  exploreEyebrow: { type: String, default: 'TIME TO TRAVEL' },
+  exploreHeadingLine1: { type: String, default: 'EXPLORE' },
+  exploreHeadingLine2: { type: String, default: 'WITH US' },
+  exploreSubtitle: { type: String, default: 'Everything Handled. You Just Show Up.' },
+  exploreInclusions: {
+    type: [String],
+    default: [
+      '24x7 Concierge Support',
+      'Visa Assistance',
+      'Packing & Equipment Rental',
+      'Comprehensive Travel Insurance Assistance',
+      'Airport Pick Up',
+      'Centralized Hotel Locations',
+      'Vetted Local Partners',
+    ],
+  },
+  exploreCtaLabel: { type: String, default: 'Book Now' },
+  explorePhone: { type: String, default: '+237 6 83 57 76 76' },
+  explorePhoneLabel: { type: String, default: 'CALL NOW' },
 }, { timestamps: true });
 
 if (mongoose.models.Settings) {

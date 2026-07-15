@@ -29,6 +29,7 @@ import EditTestimonialModal from "../../components/EditTestimonialModal";
 import ReplyEnquiryModal from "../../components/ReplyEnquiryModal";
 import DashboardCategoriesPanel from "../../components/DashboardCategoriesPanel";
 import OfferPopupSettingsPanel from "../../components/OfferPopupSettingsPanel";
+import ExploreSectionSettingsPanel from "../../components/ExploreSectionSettingsPanel";
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, HeadingLevel, ImageRun } from 'docx';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
@@ -82,7 +83,7 @@ import { useCategoryLabels } from "@/contexts/CategoryLabelsContext";
 import { getBannerPreviewImage, getBannerMediaLabel, sortBannersByOrder } from "@/lib/bannerMedia";
 import { PackageData, TourData, TicketData, BannerData, BlogData, GalleryData } from "@/lib/types";
 
-type DashboardView = 'packages' | 'categories' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials' | 'offer-popup';
+type DashboardView = 'packages' | 'categories' | 'tours' | 'tickets' | 'banners' | 'gallery' | 'testimonials' | 'blogs' | 'enquiries' | 'reports' | 'settings' | 'socials' | 'offer-popup' | 'explore-section';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -1464,6 +1465,11 @@ export default function DashboardPage() {
       icon: Megaphone,
     },
     {
+      id: 'explore-section' as DashboardView,
+      label: 'Explore With Us',
+      icon: Compass,
+    },
+    {
       id: 'settings' as DashboardView,
       label: 'Home Settings',
       icon: SettingsIcon,
@@ -1612,6 +1618,7 @@ export default function DashboardPage() {
                     {activeView === 'blogs' && 'Content Studio'}
                     {activeView === 'settings' && 'Home Configuration'}
                     {activeView === 'offer-popup' && 'Offer Pop Up'}
+                    {activeView === 'explore-section' && 'Explore With Us'}
                     {activeView === 'socials' && 'Social Presence'}
                   </h1>
                   <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1">
@@ -1625,6 +1632,7 @@ export default function DashboardPage() {
                     {activeView === 'blogs' && 'Managing luxury travel narratives'}
                     {activeView === 'settings' && 'Customize homepage section visibility and features'}
                     {activeView === 'offer-popup' && 'Manage promotional popup image, title, badge, and display timing'}
+                    {activeView === 'explore-section' && 'Edit homepage explore section text, inclusions, and contact CTA'}
                     {activeView === 'socials' && 'Centralized control for all brand digital touchpoints'}
                   </p>
                 </div>
@@ -2887,7 +2895,7 @@ export default function DashboardPage() {
                         <h3 className="text-xl font-black text-[#111827] uppercase tracking-tight mb-2">Explore Us</h3>
                         <p className="text-sm font-medium text-gray-500 mb-6">Toggle the main branding and mission statement section below the hero banner.</p>
                         
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           {siteSettings.exploreSection ? (
                             <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-black px-3 py-1 rounded-lg text-[10px] uppercase tracking-widest">
                               <CheckCircle2 className="h-3 w-3 mr-1" /> Visible Live
@@ -2897,6 +2905,16 @@ export default function DashboardPage() {
                               <AlertCircle className="h-3 w-3 mr-1" /> Hidden
                             </Badge>
                           )}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setActiveView('explore-section')}
+                            className="rounded-xl h-8 text-[10px] font-black uppercase tracking-widest border-[#bd9245]/30 text-[#bd9245] hover:bg-[#bd9245]/5"
+                          >
+                            <Edit className="h-3 w-3 mr-1" />
+                            Edit Content
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -2956,6 +2974,10 @@ export default function DashboardPage() {
 
           {activeView === 'offer-popup' && (
             <OfferPopupSettingsPanel />
+          )}
+
+          {activeView === 'explore-section' && (
+            <ExploreSectionSettingsPanel />
           )}
 
           {activeView === 'socials' && (

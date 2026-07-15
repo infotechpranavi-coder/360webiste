@@ -34,7 +34,7 @@ const TripCardItem = ({
   className?: string;
 }) => (
   <motion.div
-    className={`relative h-[500px] rounded-2xl overflow-hidden cursor-pointer group shadow-lg ${className}`}
+    className={`relative h-[380px] sm:h-[440px] md:h-[500px] rounded-2xl overflow-hidden cursor-pointer group shadow-lg ${className}`}
     onClick={onOpen}
     whileHover={{
       y: -10,
@@ -128,7 +128,7 @@ const UpcomingTrips = () => {
             <p className="text-[#bd9245] font-bold text-sm uppercase tracking-[0.2em] mb-3">
               Featured Adventures
             </p>
-            <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-gray-900 mb-6">
+            <h2 className="section-hero-title text-gray-900 mb-4 sm:mb-6">
               FEATURED ADVENTURES
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl">
@@ -138,7 +138,7 @@ const UpcomingTrips = () => {
           <div className="lg:col-span-1 lg:text-right">
             <Button
               variant="outline"
-              className="border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white px-8 py-6 rounded-full font-bold"
+              className="w-full sm:w-auto border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white px-6 sm:px-8 py-5 sm:py-6 rounded-full font-bold text-sm sm:text-base"
               onClick={() => router.push(WATER_GROUP_HREF)}
             >
               View All Water Experiences
@@ -202,20 +202,40 @@ const UpcomingTrips = () => {
               position: absolute;
               top: 0;
               right: 0;
-              width: 150px;
+              width: 60px;
               height: 100%;
               background: linear-gradient(to left, white, transparent);
               z-index: 2;
+            }
+            @media (min-width: 640px) {
+              .marquee-container::after {
+                width: 100px;
+              }
+            }
+            @media (min-width: 1024px) {
+              .marquee-container::after {
+                width: 150px;
+              }
             }
             .marquee-container::before {
               content: '';
               position: absolute;
               top: 0;
               left: 0;
-              width: 150px;
+              width: 60px;
               height: 100%;
               background: linear-gradient(to right, white, transparent);
               z-index: 2;
+            }
+            @media (min-width: 640px) {
+              .marquee-container::before {
+                width: 100px;
+              }
+            }
+            @media (min-width: 1024px) {
+              .marquee-container::before {
+                width: 150px;
+              }
             }
           `}</style>
         </div>

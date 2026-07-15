@@ -5,7 +5,7 @@ import { MessageCircle, Phone } from "lucide-react";
 
 const FloatingButtons = () => {
   return (
-    <div className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 z-50 flex flex-col gap-2 sm:gap-3">
+    <div className="fixed right-3 sm:right-6 bottom-20 sm:bottom-6 z-50 flex flex-col gap-2 sm:gap-3">
       {/* WhatsApp Button */}
       <Button
         size="icon"

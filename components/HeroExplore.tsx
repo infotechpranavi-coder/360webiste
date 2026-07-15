@@ -143,7 +143,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
       isActive ? 'opacity-100 z-[1]' : 'opacity-0 z-0'
     }`;
     const objectClass =
-      'h-full w-full object-cover object-[72%_center] sm:object-[78%_center] lg:object-right';
+      'h-full w-full object-cover object-center sm:object-[78%_center] lg:object-right';
 
     if (mediaType === 'youtube' && banner.youtubeUrl) {
       const poster =
@@ -205,7 +205,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
     <section
       id="hero"
       ref={sectionRef}
-      className="relative min-h-screen overflow-hidden bg-[#0b1f2d]"
+      className="relative overflow-hidden bg-[#0b1f2d] h-[min(58svh,480px)] min-h-[360px] sm:h-[min(72svh,620px)] sm:min-h-[480px] md:h-[min(85svh,780px)] lg:h-screen lg:min-h-[640px]"
     >
       <div className="absolute inset-0 z-0">
         <AnimatePresence mode="wait">
@@ -221,12 +221,12 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute inset-0 z-[2] bg-gradient-to-r from-[#0a2233]/85 via-[#0a2233]/45 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#0a2233]/35 via-transparent to-[#0a2233]/15 pointer-events-none" />
+        <div className="absolute inset-0 z-[2] bg-gradient-to-r from-[#0a2233]/90 via-[#0a2233]/55 to-[#0a2233]/20 pointer-events-none" />
+        <div className="absolute inset-0 z-[2] bg-gradient-to-t from-[#0a2233]/70 via-[#0a2233]/15 to-[#0a2233]/25 pointer-events-none" />
       </div>
 
-      <div className="relative z-20 mx-auto flex min-h-screen max-w-[1400px] flex-col justify-end px-5 pb-12 pt-28 sm:px-8 sm:pb-16 sm:pt-32 lg:px-12 lg:pb-20 lg:pt-36">
-        <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
+      <div className="relative z-20 mx-auto flex h-full max-w-[1400px] flex-col justify-end px-4 pb-6 pt-16 sm:px-8 sm:pb-10 sm:pt-24 lg:px-12 lg:pb-20 lg:pt-36">
+        <div className="flex flex-col gap-4 sm:gap-6 sm:flex-row sm:items-end sm:justify-between">
           <AnimatePresence mode="wait">
             <motion.div
               key={`hero-${currentIndex}`}
@@ -234,20 +234,20 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
               transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="max-w-3xl"
+              className="max-w-3xl min-w-0"
             >
-              <h1 className="text-[clamp(3.5rem,12vw,9rem)] font-black uppercase leading-[0.82] tracking-tighter text-white">
+              <h1 className="text-[clamp(1.5rem,7.2vw,8rem)] font-black uppercase leading-[0.95] tracking-tighter text-white break-words">
                 {heroTitle}
               </h1>
 
-              <p className="mt-5 max-w-xl text-sm font-medium leading-relaxed text-white/90 sm:text-base md:max-w-md md:text-[17px]">
+              <p className="mt-2.5 sm:mt-4 max-w-xl text-[11px] sm:text-sm font-medium leading-relaxed text-white/90 line-clamp-2 sm:line-clamp-3 md:line-clamp-none md:max-w-md md:text-[17px]">
                 {description}
               </p>
 
               <button
                 type="button"
                 onClick={handlePrimaryAction}
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#c8d8e2] px-7 py-3 text-[11px] font-bold uppercase tracking-[0.22em] text-[#17303f] transition hover:bg-white sm:mt-8 sm:px-8 sm:py-3.5 sm:text-xs"
+                className="mt-3.5 sm:mt-6 inline-flex items-center justify-center rounded-full bg-[#c8d8e2] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#17303f] transition hover:bg-white sm:mt-8 sm:px-8 sm:py-3.5 sm:text-xs"
               >
                 {currentBanner.link ? 'View Details' : 'Book An Experience'}
               </button>
@@ -263,7 +263,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
                   aria-label={`Show banner ${i + 1}`}
                   onClick={() => setCurrentIndex(i)}
                   className={`h-1 rounded-full transition-all duration-300 ${
-                    i === currentIndex ? 'w-10 bg-white' : 'w-6 bg-white/35 hover:bg-white/60'
+                    i === currentIndex ? 'w-8 sm:w-10 bg-white' : 'w-5 sm:w-6 bg-white/35 hover:bg-white/60'
                   }`}
                 />
               ))}

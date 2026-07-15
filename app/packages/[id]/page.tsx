@@ -2534,7 +2534,7 @@ Key Highlights`,
   const experienceCategory = getCategoryByValue(packageData.packageCategory);
 
   return (
-    <div className={`min-h-screen ${playfair.variable} ${cormorant.variable} ${poppins.variable} font-sans bg-[#faf8f3]`}>
+    <div className={`min-h-screen pb-24 lg:pb-0 ${playfair.variable} ${cormorant.variable} ${poppins.variable} font-sans bg-[#faf8f3]`}>
       {/* Package Hero — image card + details (not full-bleed) */}
       <section className="pt-24 md:pt-28 pb-4 bg-[#faf8f3]">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -3315,7 +3315,7 @@ Key Highlights`,
                 <section id="overview" className="space-y-8">
                   {/* Best Time to Visit Card */}
                   <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                    <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
+                    <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex items-center gap-3 border-b border-gray-100">
                       <div className="p-2 bg-orange-500 rounded-lg">
                         <Calendar className="h-4 w-4 text-white" />
                       </div>
@@ -3340,7 +3340,7 @@ Key Highlights`,
 
                   {/* About Explore 360 */}
                   <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                    <div className="bg-gray-50 px-8 py-5 border-b border-gray-100">
+                    <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100">
                       <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">About {SITE_NAME}</h4>
                     </div>
                     <CardContent className="p-8">
@@ -3353,7 +3353,7 @@ Key Highlights`,
                   {/* Our Services */}
                   {packageData.services && (
                     <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex items-center gap-3 border-b border-gray-100">
                         <Award className="h-5 w-5 text-blue-600" />
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">Package Inclusions & Services</h4>
                       </div>
@@ -3379,7 +3379,7 @@ Key Highlights`,
                   {/* Ideal For */}
                   {packageData.ideaFor && (
                     <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex items-center gap-3 border-b border-gray-100">
                         <Users className="h-5 w-5 text-emerald-600" />
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">Ideal For</h4>
                       </div>
@@ -3398,7 +3398,7 @@ Key Highlights`,
                   {/* Abstract */}
                   {packageData.abstract && (
                     <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 border-b border-gray-100">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100">
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">Executive Abstract</h4>
                       </div>
                       <CardContent className="p-8">
@@ -3414,7 +3414,7 @@ Key Highlights`,
                     <div className="space-y-6">
                       {packageData.tourOverview && (
                         <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                          <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
+                          <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex items-center gap-3 border-b border-gray-100">
                             <div className="p-2 bg-blue-500 rounded-lg shadow-sm">
                               <LayoutDashboard className="h-4 w-4 text-white" />
                             </div>
@@ -3433,7 +3433,7 @@ Key Highlights`,
                   {/* Pricing / Hotel Options */}
                   {packageData.hotelOptions && packageData.hotelOptions.length > 0 && (
                     <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex items-center gap-3 border-b border-gray-100">
                         <Hotel className="h-5 w-5 text-amber-600" />
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">Package Tier Options</h4>
                       </div>
@@ -3451,7 +3451,7 @@ Key Highlights`,
                   {/* Key Highlights */}
                   {packageData.keyHighlights && packageData.keyHighlights.length > 0 && (
                     <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 border-b border-gray-100">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100">
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">Exclusive Glimpses</h4>
                       </div>
                       <CardContent className="p-8">
@@ -3526,7 +3526,7 @@ Key Highlights`,
                 {/* Inclusions & Exclusions */}
                 <section id="inclusions">
                    <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 border-b border-gray-100">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100">
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight text-center">Inclusions & Exclusions</h4>
                       </div>
                       <CardContent className="p-8">
@@ -3605,7 +3605,7 @@ Key Highlights`,
                 {(packageData.transportation?.length > 0 || packageData.accommodation?.length > 0) && (
                   <section id="logistics" className="space-y-8">
                     <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 border-b border-gray-100">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100">
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight text-center">Logistics & Stay Details</h4>
                       </div>
                       <CardContent className="p-8">
@@ -3659,7 +3659,7 @@ Key Highlights`,
                     <div className="grid md:grid-cols-2 gap-8">
                       {packageData.whyChooseThisTrip && packageData.whyChooseThisTrip.length > 0 && (
                         <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                          <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
+                          <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex items-center gap-3 border-b border-gray-100">
                             <Heart className="h-5 w-5 text-rose-600" />
                             <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">Curated Reasons</h4>
                           </div>
@@ -3679,7 +3679,7 @@ Key Highlights`,
 
                       {packageData.whyPremiumSkygoTours && packageData.whyPremiumSkygoTours.length > 0 && (
                         <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                          <div className="bg-gray-50 px-8 py-5 flex items-center gap-3 border-b border-gray-100">
+                          <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex items-center gap-3 border-b border-gray-100">
                             <Sparkles className="h-5 w-5 text-amber-600" />
                             <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">The {SITE_NAME} Edge</h4>
                           </div>
@@ -3703,7 +3703,7 @@ Key Highlights`,
                 {/* FAQs Section */}
                 {packageData.faqs && packageData.faqs.length > 0 && (
                    <Card className="border border-gray-100 shadow-sm overflow-hidden bg-white rounded-3xl">
-                      <div className="bg-gray-50 px-8 py-5 border-b border-gray-100 flex items-center gap-3">
+                      <div className="bg-gray-50 px-4 sm:px-6 md:px-8 py-4 sm:py-5 border-b border-gray-100 flex items-center gap-3">
                          <MessageSquare className="h-5 w-5 text-indigo-600" />
                         <h4 className="font-black text-gray-900 text-sm uppercase tracking-tight">Expert Inquiries (FAQs)</h4>
                       </div>
@@ -3913,6 +3913,23 @@ Key Highlights`,
           )}
         </div>
       </div >
+
+      <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_30px_rgba(0,0,0,0.08)]">
+        <Button
+          className="w-full h-12 bg-gray-900 hover:bg-black text-white font-bold uppercase tracking-widest rounded-xl"
+          onClick={() =>
+            openForm({
+              title: packageData.title,
+              type: isAttractionPackage ? 'Ticket' : 'Package',
+              referenceId: packageData._id,
+              category: experienceCategory?.label || packageData.packageCategory,
+              duration: packageData.duration,
+            })
+          }
+        >
+          Enquire Now
+        </Button>
+      </div>
     </div >
   );
 };

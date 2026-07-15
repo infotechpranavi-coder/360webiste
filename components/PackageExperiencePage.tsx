@@ -147,7 +147,7 @@ export default function PackageExperiencePage({ category: baseCategory, miniCate
                 Coming Soon
               </Badge>
             )}
-            <h1 className="text-4xl md:text-6xl font-black mb-5 tracking-tight uppercase">{category.heroTitle}</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-5 tracking-tight uppercase">{category.heroTitle}</h1>
             <p className="text-lg md:text-xl text-white/85 max-w-2xl mx-auto font-medium leading-relaxed">{category.heroSubtitle}</p>
           </div>
         </div>

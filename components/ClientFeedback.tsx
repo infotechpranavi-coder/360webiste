@@ -93,7 +93,7 @@ const ClientFeedback = () => {
     <section className="py-24 bg-[#faf8f3] overflow-hidden">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <h2 className="text-5xl md:text-7xl font-[1000] text-[#1e1f44] leading-none tracking-tighter uppercase mb-12">
+        <h2 className="section-hero-title text-[#1e1f44] mb-8 sm:mb-12">
           CLIENT FEEDBACK
         </h2>
 

@@ -61,7 +61,7 @@ const PackagesPage = () => {
               <Waves className="h-4 w-4 text-cyan-200" />
               <span className="text-[10px] font-black uppercase tracking-[0.25em] text-white/90">Explore 360 Experiences</span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-none tracking-tight uppercase">
+            <h1 className="page-hero-title font-black mb-6 leading-none tracking-tight uppercase">
               Tour Packages
             </h1>
             <p className="text-lg md:text-xl mb-10 text-white/85 max-w-2xl mx-auto font-medium">

@@ -229,4 +229,12 @@ export interface SiteSettings {
     offerPopupImagePublicId?: string;
     offerPopupInitialDelaySeconds?: number;
     offerPopupRepeatIntervalSeconds?: number;
+    exploreEyebrow?: string;
+    exploreHeadingLine1?: string;
+    exploreHeadingLine2?: string;
+    exploreSubtitle?: string;
+    exploreInclusions?: string[];
+    exploreCtaLabel?: string;
+    explorePhone?: string;
+    explorePhoneLabel?: string;
 }

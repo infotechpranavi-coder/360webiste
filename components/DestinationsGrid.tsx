@@ -69,7 +69,7 @@ const DestinationsGrid = () => {
     <section
       id="destinations"
       ref={ref}
-      className="py-24 relative overflow-hidden min-h-[700px] h-auto"
+      className="py-24 relative overflow-hidden min-h-[480px] sm:min-h-[560px] lg:min-h-[700px] h-auto"
     >
       {/* Default Background */}
       <div className="absolute inset-0 z-0">
@@ -110,7 +110,7 @@ const DestinationsGrid = () => {
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Left Panel */}
           <div className="lg:col-span-1">
-            <h2 className="text-5xl sm:text-6xl md:text-7xl font-black text-white mb-6 -mt-10 lg:-mt-16">
+            <h2 className="section-hero-title text-white mb-6 mt-0 lg:-mt-16">
               DESTINATIONS
             </h2>
             <p className="text-lg text-gray-300 mb-8">

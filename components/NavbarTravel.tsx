@@ -47,7 +47,18 @@ const NavbarTravel = () => {
   const isBlogDetail = Boolean(pathname?.startsWith('/blogs/') && pathname !== '/blogs');
   // Package detail URLs end with a MongoDB id — light card hero needs solid nav (not white-on-beige)
   const isPackageDetail = /\/packages\/(?:.+-)?[a-f0-9]{24}$/i.test(pathname || '');
-  const useSolidNav = isScrolled || isBlogDetail || isPackageDetail;
+  const useSolidNav = isScrolled || isBlogDetail || isPackageDetail || isMenuOpen;
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -172,10 +183,10 @@ const NavbarTravel = () => {
       : 'bg-transparent'
       }`}>
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center relative z-50">
-            <div className="relative w-40 h-12 md:w-52 md:h-14">
+            <div className="relative w-32 h-10 sm:w-40 sm:h-12 md:w-52 md:h-14">
               <Image
                 src={LOGO_SRC}
                 alt={SITE_NAME}
@@ -478,7 +489,7 @@ const NavbarTravel = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white border-t shadow-lg">
+        <div className="lg:hidden bg-white border-t shadow-lg max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain">
           <div className="container mx-auto px-4 py-4 space-y-2">
             {navigation.map((item) => (
               <div key={item.name}>
@@ -490,7 +501,7 @@ const NavbarTravel = () => {
                       ? 'bg-primary text-white font-bold'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
-                  onClick={() => !item.submenu?.length && setIsMenuOpen(false)}
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
