@@ -94,8 +94,8 @@ export default function OfferPopupSettingsPanel() {
   };
 
   const handleSave = async () => {
-    if (form.offerPopupEnabled && (!form.offerPopupTitle.trim() || !form.offerPopupImageUrl.trim())) {
-      alert('Please add a title and image before enabling the offer popup.');
+    if (form.offerPopupEnabled && !form.offerPopupImageUrl.trim()) {
+      alert('Please upload an image before enabling the offer popup.');
       return;
     }
 
@@ -138,7 +138,7 @@ export default function OfferPopupSettingsPanel() {
                 <Megaphone className="h-7 w-7 text-[#bd9245]" />
                 Offer Pop Up
               </CardTitle>
-              <CardDescription className="text-sm font-medium text-gray-400 font-bold uppercase tracking-widest mt-1">
+              <CardDescription className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">
                 Configure a promotional popup shown on all public pages
               </CardDescription>
             </div>
@@ -285,7 +285,7 @@ export default function OfferPopupSettingsPanel() {
 
               <div className="space-y-2">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                  Title
+                  Title <span className="text-gray-300 normal-case tracking-normal">(Optional)</span>
                 </p>
                 <Input
                   value={form.offerPopupTitle}
@@ -297,7 +297,7 @@ export default function OfferPopupSettingsPanel() {
 
               <div className="space-y-2">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">
-                  Subtitle Badge
+                  Subtitle Badge <span className="text-gray-300 normal-case tracking-normal">(Optional)</span>
                 </p>
                 <Input
                   value={form.offerPopupSubtitle}
@@ -393,16 +393,20 @@ export default function OfferPopupSettingsPanel() {
                         : 'Upload a 1920×1080 landscape (16:9) image to preview'}
                     </div>
                   )}
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent p-6">
-                    {form.offerPopupSubtitle ? (
-                      <span className="mb-3 inline-flex rounded-full bg-[#bd9245] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                        {form.offerPopupSubtitle}
-                      </span>
-                    ) : null}
-                    <h3 className="text-xl font-black uppercase leading-tight text-white">
-                      {form.offerPopupTitle || 'Your Offer Title'}
-                    </h3>
-                  </div>
+                  {(form.offerPopupTitle.trim() || form.offerPopupSubtitle.trim()) && (
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent p-6">
+                      {form.offerPopupSubtitle.trim() ? (
+                        <span className="mb-3 inline-flex rounded-full bg-[#bd9245] px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                          {form.offerPopupSubtitle}
+                        </span>
+                      ) : null}
+                      {form.offerPopupTitle.trim() ? (
+                        <h3 className="text-xl font-black uppercase leading-tight text-white">
+                          {form.offerPopupTitle}
+                        </h3>
+                      ) : null}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

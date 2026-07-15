@@ -10,7 +10,7 @@ const DISMISS_STORAGE_KEY = 'skygo_offer_popup_dismissed_at';
 
 function canShowPopup(settings: SiteSettings, dismissedAt: number | null) {
   if (!settings.offerPopupEnabled) return false;
-  if (!settings.offerPopupImageUrl?.trim() || !settings.offerPopupTitle?.trim()) return false;
+  if (!settings.offerPopupImageUrl?.trim()) return false;
 
   const repeatMs = Math.max(10, settings.offerPopupRepeatIntervalSeconds ?? 320) * 1000;
   if (dismissedAt && Date.now() - dismissedAt < repeatMs) return false;
@@ -71,7 +71,7 @@ export default function OfferPopup() {
     setOpen(false);
     clearTimer();
 
-    if (settings?.offerPopupEnabled && settings.offerPopupImageUrl && settings.offerPopupTitle) {
+    if (settings?.offerPopupEnabled && settings.offerPopupImageUrl) {
       const repeatMs = Math.max(10, settings.offerPopupRepeatIntervalSeconds ?? 320) * 1000;
       timerRef.current = setTimeout(() => setOpen(true), repeatMs);
     }
