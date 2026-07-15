@@ -12,5 +12,13 @@
     "pages/api/blogs/embed-proxy.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "explore360.co.in" }],
+      "destination": "https://www.explore360.co.in/:path*",
+      "permanent": true
+    }
+  ]
 }
