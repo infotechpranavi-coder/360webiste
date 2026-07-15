@@ -8,13 +8,8 @@ import { cn } from '@/lib/utils';
 
 const DISMISS_STORAGE_KEY = 'skygo_offer_popup_dismissed_at';
 
-function canShowPopup(settings: SiteSettings, dismissedAt: number | null) {
-  if (!settings.offerPopupEnabled) return false;
-  if (!settings.offerPopupImageUrl?.trim()) return false;
-
-  const repeatMs = Math.max(10, settings.offerPopupRepeatIntervalSeconds ?? 320) * 1000;
-  if (dismissedAt && Date.now() - dismissedAt < repeatMs) return false;
-  return true;
+function isPopupConfigured(settings: SiteSettings) {
+  return Boolean(settings.offerPopupEnabled && settings.offerPopupImageUrl?.trim());
 }
 
 export default function OfferPopup() {
@@ -32,12 +27,22 @@ export default function OfferPopup() {
   const schedulePopup = useCallback(
     (popupSettings: SiteSettings) => {
       clearTimer();
+      if (!isPopupConfigured(popupSettings)) return;
+
+      const initialDelayMs = Math.max(0, popupSettings.offerPopupInitialDelaySeconds ?? 3) * 1000;
+      const repeatMs = Math.max(10, popupSettings.offerPopupRepeatIntervalSeconds ?? 320) * 1000;
 
       const dismissedRaw = localStorage.getItem(DISMISS_STORAGE_KEY);
       const dismissedAt = dismissedRaw ? Number(dismissedRaw) : null;
-      if (!canShowPopup(popupSettings, dismissedAt)) return;
 
-      const delayMs = Math.max(0, popupSettings.offerPopupInitialDelaySeconds ?? 3) * 1000;
+      // First visit: wait "Show After". After a dismissal: wait out the rest
+      // of "Repeat After" (or "Show After" again if it already elapsed).
+      let delayMs = initialDelayMs;
+      if (dismissedAt) {
+        const remainingMs = repeatMs - (Date.now() - dismissedAt);
+        delayMs = remainingMs > 0 ? remainingMs : initialDelayMs;
+      }
+
       timerRef.current = setTimeout(() => setOpen(true), delayMs);
     },
     [clearTimer]
@@ -71,7 +76,7 @@ export default function OfferPopup() {
     setOpen(false);
     clearTimer();
 
-    if (settings?.offerPopupEnabled && settings.offerPopupImageUrl) {
+    if (settings && isPopupConfigured(settings)) {
       const repeatMs = Math.max(10, settings.offerPopupRepeatIntervalSeconds ?? 320) * 1000;
       timerRef.current = setTimeout(() => setOpen(true), repeatMs);
     }
