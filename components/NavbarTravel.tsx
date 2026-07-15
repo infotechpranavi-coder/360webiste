@@ -45,7 +45,9 @@ const NavbarTravel = () => {
   const { openForm } = useInquiryForm();
 
   const isBlogDetail = Boolean(pathname?.startsWith('/blogs/') && pathname !== '/blogs');
-  const useSolidNav = isScrolled || isBlogDetail;
+  // Package detail URLs end with a MongoDB id — light card hero needs solid nav (not white-on-beige)
+  const isPackageDetail = /\/packages\/(?:.+-)?[a-f0-9]{24}$/i.test(pathname || '');
+  const useSolidNav = isScrolled || isBlogDetail || isPackageDetail;
 
   useEffect(() => {
     const handleScroll = () => {

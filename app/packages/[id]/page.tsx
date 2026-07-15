@@ -36,7 +36,7 @@ import {
   CheckCircle, Plane, Camera, Globe, Heart, Share, Car, Hotel,
   Utensils, Info, X, Car as CarIcon, Building, Bed, Award,
   Package as PackageIcon,
-  Calendar as CalendarIcon, ChevronRight, PlayCircle, Sparkles, ShieldCheck, Ticket, ArrowRight, XCircle, MessageCircle, MessageSquare,
+  Calendar as CalendarIcon, ChevronLeft, ChevronRight, PlayCircle, Sparkles, ShieldCheck, Ticket, ArrowRight, XCircle, MessageCircle, MessageSquare,
   LayoutDashboard,
   TrendingUp
 } from "lucide-react";
@@ -134,6 +134,35 @@ const PackageDetailPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<'overview' | 'itinerary' | 'policy'>('overview');
+
+  const imageCount = Array.isArray(packageData?.images) ? packageData.images.length : 0;
+  const hasImageCarousel = imageCount > 1;
+
+  const goToPrevImage = () => {
+    if (!hasImageCarousel) return;
+    setSelectedImageIndex((prev) => (prev - 1 + imageCount) % imageCount);
+  };
+
+  const goToNextImage = () => {
+    if (!hasImageCarousel) return;
+    setSelectedImageIndex((prev) => (prev + 1) % imageCount);
+  };
+
+  useEffect(() => {
+    if (!hasImageCarousel) return;
+    const timer = setInterval(() => {
+      setSelectedImageIndex((prev) => (prev + 1) % imageCount);
+    }, 4500);
+    return () => clearInterval(timer);
+  }, [hasImageCarousel, imageCount]);
+
+  useEffect(() => {
+    if (imageCount === 0) {
+      setSelectedImageIndex(0);
+      return;
+    }
+    setSelectedImageIndex((prev) => Math.min(prev, imageCount - 1));
+  }, [imageCount]);
 
   const extractIdFromSlug = (slug: string | string[] | undefined) => {
     if (!slug) return '';
@@ -2506,136 +2535,190 @@ Key Highlights`,
 
   return (
     <div className={`min-h-screen ${playfair.variable} ${cormorant.variable} ${poppins.variable} font-sans bg-[#faf8f3]`}>
-      {/* Immersive Hero Section */}
-      <div className={`relative h-[70vh] md:h-[80vh] w-full overflow-hidden ${isPremium ? 'shadow-2xl' : ''}`}>
-        <div className="absolute inset-0">
-          {Array.isArray(packageData.images) && packageData.images.length > 0 ? (
-            <Image
-              src={packageData.images[selectedImageIndex].url}
-              alt={packageData.images[selectedImageIndex].alt || packageData.title}
-              fill
-              className="object-cover transition-transform duration-1000 group-hover:scale-110"
-              priority
-            />
-          ) : (
-            <div className="w-full h-full bg-[#1e1f44] flex items-center justify-center">
-              <Globe className="h-24 w-24 text-[#bd9245]" />
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1e1f44] via-[#1e1f44]/40 to-transparent" />
-        </div>
-
-        {/* Navigation Bar Overlay */}
-        <div className="absolute top-12 left-0 right-0 p-6 z-20">
-          <div className="container mx-auto flex justify-between items-center">
+      {/* Package Hero — image card + details (not full-bleed) */}
+      <section className="pt-24 md:pt-28 pb-4 bg-[#faf8f3]">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="flex justify-between items-center mb-6">
             <Button
               variant="outline"
-              className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 hover:text-white"
+              className="bg-white border-gray-200 text-[#1e1f44] hover:bg-gray-50 rounded-full"
               onClick={() => router.back()}
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
             <div className="flex gap-3">
-              <Button size="icon" variant="outline" className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 hover:text-white rounded-full">
+              <Button size="icon" variant="outline" className="bg-white border-gray-200 text-[#1e1f44] hover:bg-gray-50 rounded-full">
                 <Heart className="h-5 w-5" />
               </Button>
-              <Button size="icon" variant="outline" className="bg-white/10 backdrop-blur-md border-white/20 text-white hover:bg-white/20 hover:text-white rounded-full">
+              <Button size="icon" variant="outline" className="bg-white border-gray-200 text-[#1e1f44] hover:bg-gray-50 rounded-full">
                 <Share className="h-5 w-5" />
               </Button>
             </div>
           </div>
-        </div>
 
-        {/* Hero Content */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 z-20 text-white">
-          <div className="container mx-auto max-w-7xl">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-              <div className="max-w-3xl animate-fade-in-up">
-                <div className="flex items-center gap-3 mb-6 flex-wrap">
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+            {/* Image Card / Carousel — object-contain so any size fits fully */}
+            <div className="lg:col-span-7">
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-lg overflow-hidden">
+                <div className="relative w-full aspect-[4/3] md:aspect-[16/10] bg-gray-100 flex items-center justify-center group">
+                  {Array.isArray(packageData.images) && packageData.images.length > 0 ? (
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={selectedImageIndex}
+                        initial={{ opacity: 0, x: 24 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -24 }}
+                        transition={{ duration: 0.35 }}
+                        className="absolute inset-0"
+                      >
+                        <Image
+                          src={packageData.images[selectedImageIndex].url}
+                          alt={packageData.images[selectedImageIndex].alt || packageData.title}
+                          fill
+                          className="object-contain"
+                          priority
+                          sizes="(max-width: 1024px) 100vw, 60vw"
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                  ) : (
+                    <Globe className="h-20 w-20 text-[#bd9245]" />
+                  )}
+
+                  {hasImageCarousel && (
+                    <>
+                      <button
+                        type="button"
+                        aria-label="Previous image"
+                        onClick={goToPrevImage}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 border border-gray-200 shadow-md flex items-center justify-center text-[#1e1f44] hover:bg-white transition opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Next image"
+                        onClick={goToNextImage}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white/95 border border-gray-200 shadow-md flex items-center justify-center text-[#1e1f44] hover:bg-white transition opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/45 backdrop-blur-sm">
+                        {packageData.images.map((_, index) => (
+                          <button
+                            key={index}
+                            type="button"
+                            aria-label={`Go to image ${index + 1}`}
+                            onClick={() => setSelectedImageIndex(index)}
+                            className={`h-1.5 rounded-full transition-all ${
+                              selectedImageIndex === index
+                                ? 'w-5 bg-[#bd9245]'
+                                : 'w-1.5 bg-white/70 hover:bg-white'
+                            }`}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="absolute top-3 right-3 z-10 rounded-full bg-black/50 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5">
+                        {selectedImageIndex + 1} / {imageCount}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {hasImageCarousel && (
+                  <div className="flex gap-2 p-3 overflow-x-auto border-t border-gray-100 bg-white">
+                    {packageData.images.map((image, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => setSelectedImageIndex(index)}
+                        className={`relative w-16 h-12 md:w-20 md:h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all ${
+                          selectedImageIndex === index
+                            ? 'border-[#bd9245] ring-2 ring-[#bd9245]/20'
+                            : 'border-gray-200 hover:border-gray-400'
+                        }`}
+                      >
+                        <Image src={image.url} alt={image.alt || packageData.title} fill className="object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Title & meta card */}
+            <div className="lg:col-span-5">
+              <div className="bg-white rounded-3xl border border-gray-100 shadow-lg p-6 md:p-8 h-full">
+                <div className="flex items-center gap-2 mb-5 flex-wrap">
                   {experienceCategory ? (
                     <Link href={experienceCategory.href}>
-                      <Badge className="bg-teal-600 hover:bg-teal-700 text-white border-none px-5 py-2 text-xs font-black uppercase tracking-[0.15em] shadow-xl cursor-pointer">
+                      <Badge className="bg-teal-600 hover:bg-teal-700 text-white border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.15em] cursor-pointer">
                         {experienceCategory.label}
                       </Badge>
                     </Link>
                   ) : packageData.packageCategory ? (
-                    <Badge className="bg-teal-600 text-white border-none px-5 py-2 text-xs font-black uppercase tracking-[0.15em] shadow-xl">
+                    <Badge className="bg-teal-600 text-white border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.15em]">
                       {packageData.packageCategory}
                     </Badge>
                   ) : null}
                   {isPremium ? (
-                    <Badge className="bg-[#bd9245] text-white border-none px-6 py-2 text-xs font-black uppercase tracking-[0.2em] shadow-xl">
-                      <Sparkles className="h-3 w-3 mr-2" />
+                    <Badge className="bg-[#bd9245] text-white border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.15em]">
+                      <Sparkles className="h-3 w-3 mr-1.5" />
                       Premium Experience
                     </Badge>
                   ) : (
-                    <Badge className="bg-[#1e1f44] text-white border-none px-4 py-1.5 text-xs font-black uppercase tracking-[0.1em] shadow-lg">
-                      {isAttractionPackage ? "Exclusive Experience" : isInternational ? "International Journey" : "Domestic Tour"}
+                    <Badge className="bg-[#1e1f44] text-white border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.1em]">
+                      {isAttractionPackage ? 'Exclusive Experience' : isInternational ? 'International Journey' : 'Domestic Tour'}
                     </Badge>
                   )}
-                  <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-5 py-2 rounded-full border border-white/20 text-sm font-bold text-white shadow-xl">
-                    <Star className="h-4 w-4 fill-[#bd9245] text-[#bd9245]" />
-                    <span className="font-black">{packageData.rating}</span>
-                    <span className="text-white/70 ml-1 text-xs uppercase tracking-tighter">({packageData.reviews?.length || 0} reviews)</span>
+                  <div className="flex items-center gap-1.5 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100 text-sm font-bold text-[#1e1f44]">
+                    <Star className="h-3.5 w-3.5 fill-[#bd9245] text-[#bd9245]" />
+                    <span className="font-black text-xs">{packageData.rating}</span>
+                    <span className="text-gray-500 ml-0.5 text-[10px] uppercase tracking-tighter">
+                      ({packageData.reviews?.length || 0} reviews)
+                    </span>
                   </div>
                 </div>
 
-                <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mb-6 text-shadow-lg leading-tight font-playfair">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3 leading-tight font-playfair text-[#1e1f44]">
                   {packageData.title}
                 </h1>
                 {packageData.subtitle && (
-                  <p className={`text-xl md:text-2xl text-white/90 mb-6 ${isPremium ? 'font-poppins font-light' : ''}`}>
+                  <p className={`text-base md:text-lg text-gray-600 mb-6 ${isPremium ? 'font-poppins font-light' : ''}`}>
                     {packageData.subtitle}
                   </p>
                 )}
 
-                <div className="flex flex-wrap items-center gap-4 text-xs md:text-sm text-white font-black uppercase tracking-[0.2em]">
-                  <div className="flex items-center gap-3 bg-[#1e1f44]/80 backdrop-blur-xl px-6 py-4 rounded-2xl border border-white/10 shadow-2xl transition-all hover:border-[#bd9245]/50 group">
-                    <div className="p-2 bg-[#bd9245]/20 rounded-lg group-hover:bg-[#bd9245]/40 transition-colors">
+                <div className="flex flex-col gap-3 text-[10px] md:text-xs text-[#1e1f44] font-black uppercase tracking-[0.15em]">
+                  <div className="flex items-center gap-3 bg-[#faf8f3] px-4 py-3 rounded-2xl border border-gray-100">
+                    <div className="p-2 bg-[#bd9245]/15 rounded-lg">
                       <MapPin className="h-4 w-4 text-[#bd9245]" />
                     </div>
                     <span>{packageData.location}</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-[#1e1f44]/80 backdrop-blur-xl px-6 py-4 rounded-2xl border border-white/10 shadow-2xl transition-all hover:border-[#bd9245]/50 group">
-                    <div className="p-2 bg-[#bd9245]/20 rounded-lg group-hover:bg-[#bd9245]/40 transition-colors">
+                  <div className="flex items-center gap-3 bg-[#faf8f3] px-4 py-3 rounded-2xl border border-gray-100">
+                    <div className="p-2 bg-[#bd9245]/15 rounded-lg">
                       <Clock className="h-4 w-4 text-[#bd9245]" />
                     </div>
                     <span>{packageData.duration}</span>
                   </div>
-                  <div className="flex items-center gap-3 bg-[#1e1f44]/80 backdrop-blur-xl px-6 py-4 rounded-2xl border border-white/10 shadow-2xl transition-all hover:border-[#bd9245]/50 group">
-                    <div className="p-2 bg-[#bd9245]/20 rounded-lg group-hover:bg-[#bd9245]/40 transition-colors">
+                  <div className="flex items-center gap-3 bg-[#faf8f3] px-4 py-3 rounded-2xl border border-gray-100">
+                    <div className="p-2 bg-[#bd9245]/15 rounded-lg">
                       <Users className="h-4 w-4 text-[#bd9245]" />
                     </div>
                     <span>{packageData.capacity}</span>
                   </div>
                 </div>
               </div>
-
-              {/* Thumbnail Gallery Preview (Desktop) */}
-              <div className="hidden lg:flex gap-3">
-                {Array.isArray(packageData.images) && packageData.images.slice(0, 3).map((image, index) => (
-                  <div
-                    key={index}
-                    className={`relative w-24 h-16 rounded-lg overflow-hidden cursor-pointer border-2 transition-all shadow-xl ${selectedImageIndex === index ? 'border-primary ring-2 ring-primary/30' : 'border-white/30 hover:border-white'
-                      } `}
-                    onClick={() => setSelectedImageIndex(index)}
-                  >
-                    <Image src={image.url} alt={image.alt} fill className="object-cover" />
-                  </div>
-                ))}
-                {packageData.images.length > 3 && (
-                  <div className="w-24 h-16 rounded-lg bg-black/50 border-2 border-white/30 flex items-center justify-center text-white font-medium cursor-pointer hover:bg-black/70 backdrop-blur-sm">
-                    +{packageData.images.length - 3}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="container mx-auto px-4 py-8 lg:py-12 relative z-10 -mt-8">
+      <div className="container mx-auto px-4 py-8 lg:py-12 relative z-10">
         <div className="grid lg:grid-cols-3 gap-8">
 
           {/* Main Content Column */}
