@@ -20,11 +20,12 @@ export const CONTACT_PHONE = '+91 877919 2482';
 export const CONTACT_PHONE_TEL = 'tel:+918779192482';
 export const CONTACT_EMAIL_MAILTO = 'mailto:info@explore360.co.in';
 export const CONTACT_WHATSAPP = 'https://wa.me/918779192482';
-export const CONTACT_ADDRESS = 'Mumbai, Maharashtra, India';
-export const CONTACT_ADDRESS_LINE = 'Head Office — Mumbai, Maharashtra, India';
-export const CONTACT_MAP_SEARCH = 'https://www.google.com/maps/search/Mumbai,+Maharashtra,+India';
+export const CONTACT_ADDRESS = 'Navi Mumbai, Maharashtra 400706';
+export const CONTACT_ADDRESS_LINE = 'Head Office — Navi Mumbai, Maharashtra 400706';
+export const CONTACT_MAP_SEARCH =
+  'https://www.google.com/maps/place/Navi+Mumbai,+Maharashtra+400706/@19.0263615,72.9798539,13z/data=!3m1!4b1!4m6!3m5!1s0x3be7c3c389405e23:0x6b5611d97b65f7c4!8m2!3d19.0344647!4d73.0110096!16s%2Fm%2F0j1x4hm';
 export const CONTACT_MAP_EMBED =
-  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.11609823277!2d72.74109995!3d19.0821978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c1!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1699123456789!5m2!1sen!2sin';
+  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d48233.8!2d73.0110096!3d19.0344647!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3c389405e23%3A0x6b5611d97b65f7c4!2sNavi%20Mumbai%2C%20Maharashtra%20400706!5e0!3m2!1sen!2sin!4v1721123456789!5m2!1sen!2sin';
 
 export const CONTACT_FAQS = [
   {

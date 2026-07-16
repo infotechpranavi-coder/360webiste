@@ -162,7 +162,7 @@ const ContactForm = () => {
       icon: MapPin,
       title: "Head Office",
       details: [CONTACT_ADDRESS_LINE],
-      description: "Based in Mumbai, serving travellers across India & beyond"
+      description: "Based in Navi Mumbai, serving travellers across India & beyond"
     },
     {
       icon: Phone,
@@ -479,7 +479,7 @@ const ContactForm = () => {
                           allowFullScreen
                           loading="lazy"
                           referrerPolicy="no-referrer-when-downgrade"
-                          title={`${SITE_NAME} Location - Mumbai, Maharashtra, India`}
+                          title={`${SITE_NAME} Location - Navi Mumbai, Maharashtra 400706`}
                         ></iframe>
                       </div>
                     </CardContent>
