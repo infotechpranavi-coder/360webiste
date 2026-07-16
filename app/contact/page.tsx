@@ -91,7 +91,7 @@ const ContactForm = () => {
         formData.message.trim() ||
         [
           formData.subject && `Subject: ${formData.subject}`,
-          formData.destination && `Destination: ${formData.destination}`,
+          formData.destination && `Event or activity: ${formData.destination}`,
           formData.travelDate && `Travel date: ${formData.travelDate}`,
           formData.travelers && `Travelers: ${formData.travelers}`,
           formData.budget && `Budget: ${formData.budget}`,
@@ -336,19 +336,19 @@ const ContactForm = () => {
                         </div>
                         <div>
                           <label htmlFor="destination" className="block text-sm font-medium text-gray-700 mb-2">
-                            Destination *
+                            Event or Activity *
                           </label>
                           <div className="relative">
                             <Input
-                              list="contact-package-destinations"
+                              list="contact-package-events"
                               id="destination"
                               name="destination"
                               value={formData.destination}
                               onChange={handleInputChange}
                               required
-                              placeholder="Enter or select destination"
+                              placeholder="Enter or select event or activity"
                             />
-                            <datalist id="contact-package-destinations">
+                            <datalist id="contact-package-events">
                               {availablePackages.map((pkg) => (
                                 <option key={pkg._id} value={pkg.title}>{pkg.location}</option>
                               ))}
