@@ -7,6 +7,13 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import FormFeedbackModal from '@/components/FormFeedbackModal';
 import { ProductInfo } from '../contexts/InquiryFormContext';
+import {
+  CONTACT_EMAIL,
+  CONTACT_PHONE,
+  CONTACT_PHONE_TEL,
+  CONTACT_EMAIL_MAILTO,
+  CONTACT_ADDRESS_LINE,
+} from '@/lib/branding';
 
 interface InquiryFormPopupProps {
   isOpen: boolean;
@@ -277,7 +284,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                     </label>
                     <div className="inquiry-phone-input">
                       <PhoneInput
-                        country={'za'}
+                        country={'in'}
                         value={formData.phone}
                         onChange={(phone) => setFormData((prev) => ({ ...prev, phone }))}
                         inputProps={{
@@ -351,14 +358,14 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                 </div>
 
                 <div>
-                  <label className={labelClass}>Budget Range</label>
+                  <label className={labelClass}>Budget Range (INR)</label>
                   <input
                     type="text"
                     name="budget"
                     value={formData.budget}
                     onChange={handleInputChange}
                     className={fieldClass}
-                    placeholder="e.g. $2,000 – $5,000"
+                    placeholder="e.g. ₹25,000 - ₹50,000"
                   />
                 </div>
 
@@ -382,7 +389,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                   <a
-                    href="tel:+237683577676"
+                    href={CONTACT_PHONE_TEL}
                     className="flex items-center gap-2.5 rounded-xl bg-[#faf8f3] px-3 py-2.5 hover:bg-[#bd9245]/10 transition-colors"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#bd9245]/15 text-[#bd9245]">
@@ -393,12 +400,12 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                         Call
                       </span>
                       <span className="block text-xs font-semibold text-gray-800 truncate">
-                        +237 6 83 57 76 76
+                        {CONTACT_PHONE}
                       </span>
                     </span>
                   </a>
                   <a
-                    href="mailto:sales@skygovoyages.com"
+                    href={CONTACT_EMAIL_MAILTO}
                     className="flex items-center gap-2.5 rounded-xl bg-[#faf8f3] px-3 py-2.5 hover:bg-[#bd9245]/10 transition-colors"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#bd9245]/15 text-[#bd9245]">
@@ -409,7 +416,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                         Email
                       </span>
                       <span className="block text-xs font-semibold text-gray-800 truncate">
-                        sales@skygovoyages.com
+                        {CONTACT_EMAIL}
                       </span>
                     </span>
                   </a>
@@ -422,7 +429,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                         Visit
                       </span>
                       <span className="block text-xs font-semibold text-gray-800 truncate">
-                        Yaoundé, Cameroon
+                        {CONTACT_ADDRESS_LINE}
                       </span>
                     </span>
                   </div>

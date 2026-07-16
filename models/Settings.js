@@ -62,7 +62,7 @@ const SettingsSchema = new mongoose.Schema({
     ],
   },
   exploreCtaLabel: { type: String, default: 'Book Now' },
-  explorePhone: { type: String, default: '+237 6 83 57 76 76' },
+  explorePhone: { type: String, default: '+91 877919 2482' },
   explorePhoneLabel: { type: String, default: 'CALL NOW' },
 }, { timestamps: true });
 

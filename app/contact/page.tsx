@@ -10,7 +10,7 @@ import { MapPin, Phone, Mail, Clock, Send, MessageCircle, Users, Globe, Plane } 
 import { useSearchParams } from "next/navigation";
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { SITE_NAME } from "@/lib/branding";
+import { SITE_NAME, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, CONTACT_EMAIL_MAILTO, CONTACT_ADDRESS_LINE, CONTACT_MAP_SEARCH, CONTACT_MAP_EMBED, CONTACT_FAQS } from "@/lib/branding";
 import FormFeedbackModal from "@/components/FormFeedbackModal";
 
 const ContactForm = () => {
@@ -160,21 +160,23 @@ const ContactForm = () => {
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Address Location",
-      details: ["Head office- Yaoundé ,Cameroon"],
-      description: "Located in the heart of Yaoundé"
+      title: "Head Office",
+      details: [CONTACT_ADDRESS_LINE],
+      description: "Based in Mumbai, serving travellers across India & beyond"
     },
     {
       icon: Phone,
-      title: "Phone Numbers",
-      details: ["+237 6 83 57 76 76"],
-      description: "Available 24/7 for emergency support"
+      title: "Phone",
+      details: [CONTACT_PHONE],
+      description: "Call us during office hours for travel assistance",
+      href: CONTACT_PHONE_TEL
     },
     {
       icon: Mail,
-      title: "Email Address",
-      details: ["sales@skygovoyages.com"],
-      description: "We respond within 24 hours"
+      title: "Email",
+      details: [CONTACT_EMAIL],
+      description: "We respond within 24 hours",
+      href: CONTACT_EMAIL_MAILTO
     },
     {
       icon: Clock,
@@ -187,15 +189,17 @@ const ContactForm = () => {
   const teamMembers = [
     {
       name: "Customer Support",
-      role: "Tour Operations",
-      email: "sales@skygovoyages.com",
-      phone: "+237 6 83 57 76 76"
+      role: "Experience Planning",
+      email: CONTACT_EMAIL,
+      phone: CONTACT_PHONE,
+      phoneHref: CONTACT_PHONE_TEL
     },
     {
       name: `${SITE_NAME} Team`,
       role: "Customer Relations",
-      email: "sales@skygovoyages.com",
-      phone: "+237 6 83 57 76 76"
+      email: CONTACT_EMAIL,
+      phone: CONTACT_PHONE,
+      phoneHref: CONTACT_PHONE_TEL
     }
   ];
 
@@ -234,7 +238,7 @@ const ContactForm = () => {
             <div className="flex flex-wrap justify-center gap-6 text-white/60 text-sm font-bold uppercase tracking-widest">
               <div className="flex items-center space-x-2">
                 <MessageCircle className="h-4 w-4" />
-                <span>24/7 Support</span>
+                <span>Personalised Support</span>
               </div>
               <span className="text-white/30">·</span>
               <div className="flex items-center space-x-2">
@@ -244,7 +248,7 @@ const ContactForm = () => {
               <span className="text-white/30">·</span>
               <div className="flex items-center space-x-2">
                 <Globe className="h-4 w-4" />
-                <span>Global Reach</span>
+                <span>Curated Experiences</span>
               </div>
             </div>
           </div>
@@ -259,7 +263,7 @@ const ContactForm = () => {
               {/* Contact Form */}
               <div>
                 <h2 className="text-3xl font-bold text-[#1e1f44] mb-6">
-                  Send us a Message via WhatsApp
+                  Send Us an Enquiry
                 </h2>
                 <Card>
                   <CardContent className="p-6">
@@ -302,7 +306,7 @@ const ContactForm = () => {
                           </label>
                           <div className="phone-input-container">
                             <PhoneInput
-                              country={'za'}
+                              country={'in'}
                               value={formData.phone}
                               onChange={(phone) => setFormData(prev => ({ ...prev, phone }))}
                               inputProps={{
@@ -389,16 +393,20 @@ const ContactForm = () => {
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">
-                            Budget Range
+                            Budget Range (INR)
                           </label>
-                          <Input
-                            id="budget"
-                            name="budget"
-                            type="text"
-                            value={formData.budget}
-                            onChange={handleInputChange}
-                            placeholder="e.g. ZAR 20,000 - 30,000"
-                          />
+                          <Select value={formData.budget} onValueChange={(val) => setFormData(p => ({...p, budget: val}))}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select budget range" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Under ₹25,000">Under ₹25,000</SelectItem>
+                              <SelectItem value="₹25,000 - ₹50,000">₹25,000 - ₹50,000</SelectItem>
+                              <SelectItem value="₹50,000 - ₹1,00,000">₹50,000 - ₹1,00,000</SelectItem>
+                              <SelectItem value="₹1,00,000 - ₹2,00,000">₹1,00,000 - ₹2,00,000</SelectItem>
+                              <SelectItem value="Above ₹2,00,000">Above ₹2,00,000</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div>
                           <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
@@ -464,14 +472,14 @@ const ContactForm = () => {
                     <CardContent className="p-0">
                       <div className="aspect-video">
                         <iframe
-                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3311.0253456789!2d18.4166667!3d33.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1dcc5d123456789%3A0x123456789abcdef!2sV%26A%20Waterfront!5e0!3m2!1sen!2sza!4v1699123456789!5m2!1sen!2sza"
+                          src={CONTACT_MAP_EMBED}
                           width="100%"
                           height="100%"
                           style={{ border: 0 }}
                           allowFullScreen
                           loading="lazy"
                           referrerPolicy="no-referrer-when-downgrade"
-                          title={`${SITE_NAME} Location - Yaoundé, Cameroon`}
+                          title={`${SITE_NAME} Location - Mumbai, Maharashtra, India`}
                         ></iframe>
                       </div>
                     </CardContent>
@@ -479,15 +487,15 @@ const ContactForm = () => {
                   <div className="mt-4 text-center">
                     <p className="text-sm text-gray-600">
                       <MapPin className="h-4 w-4 inline mr-1" />
-                      Head office- Yaoundé, Cameroon
+                      {CONTACT_ADDRESS_LINE}
                     </p>
                     <a
-                      href="https://www.google.com/maps/search/Yaoundé,+Cameroon"
+                      href={CONTACT_MAP_SEARCH}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:text-primary/80 text-sm font-medium mt-2 inline-block"
                     >
-                      Open in Google Maps â†’
+                      Open in Google Maps →
                     </a>
                   </div>
                 </div>
@@ -509,10 +517,10 @@ const ContactForm = () => {
                               <h3 className="font-semibold text-[#1e1f44]">{member.name}</h3>
                               <p className="text-sm text-gray-600">{member.role}</p>
                               <div className="flex items-center space-x-4 mt-1">
-                                <a href={`mailto:${member.email}`} className="text-xs text-primary hover:underline">
+                                <a href={CONTACT_EMAIL_MAILTO} className="text-xs text-primary hover:underline">
                                   {member.email}
                                 </a>
-                                <a href={`tel:${member.phone}`} className="text-xs text-primary hover:underline">
+                                <a href={member.phoneHref} className="text-xs text-primary hover:underline">
                                   {member.phone}
                                 </a>
                               </div>
@@ -554,7 +562,13 @@ const ContactForm = () => {
                     <div className="space-y-1 mb-3">
                       {info.details.map((detail, idx) => (
                         <p key={idx} className="text-gray-600 font-medium">
-                          {detail}
+                          {'href' in info && info.href ? (
+                            <a href={info.href} className="text-primary hover:underline">
+                              {detail}
+                            </a>
+                          ) : (
+                            detail
+                          )}
                         </p>
                       ))}
                     </div>
@@ -584,46 +598,16 @@ const ContactForm = () => {
               </p>
             </div>
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">How far in advance should I book my trip?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    We recommend booking at least 2-3 months in advance for domestic packages and 3-6 months for international trips to ensure availability and better prices.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Do you provide visa assistance?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Yes, we provide complete visa assistance for all our international packages. Our team will guide you through the entire process and help with documentation.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">What is your cancellation policy?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Our cancellation policy varies by package type. Generally, cancellations made 30+ days in advance receive a full refund, while closer cancellations may have partial refunds.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Do you offer custom packages?</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Absolutely! We specialize in creating custom packages tailored to your specific needs, interests, and budget. Contact us to discuss your requirements.
-                  </p>
-                </CardContent>
-              </Card>
+              {CONTACT_FAQS.map((faq) => (
+                <Card key={faq.question}>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{faq.question}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">{faq.answer}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
@@ -640,13 +624,13 @@ const ContactForm = () => {
               Let's create the perfect travel experience for you
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="tel:+237683577676">
+              <a href={CONTACT_PHONE_TEL}>
                 <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-gray-100">
                   <Phone className="h-5 w-5 mr-2" />
                   Call Us Now
                 </Button>
               </a>
-              <a href="mailto:sales@skygovoyages.com">
+              <a href={CONTACT_EMAIL_MAILTO}>
                 <Button size="lg" variant="outline" className="bg-white text-black border-gray-200 hover:bg-gray-100">
                   <MessageCircle className="h-5 w-5 mr-2 text-black" />
                   Send Email

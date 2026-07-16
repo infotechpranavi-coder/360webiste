@@ -13,7 +13,7 @@ export const EXPLORE_SECTION_DEFAULTS = {
     'Vetted Local Partners',
   ],
   exploreCtaLabel: 'Book Now',
-  explorePhone: '+237 6 83 57 76 76',
+  explorePhone: '+91 877919 2482',
   explorePhoneLabel: 'CALL NOW',
 } as const;
 
