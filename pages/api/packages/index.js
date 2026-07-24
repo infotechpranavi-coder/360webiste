@@ -7,6 +7,7 @@ import {
   buildMiniFilterForSlug,
   getCategoryCatalogFromSettings,
 } from '../../../lib/categoryCatalog';
+import { PACKAGE_CARD_SELECT } from '../../../lib/packageCardFields';
 
 // Demo data for when database is unavailable
 const getDemoPackages = () => {
@@ -205,9 +206,28 @@ export default async function handler(req, res) {
         query.isFeaturedTrip = true;
       }
 
-      const packages = await Package.find(query).sort({ createdAt: -1 });
+      const isCardList =
+        popular === 'true' ||
+        featured === 'true' ||
+        featuredTrip === 'true' ||
+        Boolean(search || category || group || mini);
 
-      // Return empty array if no packages found instead of falling back to demo
+      let findQuery = Package.find(query).sort({ createdAt: -1 }).lean();
+
+      if (isCardList) {
+        findQuery = findQuery.select(PACKAGE_CARD_SELECT);
+      }
+
+      if (popular === 'true') findQuery = findQuery.limit(8);
+      if (featured === 'true') findQuery = findQuery.limit(8);
+      if (featuredTrip === 'true') findQuery = findQuery.limit(12);
+
+      const packages = await findQuery;
+
+      res.setHeader(
+        'Cache-Control',
+        'public, s-maxage=60, stale-while-revalidate=300'
+      );
       res.status(200).json({ success: true, data: packages });
     } catch (error) {
       console.error('Error fetching packages:', error.message);

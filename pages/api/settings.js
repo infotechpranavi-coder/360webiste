@@ -57,12 +57,19 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        let settings = await Settings.findOne();
+        let settings = await Settings.findOne().lean();
         if (!settings) {
           settings = await Settings.create(SETTINGS_DEFAULTS);
-        } else if (applySettingsDefaults(settings)) {
-          await settings.save();
+          settings = settings.toObject ? settings.toObject() : settings;
+        } else {
+          // Apply defaults in-memory only on GET — avoid a write on every page load
+          const merged = { ...SETTINGS_DEFAULTS, ...settings };
+          settings = merged;
         }
+        res.setHeader(
+          'Cache-Control',
+          'public, s-maxage=30, stale-while-revalidate=120'
+        );
         res.status(200).json({ success: true, data: settings });
       } catch (error) {
         res.status(400).json({ success: false, error: error.message });

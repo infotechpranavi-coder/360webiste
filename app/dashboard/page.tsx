@@ -1565,13 +1565,13 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <div className="text-sm font-bold text-white uppercase tracking-tighter">Admin User</div>
-                  <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Yaoundé HQ</div>
+                  <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Navi Mumbai HQ</div>
                 </div>
               </div>
               <Button 
                 onClick={handleLogout}
                 variant="ghost" 
-                className="w-full justify-start text-white/50 hover:text-white hover:bg-red-500/10 hover:text-red-400 p-2 h-auto text-xs font-bold uppercase tracking-widest"
+                className="w-full justify-start text-white/50 hover:bg-red-500/10 hover:text-red-400 p-2 h-auto text-xs font-bold uppercase tracking-widest"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
@@ -2431,7 +2431,7 @@ export default function DashboardPage() {
                           <th className="p-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400">Category</th>
                           <th className="p-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400">Author</th>
                           <th className="p-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400">Featured</th>
-                          <th className="p-4 text-left text-[10px] font-black uppercase tracking-widest text-gray-400 text-center">Actions</th>
+                          <th className="p-4 text-center text-[10px] font-black uppercase tracking-widest text-gray-400">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-50">
@@ -2748,7 +2748,7 @@ export default function DashboardPage() {
                 <CardHeader className="p-8 pb-4">
                   <div>
                     <CardTitle className="text-2xl font-black text-[#111827] tracking-tight uppercase">Home Page Configuration</CardTitle>
-                    <CardDescription className="text-sm font-medium text-gray-400 font-bold uppercase tracking-widest mt-1">Control the visibility of dynamic sections on your main landing page</CardDescription>
+                    <CardDescription className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Control the visibility of dynamic sections on your main landing page</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="p-8 pt-4">
@@ -2986,7 +2986,7 @@ export default function DashboardPage() {
                 <CardHeader className="p-8 pb-4">
                   <div>
                     <CardTitle className="text-2xl font-black text-[#111827] tracking-tight uppercase">Social Media Presence</CardTitle>
-                    <CardDescription className="text-sm font-medium text-gray-400 font-bold uppercase tracking-widest mt-1">Manage your brand's digital touchpoints and profile links across the web</CardDescription>
+                    <CardDescription className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Manage your brand's digital touchpoints and profile links across the web</CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="p-8 pt-4">

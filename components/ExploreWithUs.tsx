@@ -38,15 +38,14 @@ const ExploreWithUs = ({ initialContent }: ExploreWithUsProps) => {
   useEffect(() => {
     if (initialContent) {
       setContent(resolveExploreSectionContent(initialContent));
+      return;
     }
-  }, [initialContent]);
 
-  useEffect(() => {
     let cancelled = false;
 
     async function loadSettings() {
       try {
-        const res = await fetch('/api/settings', { cache: 'no-store' });
+        const res = await fetch('/api/settings');
         const data = await res.json();
         if (!cancelled && data.success && data.data) {
           setContent(resolveExploreSectionContent(data.data as SiteSettings));
@@ -60,7 +59,7 @@ const ExploreWithUs = ({ initialContent }: ExploreWithUsProps) => {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initialContent]);
 
   const inclusions = content.exploreInclusions;
   const midPoint = Math.ceil(inclusions.length / 2);

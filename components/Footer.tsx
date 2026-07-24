@@ -9,7 +9,7 @@ import { useCategoryLabels } from '@/contexts/CategoryLabelsContext';
 import { getGroupPageHref } from '@/lib/packageExperienceCategories';
 
 const FOOTER_BG =
-  'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80';
+  'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=60';
 
 const quickLinks = [
   { label: 'Home', href: '/' },
@@ -18,6 +18,7 @@ const quickLinks = [
   { label: 'Blog', href: '/blogs' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'Contact Us', href: '/contact' },
+  { label: 'Terms & Conditions', href: '/terms' },
 ];
 
 const FooterLink = ({ href, children }: { href: string; children: ReactNode }) => (
@@ -85,6 +86,8 @@ const Footer = () => {
           className="object-cover object-center"
           sizes="100vw"
           priority={false}
+          loading="lazy"
+          quality={60}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-white via-white/95 via-55% to-black/30" />
       </div>
@@ -197,9 +200,20 @@ const Footer = () => {
         {/* Copyright on forest */}
         <div className="relative py-10 md:py-12">
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
-          <p className="relative text-center text-sm font-medium text-white/95 tracking-wide">
-            Copyright © {new Date().getFullYear()} {SITE_NAME}. All Rights Reserved.
-          </p>
+          <div className="relative text-center space-y-3 px-4">
+            <p className="text-sm font-medium text-white/95 tracking-wide">
+              Copyright © {new Date().getFullYear()} {SITE_NAME}. All Rights Reserved.
+            </p>
+            <p className="text-xs text-white/80">
+              <Link href="/terms" className="underline underline-offset-2 hover:text-white transition-colors">
+                Terms & Conditions
+              </Link>
+              <span className="mx-2 text-white/40">·</span>
+              <Link href="/contact" className="underline underline-offset-2 hover:text-white transition-colors">
+                Contact Us
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

@@ -2,46 +2,55 @@
 
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { destinations as defaultDestinations, Destination } from "@/data/homeData";
+import { Destination } from "@/data/homeData";
 import { useRouter } from "next/navigation";
 import { PackageData } from "@/lib/types";
 import { motion } from "framer-motion";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
-const DestinationsGrid = () => {
+function mapPackagesToDestinations(packages: PackageData[]): Destination[] {
+  const generateSlug = (title: string, id: string) =>
+    `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
+
+  return packages.map((pkg) => ({
+    id: pkg._id,
+    title: pkg.title,
+    subtitle: pkg.subtitle || '',
+    image: pkg.images?.[0]?.url || "",
+    link: `/packages/${generateSlug(pkg.title, pkg._id)}`,
+  }));
+}
+
+interface DestinationsGridProps {
+  initialPackages?: PackageData[];
+}
+
+const DestinationsGrid = ({ initialPackages }: DestinationsGridProps) => {
   const router = useRouter();
   const { ref, isVisible } = useScrollReveal({ threshold: 0.1 });
   const [hoveredCardImage, setHoveredCardImage] = useState<string | null>(null);
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-  const [displayDestinations, setDisplayDestinations] = useState<Destination[]>([]);
+  const seeded = useMemo(
+    () => (initialPackages?.length ? mapPackagesToDestinations(initialPackages) : []),
+    [initialPackages]
+  );
+  const [displayDestinations, setDisplayDestinations] = useState<Destination[]>(seeded);
 
   useEffect(() => {
+    if (initialPackages && initialPackages.length > 0) {
+      setDisplayDestinations(mapPackagesToDestinations(initialPackages));
+      return;
+    }
+
     const fetchFeaturedPackages = async () => {
       try {
         const res = await fetch('/api/packages?featured=true');
         const result = await res.json();
-        
-        if (result.success && result.data) {
-          const generateSlug = (title: string, id: string) => {
-              return `${(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${id}`;
-          };
-          
-          const featured = (result.data as PackageData[])
-            .map(pkg => ({
-              id: pkg._id,
-              title: pkg.title,
-              subtitle: pkg.subtitle,
-              image: pkg.images[0]?.url || "",
-              link: `/packages/${generateSlug(pkg.title, pkg._id)}`
-            }));
 
-          // Show all featured packages, not just 4
-          if (featured.length > 0) {
-            setDisplayDestinations(featured);
-          } else {
-            setDisplayDestinations([]);
-          }
+        if (result.success && result.data?.length) {
+          setDisplayDestinations(mapPackagesToDestinations(result.data as PackageData[]));
+        } else {
+          setDisplayDestinations([]);
         }
       } catch (error) {
         console.error('Error fetching destinations:', error);
@@ -49,21 +58,7 @@ const DestinationsGrid = () => {
     };
 
     fetchFeaturedPackages();
-  }, []);
-
-  // Preload all destination images
-  useEffect(() => {
-    const preloadImages = () => {
-      displayDestinations.forEach((destination) => {
-        const img = new window.Image();
-        img.src = destination.image;
-        img.onload = () => {
-          setLoadedImages((prev) => new Set(prev).add(destination.image));
-        };
-      });
-    };
-    preloadImages();
-  }, [displayDestinations]);
+  }, [initialPackages]);
 
   return (
     <section
@@ -161,6 +156,8 @@ const DestinationsGrid = () => {
                   <img
                     src={destination.image}
                     alt={destination.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>

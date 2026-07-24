@@ -14,14 +14,16 @@ export function cn(...inputs: ClassValue[]) {
  * Returns a sharp Cloudinary / external URL for hero banners.
  * `width` should match viewport × devicePixelRatio (capped at 3840).
  */
-export function getHeroBannerUrl(url: string, publicId?: string, width = 3840): string {
+export function getHeroBannerUrl(url: string, publicId?: string, width = 1920): string {
   if (!url) return url;
 
   if (url.includes('images.unsplash.com')) {
     const upgraded = url
       .replace(/w=\d+/i, `w=${width}`)
-      .replace(/q=\d+/i, 'q=100');
-    return upgraded.includes('w=') ? upgraded : `${upgraded}${upgraded.includes('?') ? '&' : '?'}w=${width}&q=100`;
+      .replace(/q=\d+/i, 'q=75');
+    return upgraded.includes('w=')
+      ? upgraded
+      : `${upgraded}${upgraded.includes('?') ? '&' : '?'}w=${width}&q=75`;
   }
 
   if (!url.includes('res.cloudinary.com')) return url;
@@ -30,12 +32,12 @@ export function getHeroBannerUrl(url: string, publicId?: string, width = 3840): 
   const assetPath = resolveCloudinaryAssetPath(url, publicId);
   if (!cloudName || !assetPath) return url;
 
-  const transforms = `c_limit,w_${width},q_100`;
+  const transforms = `c_limit,w_${width},q_auto:good,f_auto`;
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transforms}/${assetPath}`;
 }
 
 export function getHeroBannerSrcSet(url: string, publicId?: string): string {
-  const widths = [1080, 1920, 2560, 3840];
+  const widths = [1080, 1600, 1920, 2560];
   return widths
     .map((w) => `${getHeroBannerUrl(url, publicId, w)} ${w}w`)
     .join(', ');

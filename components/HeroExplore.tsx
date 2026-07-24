@@ -15,13 +15,13 @@ interface HeroExploreProps {
 }
 
 function useHeroImageWidth() {
-  const [width, setWidth] = useState(3840);
+  const [width, setWidth] = useState(1920);
 
   useEffect(() => {
     const update = () => {
       const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
       const viewport = typeof window !== 'undefined' ? window.innerWidth : 1920;
-      setWidth(Math.min(3840, Math.max(1920, Math.ceil(viewport * dpr))));
+      setWidth(Math.min(2560, Math.max(1080, Math.ceil(viewport * Math.min(dpr, 2)))));
     };
 
     update();
@@ -161,20 +161,30 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
     }
 
     if (mediaType === 'video' && banner.video?.url) {
+      // Show poster first; only attach video src when this slide is active
+      // so inactive banners don't download large video files in the background.
       return (
-        <video
-          key={`${banner._id}-${isActive ? 'active' : 'idle'}`}
-          src={banner.video.url}
-          className={`${visibilityClass} ${objectClass}`}
-          autoPlay={isActive}
-          muted
-          playsInline
-          poster={banner.image?.url}
-          aria-hidden={!isActive}
-          onEnded={() => {
-            if (isActive) handleMediaEnded();
-          }}
-        />
+        <div key={banner._id} className={`${visibilityClass} overflow-hidden`} aria-hidden={!isActive}>
+          {banner.image?.url ? (
+            <img
+              src={getHeroBannerUrl(banner.image.url, banner.image.public_id, heroWidth)}
+              alt=""
+              className={`absolute inset-0 ${objectClass}`}
+              aria-hidden
+            />
+          ) : null}
+          {isActive ? (
+            <video
+              src={banner.video.url}
+              className={`absolute inset-0 ${objectClass}`}
+              autoPlay
+              muted
+              playsInline
+              poster={banner.image?.url}
+              onEnded={handleMediaEnded}
+            />
+          ) : null}
+        </div>
       );
     }
 
@@ -245,7 +255,7 @@ const HeroExplore = ({ initialBanners }: HeroExploreProps) => {
               <button
                 type="button"
                 onClick={handlePrimaryAction}
-                className="mt-3.5 sm:mt-6 inline-flex items-center justify-center rounded-full bg-[#c8d8e2] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#17303f] transition hover:bg-white sm:mt-8 sm:px-8 sm:py-3.5 sm:text-xs"
+                className="mt-3.5 sm:mt-8 inline-flex items-center justify-center rounded-full bg-[#c8d8e2] px-5 py-2 text-[10px] font-bold uppercase tracking-[0.22em] text-[#17303f] transition hover:bg-white sm:px-8 sm:py-3.5 sm:text-xs"
               >
                 {currentBanner.link ? 'View Details' : 'Book An Experience'}
               </button>

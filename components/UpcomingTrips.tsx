@@ -75,30 +75,52 @@ const TripCardItem = ({
   </motion.div>
 );
 
-const UpcomingTrips = () => {
+const UpcomingTrips = ({
+  initialPackages,
+}: {
+  initialPackages?: Array<{
+    _id: string;
+    title: string;
+    location?: string;
+    place?: string;
+    images?: Array<{ url: string }>;
+  }>;
+}) => {
   const router = useRouter();
-  const [trips, setTrips] = useState<TripCard[]>([]);
-  const [loading, setLoading] = useState(true);
+  const mapTrips = (
+    data: Array<{
+      _id: string;
+      title: string;
+      location?: string;
+      place?: string;
+      images?: Array<{ url: string }>;
+    }>
+  ): TripCard[] =>
+    data.map((pkg) => ({
+      id: pkg._id,
+      title: pkg.title,
+      location: pkg.location || pkg.place || 'Explore 360',
+      image: pkg.images?.[0]?.url || WATER_HERO,
+    }));
+
+  const [trips, setTrips] = useState<TripCard[]>(
+    initialPackages?.length ? mapTrips(initialPackages) : []
+  );
+  const [loading, setLoading] = useState(!initialPackages?.length);
 
   useEffect(() => {
+    if (initialPackages && initialPackages.length > 0) {
+      setTrips(mapTrips(initialPackages));
+      setLoading(false);
+      return;
+    }
+
     const fetchUpcomingRides = async () => {
       try {
-        const response = await fetch('/api/packages?featuredTrip=true', { cache: 'no-store' });
+        const response = await fetch('/api/packages?featuredTrip=true');
         const result = await response.json();
         if (result.success && result.data?.length) {
-          const matched = result.data.map((pkg: {
-              _id: string;
-              title: string;
-              location?: string;
-              place?: string;
-              images?: Array<{ url: string }>;
-            }) => ({
-              id: pkg._id,
-              title: pkg.title,
-              location: pkg.location || pkg.place || 'Explore 360',
-              image: pkg.images?.[0]?.url || WATER_HERO,
-            }));
-          setTrips(matched);
+          setTrips(mapTrips(result.data));
         } else {
           setTrips([]);
         }
@@ -111,10 +133,11 @@ const UpcomingTrips = () => {
     };
 
     fetchUpcomingRides();
-  }, []);
+  }, [initialPackages]);
 
   const useCarousel = trips.length > CAROUSEL_THRESHOLD;
-  const duplicatedTrips = useCarousel ? [...trips, ...trips, ...trips] : [];
+  // Duplicate once for seamless marquee (was 3x — too many images in DOM)
+  const duplicatedTrips = useCarousel ? [...trips, ...trips] : [];
 
   const openTrip = (trip: TripCard) => {
     router.push(`/packages/${generateSlug(trip.title, trip.id)}`);
@@ -194,7 +217,7 @@ const UpcomingTrips = () => {
                 transform: translateX(0);
               }
               100% {
-                transform: translateX(-33.333%);
+                transform: translateX(-50%);
               }
             }
             .marquee-container::after {

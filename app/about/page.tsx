@@ -119,7 +119,7 @@ const AboutPage = () => {
             <div className="flex flex-wrap justify-center gap-6 text-white/60 text-sm font-bold uppercase tracking-widest">
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span>Based In Cameroon</span>
+                <span>Based In India</span>
               </div>
               <span className="text-white/30">·</span>
               <div className="flex items-center space-x-2">

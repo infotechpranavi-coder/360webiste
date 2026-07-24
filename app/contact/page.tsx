@@ -12,6 +12,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { SITE_NAME, CONTACT_EMAIL, CONTACT_PHONE, CONTACT_PHONE_TEL, CONTACT_EMAIL_MAILTO, CONTACT_ADDRESS_LINE, CONTACT_MAP_SEARCH, CONTACT_MAP_EMBED, CONTACT_FAQS } from "@/lib/branding";
 import FormFeedbackModal from "@/components/FormFeedbackModal";
+import FormTermsConsent from "@/components/FormTermsConsent";
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -61,6 +62,7 @@ const ContactForm = () => {
   }, [prepopulatePackageName, prepopulatePackageType]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
     title: string;
@@ -84,6 +86,7 @@ const ContactForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!acceptedTerms) return;
     setIsSubmitting(true);
 
     try {
@@ -145,6 +148,7 @@ const ContactForm = () => {
         packageType: "",
         packageName: ""
       });
+      setAcceptedTerms(false);
     } catch (error) {
       console.error('Error submitting enquiry:', error);
       setFeedback({
@@ -438,11 +442,17 @@ const ContactForm = () => {
                         />
                       </div>
 
+                      <FormTermsConsent
+                        id="contact-terms-consent"
+                        checked={acceptedTerms}
+                        onCheckedChange={setAcceptedTerms}
+                      />
+
                       <Button
                         type="submit"
                         size="lg"
                         className="w-full bg-secondary hover:bg-secondary/90 text-white"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !acceptedTerms}
                       >
                         {isSubmitting ? (
                           <>

@@ -121,7 +121,6 @@ export default function OfferPopup() {
             fill
             className="object-contain"
             sizes={isSquare ? '(max-width: 520px) 100vw, 520px' : '(max-width: 960px) 100vw, 960px'}
-            priority
           />
 
           {(settings.offerPopupTitle?.trim() || settings.offerPopupSubtitle?.trim()) && (

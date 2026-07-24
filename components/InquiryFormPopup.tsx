@@ -6,6 +6,7 @@ import { X, Phone, Mail, MapPin, Plane, Send } from 'lucide-react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import FormFeedbackModal from '@/components/FormFeedbackModal';
+import FormTermsConsent from '@/components/FormTermsConsent';
 import { ProductInfo } from '../contexts/InquiryFormContext';
 import {
   CONTACT_EMAIL,
@@ -40,6 +41,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
   });
 
   const [availablePackages, setAvailablePackages] = useState<any[]>([]);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
@@ -63,13 +65,15 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
   }, []);
 
   useEffect(() => {
-    if (isOpen && productInfo && productInfo.type !== 'General') {
+    if (!isOpen) return;
+
+    if (productInfo && productInfo.type !== 'General') {
       setFormData((prev) => ({
         ...prev,
         destination: 'other',
         message: `I am interested in the ${productInfo.type}: ${productInfo.title}. Please provide me with more details.`,
       }));
-    } else if (isOpen) {
+    } else {
       setFormData({
         name: '',
         email: '',
@@ -81,6 +85,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
         message: '',
       });
     }
+    setAcceptedTerms(false);
   }, [isOpen, productInfo]);
 
   useEffect(() => {
@@ -106,6 +111,8 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!acceptedTerms) return;
+
     setIsSubmitting(true);
 
     try {
@@ -172,6 +179,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
         budget: '',
         message: '',
       });
+      setAcceptedTerms(false);
     } catch (error) {
       console.error('Error sending inquiry:', error);
       setFeedback({
@@ -380,6 +388,12 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                     placeholder="Tell us about preferences, special requirements, or questions..."
                   />
                 </div>
+
+                <FormTermsConsent
+                  id="inquiry-terms-consent"
+                  checked={acceptedTerms}
+                  onCheckedChange={setAcceptedTerms}
+                />
               </form>
 
               {/* Compact contact strip */}
@@ -451,7 +465,7 @@ const InquiryFormPopup = ({ isOpen, onClose, productInfo }: InquiryFormPopupProp
                 <Button
                   type="submit"
                   form="inquiry-form"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !acceptedTerms}
                   className="sm:flex-[1.4] h-11 sm:h-12 rounded-xl bg-[#bd9245] hover:bg-[#a07835] text-gray-900 font-black text-sm uppercase tracking-wider disabled:opacity-60"
                 >
                   {isSubmitting ? (
