@@ -70,25 +70,26 @@ export default async function Home() {
   }
 
   const firstBanner = initialBanners[0];
-  const preloadHero =
+  const preloadImageUrl =
     firstBanner &&
     firstBanner.mediaType !== "video" &&
-    firstBanner.mediaType !== "youtube" &&
-    firstBanner.image?.url;
+    firstBanner.mediaType !== "youtube"
+      ? firstBanner.image?.url
+      : undefined;
 
   return (
     <div className="min-h-screen">
-      {preloadHero && (
+      {preloadImageUrl ? (
         <link
           rel="preload"
           as="image"
           href={getHeroBannerUrl(
-            firstBanner.image.url,
-            firstBanner.image.public_id,
+            preloadImageUrl,
+            firstBanner?.image?.public_id,
             1920
           )}
         />
-      )}
+      ) : null}
       <HeroExplore initialBanners={initialBanners} />
       <AboutHomeSection />
       {settings.exploreSection !== false && (
